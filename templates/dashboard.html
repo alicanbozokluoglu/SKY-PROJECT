@@ -16,20 +16,13 @@
             display: flex;
         }
 
-        /* SIDEBAR */
         .sidebar {
             width: 200px;
             border-right: 1px solid #ccc;
             padding: 20px;
-
             display: flex;
             flex-direction: column;  
             height: 100vh;           
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
         }
 
         .logo img {
@@ -43,15 +36,9 @@
         }
 
         .menu a {
-            display: block;
             padding: 10px 0;
             text-decoration: none;
             color: #0072ce;
-            font-weight: 500;
-        }
-
-        .menu a:hover {
-            font-weight: bold;
         }
 
         .menu-bottom {
@@ -60,13 +47,11 @@
             padding-top: 15px;
         }
 
-        /* MAIN */
         .main {
             flex: 1;
             padding: 20px;
         }
 
-        /* FILTERS */
         .filters {
             display: flex;
             gap: 10px;
@@ -74,10 +59,7 @@
             align-items: center;
         }
 
-        /* SEARCH BOX */
         .search-box {
-            display: flex;
-            align-items: center;
             border: 1px solid #ccc;
             padding: 5px 10px;
             width: 60%;
@@ -89,24 +71,6 @@
             width: 100%;
         }
 
-        /* USER SELECT */
-        .user-select {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .user-select img {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-        }
-
-        select {
-            padding: 6px;
-        }
-
-        /* STATS */
         .stats {
             display: flex;
             gap: 20px;
@@ -120,21 +84,16 @@
         }
 
         .big {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            margin: 5px 0;
+            color: #0072ce;
         }
 
-        .icon {
-            font-size: 20px;
-            margin-bottom: 5px;
+        .green-text {
+            color: #28a745;
+            font-size: 12px;
         }
 
-        .blue { color: #0072ce; }
-        .purple { color: purple; }
-        .green { color: green; }
-
-        /* LAYOUT */
         .row {
             display: flex;
             gap: 20px;
@@ -146,47 +105,9 @@
             flex: 1;
         }
 
-        /* TEAM */
-        .team {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        .member {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 8px 0;
-        }
-
-        .member img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-
-        button {
-            padding: 5px 10px;
-            background: #0072ce;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #005fa3;
-        }
-
-        .box-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        }
-
         .teams-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);  /* 3 equal columns */
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
 
@@ -195,43 +116,23 @@
             padding: 10px;
         }
 
-        .side-box {
-            max-width: 300px;
+        .member {
+            display: flex;
+            gap: 10px;
+            margin: 8px 0;
         }
 
-        .team-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-            text-align: left;
+        .member img {
+            width: 50px;
+            border-radius: 50%;
         }
 
-        .icon-large {
-            font-size: 50px;
+        button {
+            padding: 5px 10px;
+            background: #0072ce;
+            color: white;
+            border: none;
         }
-
-        .green-text {
-            color: #28a745;
-            font-weight: 600;
-            font-size: 12px;
-        }
-
-        .big {
-            font-size: 36px;
-            font-weight: bold;
-            color: #0072ce; /* default blue */
-            margin: 5px 0;
-        }
-
-        .green-number {
-            color: #28a745;
-        }
-
-        .sub-text {
-            font-size: 12px;
-            color: #28a745;
-            font-weight: 600;
-        }
-
     </style>
 </head>
 
@@ -241,7 +142,6 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-
         <div class="logo">
             <img src="/static/images/sky.png">
         </div>
@@ -258,7 +158,6 @@
                 <a href="#">🚪 Logout</a>
             </div>
         </div>
-
     </div>
 
     <!-- MAIN -->
@@ -266,53 +165,38 @@
 
         <!-- FILTERS -->
         <div class="filters">
-
             <div class="search-box">
-                🔍
-<input type="text" placeholder="Search teams">
+                🔍 <input type="text" placeholder="Search teams">
             </div>
 
-            <select><option>All Departments</option></select>
-            <select><option>All Managers</option></select>
+            <select>
+                <option>All Departments</option>
+            </select>
 
-            <div class="user-select">
-                <img src="https://via.placeholder.com/25">
-                <select>
-                    <option>David Miller</option>
-                </select>
-            </div>
-
+            <select>
+                <option>All Managers</option>
+            </select>
         </div>
 
         <!-- STATS -->
         <div class="stats">
 
             <div class="card">
-                <div class="icon blue">👥</div>
                 <h3>Total Teams</h3>
                 <p class="big">{{ total_teams }}</p>
-                <small>
-                    {{ teams_this_month }} <span class="green-text">this month</span>
-                </small>
+                <small>{{ teams_this_month }} this month</small>
             </div>
 
             <div class="card">
-                <div class="icon purple">🏢</div>
                 <h3>Total Departments</h3>
-                <p class="big green-number">{{ total_departments }}</p>
-                <small>
-                    <span class="sub-text">{{ department_list }}</span>
-                </small>
-
+                <p class="big">{{ total_departments }}</p>
+                <small>{{ department_list }}</small>
             </div>
 
             <div class="card">
-                <div class="icon green">👤</div>
                 <h3>Total Members</h3>
                 <p class="big">{{ total_members }}</p>
-                <small>
-                    {{ members_this_month }} <span class="green-text">this month</span>
-                </small>
+                <small>{{ members_this_month }}</small>
             </div>
 
         </div>
@@ -320,74 +204,67 @@
         <!-- CONTENT -->
         <div class="row">
 
-            <!-- LEFT: RECENT TEAMS -->
-            <div class="box teams-box">
+            <!-- TEAMS -->
+            <div class="box">
 
-                <div class="box-header">
-                    <h3>Recent Teams</h3>
-                    <a href="#">View All ></a>
-                </div>
+                <h3>Recent Teams</h3>
 
                 <div class="teams-grid">
 
                     {% for team in teams %}
                     <div class="team-card">
 
-                        <!-- BIG ICON -->
-                        <div class="team-icon">
-                            {% if team.name == "Backend Team" %}
-                                🔧 
-                            {% elif team.name == "Frontend Team" %}
-                                🖥️
-                            {% elif team.name == "DevOps Team" %}
-                                ☁️
-                            {% endif %}
-                        </div>
-
                         <strong>{{ team.name }}</strong><br>
-                        <small>{{ team.department }}</small>
+                        <small>{{ team.department.name }}</small>
 
                         <div class="member">
-                            <img src="{{ team.manager_image }}">
+                            <img src="https://via.placeholder.com/50">
                             <div>
-                                {{ team.manager_name }}<br>
-                                <small>{{ team.role }}</small>
+                                {{ team.team_leader.name }}<br>
+                                <small>{{ team.department.name }}</small>
                             </div>
                         </div>
 
                         <button>View</button>
 
                     </div>
+                    {% empty %}
+                        <p>No teams found</p>
                     {% endfor %}
 
                 </div>
 
             </div>
 
-            <!-- RIGHT: NOTIFICATIONS -->
-            <div class="box side-box">
-
+            <!-- NOTIFICATIONS -->
+            <div class="box" style="max-width:300px;">
                 <h3>🔔 Notifications</h3>
 
                 {% for n in notifications %}
                     <p>{{ n.message }} - {{ n.time }}</p>
+                {% empty %}
+                    <p>No notifications</p>
                 {% endfor %}
-
             </div>
 
-        </div> <!-- ✅ CLOSE ROW HERE -->
+        </div>
 
-        <!-- ROW 2: UPCOMING MEETINGS -->
+        <!-- MEETINGS -->
         <div class="box" style="margin-top:20px;">
-
             <h3>📅 Upcoming Meetings</h3>
 
             {% for m in meetings %}
                 <p><strong>{{ m.title }}</strong></p>
                 <p>{{ m.time }}</p>
                 <hr>
+            {% empty %}
+                <p>No meetings scheduled</p>
             {% endfor %}
-
         </div>
-</body> 
+
+    </div>
+
+</div>
+
+</body>
 </html>
