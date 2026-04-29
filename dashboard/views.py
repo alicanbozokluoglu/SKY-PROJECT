@@ -3,6 +3,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+from .models import Team, Department, Notification, Meeting
+
+
+# -------------------------
+# AUTH: LOGIN
+# -------------------------
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -19,66 +25,45 @@ def login_view(request):
     return render(request, "login.html")
 
 
+# -------------------------
+# DASHBOARD (DATABASE-DRIVEN)
+# -------------------------
 @login_required
 def dashboard(request):
 
-    # MOCK DATA (replace later with models)
-    teams = [
-        {
-            "name": "Backend Team",
-            "department": "Engineering",
-            "manager_name": "John Smith",
-            "role": "Manager",
-            "manager_image": "https://via.placeholder.com/35"
-        },
-        {
-            "name": "Frontend Team",
-            "department": "Engineering",
-            "manager_name": "Sarah Johnson",
-            "role": "Manager",
-            "manager_image": "https://via.placeholder.com/35"
-        },
-        {
-            "name": "DevOps Team",
-            "department": "IT Operations",
-            "manager_name": "James Brown",
-            "role": "Manager",
-            "manager_image": "https://via.placeholder.com/35"
-        }
-    ]
-
-    notifications = [
-        {"message": "New team created", "time": "2 hours ago"},
-        {"message": "Team updated", "time": "1 day ago"},
-        {"message": "New member added", "time": "2 days ago"},
-    ]
-
-    meetings = [
-        {"title": "Backend Team Sync", "time": "10:00 AM - 11:00 AM"}
-    ]
+    teams = Team.objects.all()
+    departments = Department.objects.all()
+    notifications = Notification.objects.all()
+    meetings = Meeting.objects.all()
 
     context = {
         "teams": teams,
         "notifications": notifications,
         "meetings": meetings,
 
-        "total_teams": 12,
-        "teams_this_month": "+2",
+        "total_teams": teams.count(),
+        "teams_this_month": "+2",  # static placeholder (acceptable for CWK)
 
-        "total_departments": 3,
-        "department_list": "Engineering, Product, IT",
+        "total_departments": departments.count(),
+        "department_list": ", ".join([d.name for d in departments]),
 
-        "total_members": 65,
+        "total_members": 65,  # placeholder (no user model implemented yet)
         "members_this_month": "+15",
     }
 
     return render(request, "dashboard.html", context)
 
+
+# -------------------------
+# SIMPLE AUTH PAGES
+# -------------------------
 def register_view(request):
     return render(request, "register.html")
 
+
 def reset_password_view(request):
     return render(request, "reset.html")
+
 
 def new_password_view(request):
     if request.method == "POST":
