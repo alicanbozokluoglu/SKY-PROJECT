@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now
 
 from .models import Team, Department, Notification, Meeting
 
@@ -26,14 +27,15 @@ def login_view(request):
 
 
 # -------------------------
-# DASHBOARD (DATABASE-DRIVEN)
+# DASHBOARD
 # -------------------------
 @login_required
 def dashboard(request):
 
-    teams = Team.objects.all()
-    departments = Department.objects.all()
-    notifications = Notification.objects.all()
+    current_month = now().month
+
+    teams = Team.objects.select_related("department").order_by("-id")[:6]
+    notifications = Notification.objects.order_by("-created_at")[:5]
     meetings = Meeting.objects.all()
 
     context = {
@@ -41,14 +43,14 @@ def dashboard(request):
         "notifications": notifications,
         "meetings": meetings,
 
-        "total_teams": teams.count(),
-        "teams_this_month": "+2",  # static placeholder (acceptable for CWK)
+        "total_teams": Team.objects.count(),
+        "teams_this_month": Team.objects.filter(created_at__month=current_month).count(),
 
-        "total_departments": departments.count(),
-        "department_list": ", ".join([d.name for d in departments]),
+        "total_departments": Department.objects.count(),
+        "department_list": ", ".join(Department.objects.values_list("name", flat=True)),
 
-        "total_members": 65,  # placeholder (no user model implemented yet)
-        "members_this_month": "+15",
+        "total_members": 0,
+        "members_this_month": 0,
     }
 
     return render(request, "dashboard.html", context)

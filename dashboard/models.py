@@ -16,13 +16,15 @@ class Team(models.Model):
     manager_role = models.CharField(max_length=100)
     manager_image = models.URLField(blank=True, null=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)  # ADD THIS
+
     def __str__(self):
         return self.name
 
 
 class Notification(models.Model):
     message = models.CharField(max_length=255)
-    time = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)  # CHANGE THIS
 
     def __str__(self):
         return self.message
