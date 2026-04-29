@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -33,11 +33,9 @@ def dashboard(request):
 
     teams = Team.objects.select_related("department").order_by("-id")[:6]
 
-    # ✅ clean department list (no duplicates, sorted)
     departments = Department.objects.values_list("name", flat=True)
     department_list = ", ".join(sorted(set(departments)))
 
-    # ✅ simple realistic placeholders (better than fake analytics)
     notifications = [
         {"message": "Team registry loaded successfully", "time": "Today"},
     ]
@@ -49,23 +47,34 @@ def dashboard(request):
     context = {
         "teams": teams,
 
-        # ✅ REAL COUNTS
         "total_teams": Team.objects.count(),
         "total_departments": Department.objects.count(),
         "total_members": Person.objects.count(),
 
-        # ✅ REMOVE misleading metrics
-        "teams_this_month": f"{Team.objects.count()} total",
-        "members_this_month": f"{Person.objects.count()} total",
+        "teams_this_month": "N/A",
+        "members_this_month": "N/A",
 
         "department_list": department_list,
-
-        # ✅ UI completeness
         "notifications": notifications,
         "meetings": meetings,
     }
 
     return render(request, "dashboard.html", context)
+
+
+# -------------------------
+# TEAM DETAIL
+# -------------------------
+@login_required
+def team_detail(request, id):
+    team = get_object_or_404(
+        Team.objects.select_related("department", "team_leader"),
+        id=id
+    )
+
+    return render(request, "team_detail.html", {
+        "team": team
+    })
 
 
 # -------------------------
@@ -92,11 +101,3 @@ def new_password_view(request):
         return redirect("login")
 
     return render(request, "new_password.html")
-
-@login_required
-def team_detail(request, id):
-    team = Team.objects.select_related("department", "team_leader").get(id=id)
-
-    return render(request, "team_detail.html", {
-        "team": team
-    })
