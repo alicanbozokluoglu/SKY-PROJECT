@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            border: 18px solid #b5b5b5;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: white;
+        }
+
+        .container {
+            background: white;
+            width: 420px;
+            padding: 30px;
+        }
+
+        /* LOGO IMAGE */
+        .logo img {
+            width: 140px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header img {
+            width: 120px;        /* control size */
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .divider {
+            height: 1px;
+            background: #ccc;
+            margin: 10px 0 20px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0072ce;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
+        .links {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 15px;
+            right: 25px;
+            font-size: 12px;
+            color: grey;
+            font-style: italic;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <div class="container">
+
+        <!-- HEADER WITH LOGO LEFT -->
+        <div class="header">
+            <img src="/static/images/sky.png" alt="SKY Logo">
+        </div>
+
+        <h2>Create Account</h2>
+        <div class="divider"></div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="text" name="fullname" placeholder="Full Name">
+            <input type="text" name="username" placeholder="Username">
+            <input type="email" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <input type="password" name="confirm_password" placeholder="Confirm Password">
+
+            <button type="submit">REGISTER</button>
+        </form>
+
+        <div class="links">
+            Already have an account? <a href="/">Login</a>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Privacy Options | Terms and Conditions | Contact | Help
+    </div>
+
+</div>
+
+</body>
+</html>

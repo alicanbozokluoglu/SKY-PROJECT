@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            border: 18px solid #b5b5b5;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: white;
+        }
+
+        .container {
+            background: white;
+            width: auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .role-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0 15px 0;
+        }
+
+        .role-label {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* FIX: stop full-width behaviour */
+        .role-box {
+            width: 140px;              /* key fix */
+            padding: 5px 8px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: white;
+        }
+
+
+        /* LOGO IMAGE */
+        .logo img {
+            width: 140px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #ccc;
+            margin: 10px 0 20px 0;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0072ce;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
+        .links {
+            margin-top: 10px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 15px;
+            right: 25px;
+            font-size: 12px;
+            color: grey;
+            font-style: italic;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <div class="container">
+
+        <!-- SKY LOGO IMAGE -->
+        <div class="logo">
+            <img src="/static/images/sky.png" alt="SKY Logo">
+        </div>
+
+        <h2>Welcome back!</h2>
+        <div class="divider"></div>
+
+        <p>Select role before logging in</p>
+
+        <div class="role-row">
+            <span class="role-label">Login as:</span>
+
+            <select name="role" class="role-box">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="text" name="username" placeholder="Enter your email or username">
+            <input type="password" name="password" placeholder="Enter your password">
+
+            <button type="submit">LOGIN</button>
+        </form>
+
+        <div class="links">
+            <a href="/reset/">Forgot Password?</a> |
+            <a href="/register/">Register</a>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Privacy Options | Terms and Conditions | Contact | Help
+    </div>
+
+</div>
+
+</body>
+</html>
