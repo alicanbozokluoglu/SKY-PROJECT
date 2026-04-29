@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ team.name }}</title>
+</head>
+<body>
+
+<h2>{{ team.name }}</h2>
+
+<p><strong>Department:</strong> {{ team.department.name }}</p>
+<p><strong>Leader:</strong> {{ team.team_leader.name }}</p>
+
+<hr>
+
+<h3>Quick Actions</h3>
+<button>Send Email</button>
+<button>Book Meeting</button>
+
+<hr>
+
+<h3>Stats</h3>
+<p>Active Projects: 3</p>
+<p>Team Members: 8</p>
+<p>Deadline: 10/10/2026</p>
+
+<hr>
+
+<a href="{% url 'teams' %}">← Back to Teams</a>
+
+</body>
+</html>
