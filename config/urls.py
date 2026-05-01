@@ -28,4 +28,5 @@ urlpatterns = [
     path("profile/", views.profile_view, name="profile"),
     path("settings/", views.settings_view, name="settings"),
     path("schedule/", views.schedule_view, name="schedule"),
+    path("organisation-map/", views.organisation_map_view, name="organisation_map"),
 ]

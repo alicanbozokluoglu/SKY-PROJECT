@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h2>🗺 Organisation Map</h2>
+
+<!-- TOP ROW -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div><strong>Organisation Map</strong></div>
+    <div>👤 Sarah Johnson ▼</div>
+</div>
+
+<!-- CONTROLS -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+
+    <div style="display:flex; gap:10px;">
+        <button>🔲 Grid View</button>
+        <button>🕸 Network View</button>
+        <button>⬇ Export</button>
+    </div>
+
+    <div>
+        🔍 <input type="text" placeholder="Search teams or dependencies..." style="padding:6px;">
+    </div>
+
+</div>
+
+<!-- TOOLBAR -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+
+    <div style="display:flex; gap:10px;">
+        <button>➕</button>
+        <button>➖</button>
+        <button>🔄</button>
+        <button>📸</button>
+    </div>
+
+    <div>
+        <strong>Teams:</strong> 15 &nbsp;&nbsp;
+        <strong>Dependencies:</strong> 28
+    </div>
+
+</div>
+
+<!-- MAP IMAGE -->
+<div style="border:1px solid #ccc; padding:10px; text-align:center;">
+
+    <img src="{% static 'images/org_map.png' %}" 
+         style="width:100%; max-width:100%;">
+
+</div>
+
+<!-- LEGEND -->
+<div style="margin-top:15px;">
+    <strong>Legend:</strong><br>
+    🔵 Core Team &nbsp;
+    🟢 Backend &nbsp;
+    🟡 QA &nbsp;
+    🟣 Data &nbsp;
+    🔴 Security &nbsp;
+    🟠 DevOps &nbsp;
+    ⚫ Mobile
+</div>
+
+{% endblock %}

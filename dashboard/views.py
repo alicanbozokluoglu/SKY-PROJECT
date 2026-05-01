@@ -260,3 +260,7 @@ def profile_view(request):
         "user": user,
         "email": email
     })
+
+@login_required
+def organisation_map_view(request):
+    return render(request, "organisation_map.html")
