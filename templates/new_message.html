@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>✉️ New Message</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div style="margin-bottom:15px;">
+        <label><strong>To:</strong></label><br>
+        <select name="team" required style="width:300px; padding:5px;">
+            {% for team in teams %}
+                <option value="{{ team.id }}">{{ team.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label><strong>Subject:</strong></label><br>
+        <input type="text" name="subject" required style="width:400px; padding:5px;">
+    </div>
+
+    <div style="margin-bottom:15px;">
+        <label><strong>Message:</strong></label><br>
+        <textarea name="body" rows="6" style="width:400px; padding:5px;"></textarea>
+    </div>
+
+    <div style="margin-top:20px;">
+        <button type="submit" style="background:#0072ce; color:white; border:none; padding:8px 15px;">
+            Send Message
+        </button>
+
+        <a href="{% url 'messages' %}" style="margin-left:10px;">
+            Cancel
+        </a>
+    </div>
+
+</form>
+
+{% endblock %}

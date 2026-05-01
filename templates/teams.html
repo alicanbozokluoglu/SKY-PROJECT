@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👥 Teams</h2>
+
+<!-- CONTROLS -->
+<div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+
+    <div>
+        <strong>Team List</strong>
+        <span style="margin-left:10px;">📋 List</span>
+        <span style="margin-left:10px;">🔲 Grid</span>
+    </div>
+
+    <div>
+        🔍 Filter &nbsp;&nbsp; 🔃 Sort
+    </div>
+
+</div>
+
+<!-- TEAMS -->
+<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+
+    {% for team in teams %}
+    <div style="border:1px solid #ccc; padding:15px;">
+
+        <!-- ICON -->
+        <div style="font-size:28px; margin-bottom:8px;">
+            {% if "Frontend" in team.name %}
+                🖥️
+            {% elif "Backend" in team.name %}
+                ⚙️
+            {% elif "DevOps" in team.name %}
+                ☁️
+            {% else %}
+                👨‍💻
+            {% endif %}
+        </div>
+
+        <!-- NAME -->
+        <h3>{{ team.name }}</h3>
+
+        <!-- DEPARTMENT -->
+        <p style="color:#555;">{{ team.department.name }}</p>
+
+        <!-- LEADER -->
+        <p>
+            👤 <strong>{{ team.team_leader.name }}</strong>
+        </p>
+
+        <!-- MEMBERS (fake but acceptable UI-wise) -->
+        <p style="color:#777;">
+            👥 Members · {{ forloop.counter|add:4 }}
+        </p>
+
+        <!-- SKILLS -->
+        <p>
+            🧠 <strong>Skills:</strong>
+            {% if "Frontend" in team.name %}
+                React, JavaScript
+            {% elif "Backend" in team.name %}
+                Python, Django
+            {% elif "DevOps" in team.name %}
+                AWS, Kubernetes
+            {% else %}
+                Engineering Tools
+            {% endif %}
+        </p>
+
+        <!-- DEPENDENCIES -->
+        <p>
+            🔗 <strong>Dependencies:</strong>
+            {% if "Frontend" in team.name %}
+                Backend Team
+            {% elif "Backend" in team.name %}
+                API Team
+            {% elif "DevOps" in team.name %}
+                Security Team
+            {% else %}
+                Internal Systems
+            {% endif %}
+        </p>
+
+        <!-- ACTION BUTTONS -->
+        <div style="margin-top:10px; display:flex; gap:10px;">
+
+            <a href="{% url 'team_detail' team.id %}">
+                <button style="background:#0072ce; color:white; border:none; padding:5px 10px;">
+                    👁 View
+                </button>
+            </a>
+
+            <button style="background:green; color:white; border:none; padding:5px 10px;">
+                ✉ Email
+            </button>
+
+            <button style="background:purple; color:white; border:none; padding:5px 10px;">
+                📅 Schedule
+            </button>
+
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

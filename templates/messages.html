@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📩 Messages</h2>
+
+<div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+
+    <div>
+        <a href="#" style="margin-right:15px; font-weight:bold; color:#0072ce;">
+            Inbox ({{ unread_count }})
+        </a>
+        <a href="#" style="font-weight:bold; color:#0072ce;">
+            Sent
+        </a>
+    </div>
+
+    <a href="{% url 'new_message' %}">
+        <button style="background:#0072ce; color:white; border:none; padding:8px 12px;">
+            + New Message
+        </button>
+    </a>
+
+</div>
+
+<hr>
+
+<h3>Inbox</h3>
+
+{% for m in inbox %}
+<div style="border-bottom:1px solid #ccc; padding:10px 0; {% if not m.is_read %}font-weight:bold;{% endif %}">
+
+    {% if not m.is_read %}
+        <span style="color:#0072ce;">●</span>
+    {% endif %}
+
+    <strong>{{ m.subject }}</strong><br>
+    <small>From: {{ m.sender.name }}</small><br>
+
+    <a href="{% url 'message_detail' m.id %}">Open</a>
+
+</div>
+{% empty %}
+<p>No messages</p>
+{% endfor %}
+
+<hr>
+
+<h3>Sent</h3>
+
+{% for m in sent %}
+<div style="border-bottom:1px solid #ccc; padding:10px 0;">
+    <strong>{{ m.subject }}</strong><br>
+    <small>To: {{ m.receiver.name }}</small>
+</div>
+{% empty %}
+<p>No sent messages</p>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SKY</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+            border: 18px solid #b5b5b5;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            border-right: 1px solid #ccc;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .logo img {
+            width: 100px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px 0;
+            text-decoration: none;
+            color: #0072ce;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .menu-bottom {
+            margin-top: auto;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* RIGHT SIDE */
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* DROPDOWN */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background: white;
+            border: 1px solid #ccc;
+            width: 150px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f2f2f2;
+        }
+
+        .dropdown-menu {
+            display: none;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+        /* FOOTER */
+        .main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer {
+            margin-top: auto;       /* pushes to bottom */
+            text-align: right;      /* move to right side */
+            font-size: 12px;
+            color: #555;
+            padding-top: 20px;
+        }
+
+        .footer a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #555;
+        }
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <div class="logo">
+            <img src="/static/images/sky.png">
+        </div>
+
+        <div class="menu">
+            <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+            <a href="{% url 'teams' %}">👥 Teams</a>
+            <a href="{% url 'departments' %}">🏢 Departments</a>
+            <a href="{% url 'messages' %}">💬 Messages</a>
+            <a href="{% url 'schedule' %}">📅 Schedule</a>
+
+            <div class="menu-bottom">
+                <a href="{% url 'settings' %}">⚙️ Settings</a>
+                <a href="{% url 'login' %}">🚪 Logout</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <div class="filters">
+
+            <!-- LEFT SIDE -->
+            <div style="display:flex; gap:10px;">
+                <div class="search-box">🔍 Search teams ...</div>
+
+                <select><option>All Departments</option></select>
+                <select><option>All Managers</option></select>
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="profile-area">
+
+                <div class="notification">🔔</div>
+
+                <div class="profile-dropdown" onclick="toggleDropdown(event)">                    <img src="https://ui-avatars.com/api/?name=David+Miller&background=0072ce&color=fff" class="profile-img">
+                    <span>David Miller ▼</span>
+
+                    <div class="dropdown-menu">
+                        <a href="{% url 'profile' %}">👁 View Profile</a>                        <a href="{% url 'settings' %}">⚙️ Settings</a>
+                        <a href="{% url 'login' %}">🚪 Sign Out</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% block content %}
+        {% endblock %}
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <a href="#">Privacy Options</a>
+            <a href="#">Terms and Conditions</a>
+            <a href="#">Contact</a>
+            <a href="#">Help</a>
+        </div>
+
+    </div>
+
+</div>
+<script>
+function toggleDropdown(event) {
+    event.stopPropagation();
+
+    const menu = document.querySelector(".dropdown-menu");
+    menu.classList.toggle("show");
+}
+
+// close when clicking outside
+document.addEventListener("click", function() {
+    const menu = document.querySelector(".dropdown-menu");
+    if (menu) {
+        menu.classList.remove("show");
+    }
+});
+</script>
+</body>
+</html>

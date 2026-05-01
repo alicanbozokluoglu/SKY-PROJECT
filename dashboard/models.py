@@ -17,27 +17,28 @@ class Person(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=100)
-
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     team_leader = models.ForeignKey(
         Person,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="leaders"
+        blank=True
     )
-
-    department_head = models.ForeignKey(
-        Person,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="heads"
-    )
-
-    jira_project = models.CharField(max_length=200, blank=True, null=True)
-
-    development_focus = models.TextField(blank=True, null=True)
-    tech_stack = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="sent_messages")
+    receiver = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="received_messages")
+
+    subject = models.CharField(max_length=200)
+    body = models.TextField()
+
+    is_read = models.BooleanField(default=False)  # ✅ IMPORTANT
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject

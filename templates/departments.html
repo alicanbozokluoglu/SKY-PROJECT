@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>🏢 Departments</h2>
+
+<!-- CONTROLS (match teams page style) -->
+<div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+
+    <div>
+        <strong>Department List</strong>
+    </div>
+
+    <div>
+        🔍 Filter &nbsp;&nbsp; 🔃 Sort
+    </div>
+
+</div>
+
+<!-- GRID -->
+<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+
+    {% for dept in departments %}
+    <div style="border:1px solid #ccc; padding:15px;">
+
+        <!-- ICON -->
+        <div style="font-size:30px; margin-bottom:8px; color:purple;">
+            🏢
+        </div>
+
+        <!-- NAME -->
+        <h3>{{ dept.name }}</h3>
+
+        <!-- LEADER (safe fallback) -->
+        <p>
+            👤 <strong>
+                {% if dept.team_set.first %}
+                    {{ dept.team_set.first.team_leader.name }}
+                {% else %}
+                    Not assigned
+                {% endif %}
+            </strong>
+        </p>
+
+        <!-- TEAMS COUNT -->
+        <p style="color:#777;">
+            👥 Teams · {{ dept.team_set.count }}
+        </p>
+
+        <!-- TEAM LIST -->
+        <p><strong>Teams:</strong></p>
+
+        <ul style="padding-left:18px;">
+            {% for team in dept.team_set.all %}
+                <li>{{ team.name }}</li>
+            {% empty %}
+                <li>No teams</li>
+            {% endfor %}
+        </ul>
+
+        <!-- ACTION -->
+        <div style="margin-top:10px;">
+            <a href="{% url 'teams' %}">
+                <button style="background:#0072ce; color:white; border:none; padding:6px 10px;">
+                    👁 View Teams
+                </button>
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

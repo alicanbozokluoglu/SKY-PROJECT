@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>⚙️ Settings</h2>
+
+<!-- TABS -->
+<div style="display:flex; gap:20px; margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:10px;">
+
+    <div style="font-weight:bold; color:#0072ce;">
+        ⚙️ Account Preferences
+    </div>
+
+    <div style="color:#777;">🔔 Notification Settings</div>
+    <div style="color:#777;">🖥 Interface Settings</div>
+    <div style="color:#777;">🔒 Privacy & Permissions</div>
+
+</div>
+
+<!-- FORM -->
+<form method="POST">
+    {% csrf_token %}
+
+    <!-- ROW 1 -->
+    <div style="display:flex; gap:40px; margin-bottom:20px;">
+
+        <div>
+            <label><strong>🌐 Language</strong></label><br>
+            <select name="language" style="padding:8px; width:220px;">
+                <option>English (US)</option>
+                <option>English (UK)</option>
+            </select>
+        </div>
+
+        <div>
+            <label><strong>⏰ Time Zone</strong></label><br>
+            <select name="timezone" style="padding:8px; width:260px;">
+                <option>UTC-05:00 Eastern Time</option>
+                <option>UTC+00:00 London</option>
+            </select>
+        </div>
+
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div style="margin-bottom:20px;">
+        <label><strong>📊 Default Dashboard View</strong></label>
+
+        <div style="margin-top:10px;">
+
+            <label style="margin-right:20px;">
+                <input type="radio" name="dashboard_view" value="grid" checked>
+                🟦 Grid View
+            </label>
+
+            <label>
+                <input type="radio" name="dashboard_view" value="network">
+                🕸 Network Map
+            </label>
+
+        </div>
+    </div>
+
+    <!-- THEME -->
+    <div style="margin-bottom:25px;">
+        <label><strong>🎨 Theme Mode</strong></label><br>
+
+        <select name="theme" style="padding:8px; width:220px; margin-top:5px;">
+            <option>Light</option>
+            <option>Dark</option>
+        </select>
+    </div>
+
+    <!-- SAVE BUTTON -->
+    <button type="submit"
+        style="
+            width:100%;
+            padding:12px;
+            background:#0072ce;
+            color:white;
+            border:none;
+            font-size:16px;
+            cursor:pointer;
+        ">
+        💾 Save Changes
+    </button>
+
+</form>
+
+{% endblock %}

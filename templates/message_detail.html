@@ -1,0 +1,19 @@
+<h2>{{ message.subject }}</h2>
+
+<p><strong>From:</strong> {{ message.sender.name }}</p>
+<p><strong>To:</strong> {{ message.receiver.name }}</p>
+<p><strong>Date:</strong> {{ message.created_at }}</p>
+
+<hr>
+
+<p>{{ message.body }}</p>
+
+<br>
+
+<a href="{% url 'reply_message' message.id %}">
+    <button>Reply</button>
+</a>
+
+<a href="{% url 'messages' %}">
+    <button>Back</button>
+</a>

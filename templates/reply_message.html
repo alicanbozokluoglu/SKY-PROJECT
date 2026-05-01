@@ -1,0 +1,11 @@
+<h2>Reply to: {{ original.subject }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <textarea name="body" rows="6" style="width:100%;" placeholder="Write your reply..."></textarea>
+
+    <br><br>
+
+    <button type="submit">Send Reply</button>
+</form>

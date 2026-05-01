@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👤 View Profile</h2>
+
+<a href="{% url 'dashboard' %}" style="text-decoration:none; color:#0072ce;">
+    ⬅ Back to Dashboard
+</a>
+
+<div style="margin-top:20px; border:1px solid #ccc; padding:20px; max-width:500px;">
+
+    <!-- PROFILE HEADER -->
+    <div style="display:flex; align-items:center; gap:15px;">
+
+        <img src="https://ui-avatars.com/api/?name={{ user.name }}&background=0072ce&color=fff"
+             style="width:60px; height:60px; border-radius:50%;">
+
+        <div>
+            <h3 style="margin:0;">{{ user.name }}</h3>
+            <p style="margin:0; color:#555;">Backend Developer</p>
+            <p style="margin:0; color:#777;">{{ user.department.name|default:"Engineering Department" }}</p>
+        </div>
+
+    </div>
+
+    <hr style="margin:15px 0;">
+
+    <!-- INFO -->
+    <p>📧 <strong>Email:</strong> {{ email }}</p>
+
+    <div style="margin-top:15px;">
+
+        <button style="background:#0072ce; color:white; border:none; padding:6px 12px;">
+            ✏️ Edit Profile
+        </button>
+
+        <button style="background:purple; color:white; border:none; padding:6px 12px;">
+            📅 Schedule
+        </button>
+
+    </div>
+
+</div>
+
+{% endblock %}
