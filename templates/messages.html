@@ -4,20 +4,34 @@
 
 <h2>📩 Messages</h2>
 
-<div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+<!-- TOP BAR -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
 
-    <div>
-        <a href="#" style="margin-right:15px; font-weight:bold; color:#0072ce;">
-            Inbox ({{ unread_count }})
-        </a>
-        <a href="#" style="font-weight:bold; color:#0072ce;">
+    <div style="display:flex; gap:20px; align-items:center;">
+
+        <div style="font-weight:bold; color:#0072ce;">
+            Inbox 
+            <span style="background:#0072ce; color:white; padding:3px 8px; border-radius:12px;">
+                3
+            </span>
+        </div>
+
+        <div>
             Sent
-        </a>
+        </div>
+
+        <div>
+            Drafts 
+            <span style="background:purple; color:white; padding:3px 8px; border-radius:12px;">
+                2
+            </span>
+        </div>
+
     </div>
 
     <a href="{% url 'new_message' %}">
         <button style="background:#0072ce; color:white; border:none; padding:8px 12px;">
-            + New Message
+            ✉️ New Message
         </button>
     </a>
 
@@ -25,7 +39,59 @@
 
 <hr>
 
-<h3>Inbox</h3>
+<!-- RECENT MESSAGES -->
+<h3>📌 Recent Messages</h3>
+
+<!-- MESSAGE 1 -->
+<div style="border-bottom:1px solid #ccc; padding:12px 0; display:flex; justify-content:space-between;">
+
+    <div>
+        <strong>Frontend Development</strong><br>
+        <small>Request for API documentation update ...</small>
+    </div>
+
+    <div style="text-align:right;">
+        <small>2 hours ago</small><br>
+        <span style="color:#0072ce; font-weight:bold;">● New</span>
+    </div>
+
+</div>
+
+<!-- MESSAGE 2 -->
+<div style="border-bottom:1px solid #ccc; padding:12px 0; display:flex; justify-content:space-between;">
+
+    <div>
+        <strong>Backend Services</strong><br>
+        <small>Database optimisation inquiry ...</small>
+    </div>
+
+    <div style="text-align:right;">
+        <small>Yesterday</small><br>
+        <span style="color:green;">✔ Replied</span>
+    </div>
+
+</div>
+
+<!-- MESSAGE 3 -->
+<div style="border-bottom:1px solid #ccc; padding:12px 0; display:flex; justify-content:space-between;">
+
+    <div>
+        <strong>Security Team</strong><br>
+        <small>Encryption compliance review ...</small>
+    </div>
+
+    <div style="text-align:right;">
+        <small>2 days ago</small><br>
+        <span style="color:gray;">Sent</span>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- OPTIONAL: KEEP YOUR REAL DATA BELOW -->
+
+<h3>Database Messages</h3>
 
 {% for m in inbox %}
 <div style="border-bottom:1px solid #ccc; padding:10px 0; {% if not m.is_read %}font-weight:bold;{% endif %}">
@@ -42,19 +108,6 @@
 </div>
 {% empty %}
 <p>No messages</p>
-{% endfor %}
-
-<hr>
-
-<h3>Sent</h3>
-
-{% for m in sent %}
-<div style="border-bottom:1px solid #ccc; padding:10px 0;">
-    <strong>{{ m.subject }}</strong><br>
-    <small>To: {{ m.receiver.name }}</small>
-</div>
-{% empty %}
-<p>No sent messages</p>
 {% endfor %}
 
 {% endblock %}
