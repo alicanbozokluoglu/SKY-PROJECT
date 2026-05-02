@@ -19,6 +19,7 @@ from .models import Team, Department, Person, Message
 
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import HttpResponse
 
 
 def login_view(request):
