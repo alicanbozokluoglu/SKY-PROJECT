@@ -1,11 +1,27 @@
-<h2>Reply to: {{ original.subject }}</h2>
+<!-- this page lets the user reply to a message -->
 
+<h2>Reply to: {{ original.subject }}</h2>
+<!-- this shows the subject of the original message
+so the user knows what they are replying to -->
+
+
+<!-- this is a form that sends data to the server -->
 <form method="POST">
     {% csrf_token %}
+    <!-- this is required by Django for security -->
 
+
+    <!-- this is where the user writes their reply -->
     <textarea name="body" rows="6" style="width:100%;" placeholder="Write your reply..."></textarea>
+
 
     <br><br>
 
+
+    <!-- this button sends the reply -->
     <button type="submit">Send Reply</button>
 </form>
+
+<!--- This page allows the user to reply to a message.
+It shows the original subject, and the user can write a reply.
+When they click send, the message is saved and sent.-->

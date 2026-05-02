@@ -1,19 +1,42 @@
+<!-- this page shows one single message (like opening an email) -->
+
 <h2>{{ message.subject }}</h2>
+<!-- this shows the title of the message
+the data comes from "views.py" -->
+
 
 <p><strong>From:</strong> {{ message.sender.name }}</p>
+<!-- shows who sent the message -->
+
 <p><strong>To:</strong> {{ message.receiver.name }}</p>
+<!-- shows which team received the message -->
+
 <p><strong>Date:</strong> {{ message.created_at }}</p>
+<!-- shows when the message was created -->
+
 
 <hr>
+<!-- this draws a line to separate header from message content -->
+
 
 <p>{{ message.body }}</p>
+<!-- this shows the main content of the message -->
+
 
 <br>
 
+
+<!-- this button takes user to reply page -->
 <a href="{% url 'reply_message' message.id %}">
     <button>Reply</button>
 </a>
 
+
+<!-- this button takes user back to messages page -->
 <a href="{% url 'messages' %}">
     <button>Back</button>
 </a>
+
+<!---This page shows a single message.
+It displays the subject, sender, receiver, date, and message content.
+There is also a button to reply and a button to go back.-->

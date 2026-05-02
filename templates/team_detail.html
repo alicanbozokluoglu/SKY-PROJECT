@@ -1,31 +1,62 @@
 <!DOCTYPE html>
+<!-- this tells the browser this is an HTML5 page -->
+
 <html>
 <head>
     <title>{{ team.name }}</title>
+    <!-- this sets the page title to the team name -->
 </head>
+
 <body>
 
+<!-- this shows the team name as the main heading -->
 <h2>{{ team.name }}</h2>
 
+
+<!-- this shows the department that the team belongs to -->
 <p><strong>Department:</strong> {{ team.department.name }}</p>
+
+<!-- this shows the name of the team leader -->
 <p><strong>Leader:</strong> {{ team.team_leader.name }}</p>
 
-<hr>
 
+<hr>
+<!-- this line separates sections on the page -->
+
+
+<!-- this section shows quick action buttons for the user -->
 <h3>Quick Actions</h3>
+
+<!-- these buttons are currently visual and do not have functionality yet -->
 <button>Send Email</button>
 <button>Book Meeting</button>
 
-<hr>
 
+<hr>
+<!-- this separates the next section -->
+
+
+<!-- this section shows basic team statistics -->
 <h3>Stats</h3>
+
+<!-- these values are currently hardcoded (not from database) -->
 <p>Active Projects: 3</p>
 <p>Team Members: 8</p>
 <p>Deadline: 10/10/2026</p>
 
-<hr>
 
+<hr>
+<!-- this separates the final section -->
+
+
+<!-- this link takes the user back to the teams page -->
 <a href="{% url 'teams' %}">← Back to Teams</a>
+
 
 </body>
 </html>
+
+<!---This page shows details about one team.
+It displays the team name, department, and team leader.
+It also shows some example statistics and buttons for actions.
+At the bottom, there is a link to go back to the teams page.-->

@@ -1,10 +1,17 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html"
+so it automatically gets the sidebar, header, and footer -->
 
 {% block content %}
+<!-- everything inside this block will go into the main area of the page -->
+
 
 <h2>📅 Schedule</h2>
+<!-- this is the main title of the page -->
 
-<!-- TOP ROW -->
+
+<!-- this section is the top row of the page.
+it shows the page title on the left and the user name on the right -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
     <div>
         <strong>📅 Schedule</strong>
@@ -16,17 +23,20 @@
 </div>
 
 
-<!-- SECOND ROW (NAV + VIEW TOGGLES + UPCOMING TITLE) -->
+<!-- this section is the navigation row.
+it shows the month, view buttons, and upcoming section title -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
 
     <div>
         ◀ May 2026 ▶
+        <!-- arrows allow moving between months (just visual for now) -->
     </div>
 
     <div>
         <button>Monthly</button>
         <button>Weekly</button>
         <button>Agenda</button>
+        <!-- these buttons change view (currently only visual) -->
     </div>
 
     <div>
@@ -36,22 +46,26 @@
 </div>
 
 
-<!-- MAIN GRID -->
+<!-- this section creates the main layout with two boxes:
+left = calendar, right = upcoming schedule -->
 <div style="display:flex; gap:20px;">
 
-    <!-- CALENDAR -->
+
+    <!-- this is the calendar box -->
     <div style="flex:2; border:1px solid #ccc; padding:15px;">
 
-        <!-- DAYS -->
+        <!-- this row shows days of the week -->
         <div style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-weight:bold;">
             <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
         </div>
 
-        <!-- DATES -->
+        <!-- this row shows dates -->
         <div style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; margin-top:10px; gap:10px;">
 
             <div>30</div>
             <div>31</div>
+
+            <!-- this date has a meeting -->
             <div style="background:#eef; padding:10px; border-radius:5px;">
                 1<br>
                 <small>10:00 AM</small>
@@ -67,23 +81,26 @@
     </div>
 
 
-    <!-- UPCOMING -->
+    <!-- this is the upcoming schedule box -->
     <div style="flex:1; border:1px solid #ccc; padding:15px;">
 
         <h3>📌 Upcoming Schedule</h3>
 
+        <!-- this shows the next meeting -->
         <div style="margin-bottom:15px;">
             <strong>10:00 AM - 11:00 AM</strong><br>
             Product Team
         </div>
 
-        <!-- AVATARS -->
+        <!-- this section shows small profile images (avatars) -->
         <div style="display:flex; align-items:center; gap:5px; margin-bottom:10px;">
 
+            <!-- these images are generated using an online avatar service -->
             <img src="https://ui-avatars.com/api/?name=John+Smith&background=0072ce&color=fff" style="width:30px; border-radius:50%;">
             <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=28a745&color=fff" style="width:30px; border-radius:50%;">
             <img src="https://ui-avatars.com/api/?name=James+Brown&background=6f42c1&color=fff" style="width:30px; border-radius:50%;">
 
+            <!-- this shows there are more people -->
             <span style="margin-left:5px;">+3 more</span>
 
         </div>
@@ -93,7 +110,7 @@
 </div>
 
 
-<!-- BUTTON -->
+<!-- this is a big button at the bottom to create a meeting -->
 <div style="margin-top:20px;">
     <button style="
         width:100%;
@@ -109,3 +126,8 @@
 </div>
 
 {% endblock %}
+
+<!-- This page shows a calendar and upcoming meetings.
+On the left side, we show dates like a calendar.
+On the right side, we show the next meeting and people involved.
+At the bottom, there is a button to create a new meeting.-->

@@ -1,31 +1,45 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html"
+so it automatically gets the sidebar, header, and footer -->
 
 {% block content %}
+<!-- everything inside this block will appear in the main section -->
+
 
 <h2>⚙️ Settings</h2>
+<!-- this is the main title of the page -->
 
-<!-- TABS -->
+
+<!-- this section shows tabs at the top (like different categories) -->
 <div style="display:flex; gap:20px; margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:10px;">
 
+    <!-- this is the active tab (current section) -->
     <div style="font-weight:bold; color:#0072ce;">
         ⚙️ Account Preferences
     </div>
 
+    <!-- these are other tabs (not active yet, just visual) -->
     <div style="color:#777;">🔔 Notification Settings</div>
     <div style="color:#777;">🖥 Interface Settings</div>
     <div style="color:#777;">🔒 Privacy & Permissions</div>
 
 </div>
 
-<!-- FORM -->
+
+<!-- this is a form.
+when user clicks "Save Changes", the data is sent to views.py -->
 <form method="POST">
     {% csrf_token %}
+    <!-- this is required by Django for security -->
 
-    <!-- ROW 1 -->
+
+    <!-- this section contains language and time zone options -->
     <div style="display:flex; gap:40px; margin-bottom:20px;">
 
         <div>
             <label><strong>🌐 Language</strong></label><br>
+
+            <!-- dropdown list for language -->
             <select name="language" style="padding:8px; width:220px;">
                 <option>English (US)</option>
                 <option>English (UK)</option>
@@ -34,6 +48,8 @@
 
         <div>
             <label><strong>⏰ Time Zone</strong></label><br>
+
+            <!-- dropdown list for timezone -->
             <select name="timezone" style="padding:8px; width:260px;">
                 <option>UTC-05:00 Eastern Time</option>
                 <option>UTC+00:00 London</option>
@@ -42,12 +58,14 @@
 
     </div>
 
-    <!-- DASHBOARD VIEW -->
+
+    <!-- this section lets user choose how dashboard looks -->
     <div style="margin-bottom:20px;">
         <label><strong>📊 Default Dashboard View</strong></label>
 
         <div style="margin-top:10px;">
 
+            <!-- radio button: only one can be selected -->
             <label style="margin-right:20px;">
                 <input type="radio" name="dashboard_view" value="grid" checked>
                 🟦 Grid View
@@ -61,7 +79,8 @@
         </div>
     </div>
 
-    <!-- THEME -->
+
+    <!-- this section allows user to choose light or dark theme -->
     <div style="margin-bottom:25px;">
         <label><strong>🎨 Theme Mode</strong></label><br>
 
@@ -71,7 +90,8 @@
         </select>
     </div>
 
-    <!-- SAVE BUTTON -->
+
+    <!-- this button sends all the form data to the server -->
     <button type="submit"
         style="
             width:100%;
@@ -87,4 +107,10 @@
 
 </form>
 
+
 {% endblock %}
+
+<!--This page lets the user change their settings.
+They can choose language, time zone, dashboard style, and theme.
+When they click save, the data is sent to the backend.-->
+

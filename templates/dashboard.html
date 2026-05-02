@@ -1,8 +1,15 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html"
+so it automatically gets sidebar, header, and footer -->
+
 
 {% block content %}
+<!-- everything here goes into the main area of the page -->
+
 
 <style>
+/* this section controls the design of the dashboard cards */
+
 .stat-card {
     border:1px solid #ccc;
     padding:20px;
@@ -11,61 +18,80 @@
     gap:10px;
     align-items:center;
 }
+/* this creates the boxes for statistics */
 
 .stat-icon {
     font-size:32px;
 }
+/* this controls the size of icons */
 
 .stat-text {
     flex:1;
 }
+/* this lets text take remaining space */
 
 .big-number {
     font-size:28px;
     font-weight:bold;
 }
+/* this makes numbers big and bold */
 
 .green {
     color:#28a745;
     font-size:13px;
 }
+/* this styles the green “increase” text */
 
 .team-icon {
     font-size:24px;
     margin-bottom:5px;
 }
+/* this controls icons inside team cards */
 </style>
 
 
-<!-- STATS -->
+<!-- this section shows 3 main statistics -->
 <div style="display:flex; gap:20px; margin-bottom:20px;">
 
-    <!-- TEAMS -->
+
+    <!-- this box shows total teams -->
     <div class="stat-card">
         <div class="stat-icon" style="color:#0072ce;">👥</div>
         <div class="stat-text">
             <h4>Total Teams</h4>
+
+            <!-- this number comes from views.py -->
             <div class="big-number">{{ total_teams }}</div>
+
+            <!-- this is fake increase data -->
             <div class="green">⬆ 2 this month</div>
         </div>
     </div>
 
-    <!-- DEPARTMENTS -->
+
+    <!-- this box shows total departments -->
     <div class="stat-card">
         <div class="stat-icon" style="color:purple;">🏢</div>
         <div class="stat-text">
             <h4>Total Departments</h4>
+
             <div class="big-number">{{ total_departments }}</div>
+
+            <!-- shows list of department names -->
             <small>{{ department_list }}</small>
         </div>
     </div>
 
-    <!-- MEMBERS -->
+
+    <!-- this box shows total members -->
     <div class="stat-card">
         <div class="stat-icon" style="color:#28a745;">👤</div>
         <div class="stat-text">
             <h4>Total Members</h4>
+
             <div class="big-number">{{ total_members }}</div>
+
+            <!-- fake increase -->
             <div class="green">⬆ 5 this month</div>
         </div>
     </div>
@@ -73,18 +99,22 @@
 </div>
 
 
-<!-- CONTENT -->
+<!-- this section splits the page into two columns -->
 <div style="display:flex; gap:20px;">
 
-    <!-- RECENT TEAMS -->
+
+    <!-- this section shows recent teams -->
     <div style="flex:1; border:1px solid #ccc; padding:15px;">
 
         <h3>🕒 Recent Teams</h3>
 
+        <!-- loop through teams from database -->
         {% for team in teams %}
+
         <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
 
-            <!-- ICON PER TEAM -->
+
+            <!-- this chooses an icon depending on team name -->
             <div class="team-icon">
                 {% if "Backend" in team.name %}
                     🔧
@@ -97,30 +127,40 @@
                 {% endif %}
             </div>
 
+
+            <!-- team name -->
             <strong>{{ team.name }}</strong><br>
+
+            <!-- department name -->
             <small>{{ team.department.name }}</small>
 
+
+            <!-- team leader -->
             <div style="margin-top:5px;">
                 {{ team.team_leader.name }}
             </div>
 
-            <br>
 
+            <!-- button to go to team detail page -->
             <a href="{% url 'team_detail' team.id %}">
                 <button>View</button>
             </a>
 
         </div>
+
         {% endfor %}
 
     </div>
 
-    <!-- NOTIFICATIONS -->
+
+    <!-- this section shows notifications -->
     <div style="width:300px; border:1px solid #ccc; padding:15px;">
         <h3>🔔 Notifications</h3>
 
+        <!-- loop through notifications -->
         {% for n in notifications %}
             <p>{{ n.message }} - {{ n.time }}</p>
+
         {% empty %}
             <p>No notifications</p>
         {% endfor %}
@@ -129,7 +169,7 @@
 </div>
 
 
-<!-- MEETINGS -->
+<!-- this section shows upcoming meetings -->
 <div style="margin-top:20px; border:1px solid #ccc; padding:15px;">
     <h3>📅 Upcoming Meetings</h3>
 
@@ -137,9 +177,17 @@
         <p><strong>{{ m.title }}</strong></p>
         <p>{{ m.time }}</p>
         <hr>
+
     {% empty %}
         <p>No meetings scheduled</p>
     {% endfor %}
 </div>
 
+
 {% endblock %}
+
+<!--This is the dashboard page.
+At the top, it shows statistics like number of teams, departments, and members.
+In the middle, it shows recent teams.
+On the right, it shows notifications.
+At the bottom, it shows upcoming meetings.-->

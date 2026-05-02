@@ -1,37 +1,54 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html", so it automatically includes the sidebar, header, and footer -->
 
 {% block content %}
+<!-- everything inside this block will appear in the main content area of the page -->
+
 
 <h2>🏢 Departments</h2>
+<!-- this is the title of the page showing all departments -->
 
-<!-- CONTROLS (match teams page style) -->
+
+<!-- this section creates a top control bar where the user can see the page title 
+and simple filter and sort options -->
 <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
 
+    <!-- this shows a label for the section -->
     <div>
         <strong>Department List</strong>
     </div>
 
+    <!-- these are visual icons for filtering and sorting (they do not have functionality yet) -->
     <div>
         🔍 Filter &nbsp;&nbsp; 🔃 Sort
     </div>
 
 </div>
 
-<!-- GRID -->
+
+<!-- this section creates a grid layout to display departments in two columns -->
 <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
 
+
+    <!-- this loop goes through each department sent from "views.py" -->
     {% for dept in departments %}
+
+    <!-- for each department, it creates a box -->
     <div style="border:1px solid #ccc; padding:15px;">
 
-        <!-- ICON -->
+
+        <!-- this shows an icon for the department -->
         <div style="font-size:30px; margin-bottom:8px; color:purple;">
             🏢
         </div>
 
-        <!-- NAME -->
+
+        <!-- this shows the department name -->
         <h3>{{ dept.name }}</h3>
 
-        <!-- LEADER (safe fallback) -->
+
+        <!-- this section shows the team leader of the first team in this department -->
+        <!-- if no team exists, it shows "Not assigned" -->
         <p>
             👤 <strong>
                 {% if dept.team_set.first %}
@@ -42,12 +59,14 @@
             </strong>
         </p>
 
-        <!-- TEAMS COUNT -->
+
+        <!-- this shows how many teams belong to this department -->
         <p style="color:#777;">
             👥 Teams · {{ dept.team_set.count }}
         </p>
 
-        <!-- TEAM LIST -->
+
+        <!-- this section lists all teams inside the department -->
         <p><strong>Teams:</strong></p>
 
         <ul style="padding-left:18px;">
@@ -58,7 +77,8 @@
             {% endfor %}
         </ul>
 
-        <!-- ACTION -->
+
+        <!-- this button takes the user to the teams page -->
         <div style="margin-top:10px;">
             <a href="{% url 'teams' %}">
                 <button style="background:#0072ce; color:white; border:none; padding:6px 10px;">
@@ -68,8 +88,15 @@
         </div>
 
     </div>
+
     {% endfor %}
 
 </div>
 
+
 {% endblock %}
+<!-- this ends the content section -->
+
+<!--This page shows all departments.
+Each department is displayed in a box with its name, leader, and teams.
+We use a loop to display all departments from the database.--->

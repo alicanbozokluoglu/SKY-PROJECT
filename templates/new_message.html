@@ -1,41 +1,74 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html", so it automatically includes the sidebar, header, and footer -->
 
 {% block content %}
+<!-- everything inside this block will appear in the main content area of the page -->
+
 
 <h2>✉️ New Message</h2>
+<!-- this is the title of the page, showing the user they are creating a new message -->
 
+
+<!-- this form is used to collect information from the user and send it to the backend -->
 <form method="POST">
     {% csrf_token %}
+    <!-- this is a security token required by Django to protect the form -->
 
+
+    <!-- this section lets the user choose which team they want to send the message to -->
     <div style="margin-bottom:15px;">
         <label><strong>To:</strong></label><br>
+
+        <!-- this dropdown list is filled using data from "views.py" -->
         <select name="team" required style="width:300px; padding:5px;">
             {% for team in teams %}
+                <!-- each option represents one team from the database -->
                 <option value="{{ team.id }}">{{ team.name }}</option>
             {% endfor %}
         </select>
     </div>
 
+
+    <!-- this section lets the user enter the subject of the message -->
     <div style="margin-bottom:15px;">
         <label><strong>Subject:</strong></label><br>
+
+        <!-- this is a text input where the user types the message title -->
         <input type="text" name="subject" required style="width:400px; padding:5px;">
     </div>
 
+
+    <!-- this section lets the user write the message content -->
     <div style="margin-bottom:15px;">
         <label><strong>Message:</strong></label><br>
+
+        <!-- this is a larger text area for writing the full message -->
         <textarea name="body" rows="6" style="width:400px; padding:5px;"></textarea>
     </div>
 
+
+    <!-- this section contains the action buttons -->
     <div style="margin-top:20px;">
+
+        <!-- when clicked, this sends the form data to "views.py" to create a new message -->
         <button type="submit" style="background:#0072ce; color:white; border:none; padding:8px 15px;">
             Send Message
         </button>
 
+
+        <!-- this link takes the user back to the messages page without sending anything -->
         <a href="{% url 'messages' %}" style="margin-left:10px;">
             Cancel
         </a>
+
     </div>
 
 </form>
 
+
 {% endblock %}
+<!-- this ends the content section -->
+
+<!--This page lets the user send a new message.
+They choose a team, write a subject, and write the message.
+When they click send, the message is saved in the database-->
