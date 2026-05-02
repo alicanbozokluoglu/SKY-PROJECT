@@ -1,239 +1,152 @@
 <!DOCTYPE html>
-<!-- this tells the browser that this is an HTML5 page -->
-
 <html>
 <head>
     <title>Reset Password</title>
-    <!-- this is the name shown on the browser tab -->
 
     <style>
-        /* this section controls how the page looks (design) */
-
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background: white;
         }
-        /* removes default spacing and sets font and background */
 
         .page-wrapper {
             min-height: 100vh;
             border: 18px solid #b5b5b5;
-            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            background: white;
         }
-        /* this creates the big outer box with a grey border and centers everything */
 
         .container {
-            background: white;
             width: 420px;
             padding: 30px;
         }
-        /* this is the main box in the middle that holds the form */
-
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        /* this centers the logo */
 
         .header img {
             width: 120px;
-            max-width: 100%;
-            height: auto;
             display: block;
             margin: 0 auto;
         }
-        /* controls size and position of the logo */
 
         h2 {
-            margin-bottom: 5px;
             text-align: center;
-            font-weight: bold;
         }
-        /* styles the main title */
 
         .subtitle {
             text-align: center;
             font-size: 14px;
             margin-bottom: 10px;
-            color: #444;
         }
-        /* this styles the small text under the title */
 
         .divider {
             height: 1px;
             background: #ccc;
-            margin: 10px 0 20px 0;
+            margin: 15px 0;
         }
-        /* this creates a line to separate sections */
 
         input {
             width: 100%;
             padding: 10px;
             margin: 8px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
-        /* styles the email input box */
 
         button {
             width: 100%;
             padding: 10px;
-            background-color: #0072ce;
+            background: #0072ce;
             color: white;
             border: none;
-            cursor: pointer;
-            font-weight: bold;
         }
-        /* styles the button */
 
-        button:hover {
-            background-color: #005fa3;
+        .steps {
+            margin-top: 25px;
         }
-        /* changes button color when mouse is over it */
 
-        .links {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 13px;
+        .step {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
         }
-        /* styles the "Back to Login" link */
+
+        .circle {
+            background: #0072ce;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         .footer {
             position: absolute;
             bottom: 15px;
             right: 25px;
             font-size: 12px;
-            color: grey;
-            font-style: italic;
-            text-align: right;
         }
-        /* places the footer text at the bottom right */
     </style>
 </head>
 
 <body>
 
 <div class="page-wrapper">
-<!-- this is the outer container that holds everything -->
 
     <div class="container">
-    <!-- this is the main white box in the middle -->
 
-        <!-- this section shows the logo image from "static/images" folder -->
         <div class="header">
-            <img src="/static/images/sky.png" alt="SKY Logo">
+            <img src="/static/images/sky.png">
         </div>
 
-        <!-- this is the main title -->
         <h2>Reset Password</h2>
-
-        <!-- this text explains what the user should do -->
         <p class="subtitle">Enter your email to reset password</p>
 
         <div class="divider"></div>
 
-        <!-- this section shows messages from Django (for example errors or success messages) -->
+        <!-- messages from Django -->
         {% if messages %}
             {% for message in messages %}
                 <p style="color:red;">{{ message }}</p>
             {% endfor %}
         {% endif %}
 
-        <!-- this form sends data to the server -->
         <form method="post">
             {% csrf_token %}
-            <!-- this is a security feature required by Django -->
-
-            <!-- user types email here -->
             <input type="email" name="email" placeholder="Email Address">
-
-            <!-- when user clicks this button, the form is sent to the server -->
             <button type="submit">Send Reset Link</button>
         </form>
 
-        <!-- this link takes user back to login page -->
-        <div class="links">
-            <a href="/">Back to Login</a>
+        <!-- WHAT HAPPENS NEXT -->
+        <div class="steps">
+
+            <h3>What happens next?</h3>
+
+            <div class="step">
+                <div class="circle">1</div>
+                <div>We’ll send you an email with a secure reset link</div>
+            </div>
+
+            <div class="step">
+                <div class="circle">2</div>
+                <div>Click the link in your email</div>
+            </div>
+
+            <div class="step">
+                <div class="circle">3</div>
+                <div>Log in with your new password</div>
+            </div>
+
         </div>
 
     </div>
 
-    <!-- this section explains to the user what will happen after they click the button -->
-    <div style="margin-top:25px;">
-
-        <h3>What happens next?</h3>
-
-        <!-- step 1 -->
-        <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <div style="
-                background:#0072ce;
-                color:white;
-                width:28px;
-                height:28px;
-                border-radius:50%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-weight:bold;
-            ">1</div>
-
-            <div>We’ll send you an email with a secure reset link</div>
-        </div>
-
-        <!-- step 2 -->
-        <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <div style="
-                background:#0072ce;
-                color:white;
-                width:28px;
-                height:28px;
-                border-radius:50%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-weight:bold;
-            ">2</div>
-
-            <div>Click the link in your email to set a new password</div>
-        </div>
-
-        <!-- step 3 -->
-        <div style="display:flex; gap:10px;">
-            <div style="
-                background:#0072ce;
-                color:white;
-                width:28px;
-                height:28px;
-                border-radius:50%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-weight:bold;
-            ">3</div>
-
-            <div>Log in with your new password</div>
-        </div>
-
-    </div>
-
-    <!-- this is the footer at the bottom right of the page -->
     <div class="footer">
-        Privacy Options | Terms and Conditions | Contact | Help
+        Privacy Options | Terms | Contact | Help
     </div>
 
 </div>
 
 </body>
 </html>
-
-<!---This page is for when the user forgets their password.
-They enter their email and click the button.
-The system will send them a reset link.
-Below, we also explain what will happen step by step.-->

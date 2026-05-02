@@ -24,7 +24,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            height: 250vh;
+            height: 100vh;
         }
 
         .logo img {
@@ -37,6 +37,7 @@
             text-decoration: none;
             color: #0072ce;
         }
+
         .menu {
             display: flex;
             flex-direction: column;
@@ -53,6 +54,8 @@
         .main {
             flex: 1;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         /* HEADER */
@@ -63,7 +66,6 @@
             margin-bottom: 20px;
         }
 
-        /* RIGHT SIDE */
         .profile-area {
             display: flex;
             align-items: center;
@@ -81,10 +83,9 @@
         }
 
         .profile-img {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            margin-right: 5px;
             vertical-align: middle;
         }
 
@@ -111,24 +112,14 @@
             background: #f2f2f2;
         }
 
-        .dropdown-menu {
-            display: none;
-        }
-
         .dropdown-menu.show {
             display: block;
         }
-        /* FOOTER */
-        .main {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
 
+        /* FOOTER */
         .footer {
-            margin-top: auto;       /* pushes to bottom */
-            text-align: right;      /* move to right side */
+            margin-top: auto;
+            text-align: right;
             font-size: 12px;
             color: #555;
             padding-top: 20px;
@@ -138,12 +129,6 @@
             margin-left: 15px;
             text-decoration: none;
             color: #555;
-        }
-        .profile-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            vertical-align: middle;
         }
     </style>
 </head>
@@ -156,7 +141,7 @@
     <div class="sidebar">
 
         <div class="logo">
-            <img src="/static/images/sky.png">
+            <img src="{% static 'images/sky.png' %}">
         </div>
 
         <div class="menu">
@@ -183,8 +168,7 @@
 
             <!-- LEFT SIDE -->
             <div style="display:flex; gap:10px;">
-                <div class="search-box">🔍 Search teams ...</div>
-
+                <input type="text" placeholder="🔍 Search teams..." style="padding:5px;">
                 <select><option>All Departments</option></select>
                 <select><option>All Managers</option></select>
             </div>
@@ -194,11 +178,19 @@
 
                 <div class="notification">🔔</div>
 
-                <div class="profile-dropdown" onclick="toggleDropdown(event)">                    <img src="https://ui-avatars.com/api/?name=David+Miller&background=0072ce&color=fff" class="profile-img">
-                    <span>David Miller ▼</span>
+                <div class="profile-dropdown" onclick="toggleDropdown(event)">
+
+                    {% if request.user.is_authenticated and request.user.person %}
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.person.name|urlencode }}&background=0072ce&color=fff" class="profile-img">
+                        <span>{{ request.user.person.name }} ▼</span>
+                    {% else %}
+                        <img src="https://ui-avatars.com/api/?name=User&background=0072ce&color=fff" class="profile-img">
+                        <span>User ▼</span>
+                    {% endif %}
 
                     <div class="dropdown-menu">
-                        <a href="{% url 'profile' %}">👁 View Profile</a>                        <a href="{% url 'settings' %}">⚙️ Settings</a>
+                        <a href="{% url 'profile' %}">👁 View Profile</a>
+                        <a href="{% url 'settings' %}">⚙️ Settings</a>
                         <a href="{% url 'login' %}">🚪 Sign Out</a>
                     </div>
                 </div>
@@ -221,15 +213,14 @@
     </div>
 
 </div>
+
 <script>
 function toggleDropdown(event) {
     event.stopPropagation();
-
     const menu = document.querySelector(".dropdown-menu");
     menu.classList.toggle("show");
 }
 
-// close when clicking outside
 document.addEventListener("click", function() {
     const menu = document.querySelector(".dropdown-menu");
     if (menu) {
@@ -237,5 +228,6 @@ document.addEventListener("click", function() {
     }
 });
 </script>
+
 </body>
 </html>

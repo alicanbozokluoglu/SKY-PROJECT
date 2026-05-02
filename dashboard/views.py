@@ -131,7 +131,7 @@ def departments_view(request):
 def messages_view(request):
     # this shows inbox and sent messages
 
-    current_user = Person.objects.first()
+    current_user = request.user.person
     # temporary: first person in database is treated as logged user
 
     inbox = Message.objects.filter(
@@ -176,7 +176,7 @@ def new_message(request):
         team = Team.objects.get(id=team_id)
         # find selected team
 
-        sender = Person.objects.first()
+        sender = request.user.person
         # temporary sender
 
         Message.objects.create(
@@ -235,14 +235,18 @@ def reset_password_view(request):
             messages.error(request, "Please enter your email")
             return redirect("reset")
 
-        # send email
-        send_mail(
-            subject="Password Reset - SKY",
-            message="Click this link to reset your password:\nhttp://127.0.0.1:8000/new-password/",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                subject="Password Reset - SKY",
+                message="Click this link:\nhttp://127.0.0.1:8000/new-password/",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            print("EMAIL SENT SUCCESSFULLY")
+
+        except Exception as e:
+            print("EMAIL ERROR:", e)
 
         messages.success(request, "Reset link sent to your email")
         return redirect("login")
@@ -299,7 +303,7 @@ def reply_message(request, id):
         subject = "Re: " + original.subject
         body = request.POST.get("body")
 
-        sender = Person.objects.first()
+        sender = request.user.person
 
         Message.objects.create(
             sender=sender,
@@ -318,17 +322,12 @@ def reply_message(request, id):
 
 @login_required
 def profile_view(request):
-    # shows user profile
 
-    user = Person.objects.first()
-    # temporary user
-
-    email = user.name.lower().replace(" ", ".") + "@sky.com"
-    # create fake email
+    person = getattr(request.user, "person", None)
 
     return render(request, "profile.html", {
-        "user": user,
-        "email": email
+        "user": person,
+        "email": request.user.email
     })
 
 
@@ -341,3 +340,17 @@ def organisation_map_view(request):
 Each function is a page.
 It gets data from the database and sends it to HTML pages.
 It also handles forms like login and messages."""
+
+def test_email(request):
+    try:
+        send_mail(
+            subject="TEST EMAIL",
+            message="This is a test email from Django",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=["alicanbozokluoglu@outlook.com"],  # your email
+            fail_silently=False,
+        )
+        return HttpResponse("EMAIL SENT")
+
+    except Exception as e:
+        return HttpResponse(f"ERROR: {e}")
