@@ -1,4 +1,5 @@
 {% load static %}
+<!-- this lets Django load images, CSS, and static files -->
 
 <!DOCTYPE html>
 <html>
@@ -6,18 +7,20 @@
     <title>SKY</title>
 
     <style>
+        /* this styles the whole page */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
         }
 
+        /* this is the big layout container (sidebar + main content) */
         .page-wrapper {
             display: flex;
             min-height: 100vh;
             border: 18px solid #b5b5b5;
         }
 
-        /* SIDEBAR */
+        /* this section is the left sidebar */
         .sidebar {
             width: 220px;
             border-right: 1px solid #ccc;
@@ -27,10 +30,12 @@
             height: 100vh;
         }
 
+        /* this controls the SKY logo */
         .logo img {
             width: 100px;
         }
 
+        /* this styles each menu link */
         .menu a {
             display: block;
             padding: 10px 0;
@@ -38,19 +43,21 @@
             color: #0072ce;
         }
 
+        /* this keeps menu items vertical */
         .menu {
             display: flex;
             flex-direction: column;
             height: 100%;
         }
 
+        /* this pushes bottom menu items to bottom */
         .menu-bottom {
             margin-top: auto;
             border-top: 1px solid #ccc;
             padding-top: 15px;
         }
 
-        /* MAIN */
+        /* this is the main content area */
         .main {
             flex: 1;
             padding: 20px;
@@ -58,7 +65,7 @@
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* this is the header (top bar) */
         .filters {
             display: flex;
             justify-content: space-between;
@@ -66,6 +73,7 @@
             margin-bottom: 20px;
         }
 
+        /* right side (profile + bell) */
         .profile-area {
             display: flex;
             align-items: center;
@@ -86,10 +94,9 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            vertical-align: middle;
         }
 
-        /* DROPDOWN */
+        /* dropdown menu */
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -116,7 +123,7 @@
             display: block;
         }
 
-        /* FOOTER */
+        /* footer */
         .footer {
             margin-top: auto;
             text-align: right;
@@ -135,16 +142,22 @@
 
 <body>
 
+<!-- this is the main layout wrapper -->
 <div class="page-wrapper">
 
-    <!-- SIDEBAR -->
+
+    <!-- this is the sidebar -->
     <div class="sidebar">
 
+        <!-- SKY logo -->
         <div class="logo">
             <img src="{% static 'images/sky.png' %}">
         </div>
 
+        <!-- menu -->
         <div class="menu">
+
+            <!-- links go to pages defined in "urls.py" -->
             <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
             <a href="{% url 'teams' %}">👥 Teams</a>
             <a href="{% url 'departments' %}">🏢 Departments</a>
@@ -156,53 +169,88 @@
                 <a href="{% url 'settings' %}">⚙️ Settings</a>
                 <a href="{% url 'login' %}">🚪 Logout</a>
             </div>
+
         </div>
 
     </div>
 
-    <!-- MAIN -->
+
+    <!-- this is the main content area -->
     <div class="main">
 
-        <!-- HEADER -->
+
+        <!-- this is the header (top bar) -->
         <div class="filters">
 
-            <!-- LEFT SIDE -->
-            <div style="display:flex; gap:10px;">
-                <input type="text" placeholder="🔍 Search teams..." style="padding:5px;">
-                <select><option>All Departments</option></select>
-                <select><option>All Managers</option></select>
+            <!-- this section is the left side: search + filters -->
+            <div style="display:flex; gap:10px; align-items:center;">
+
+                <!-- this is the search form, it sends data to "teams_view" in views.py -->
+                <form method="get" action="{% url 'teams' %}" style="display:flex; gap:5px;">
+
+                    <!-- user types here -->
+                    <input type="text" name="q" placeholder="🔍 Search teams..." style="padding:5px;">
+
+                    <!-- this button makes sure form submits -->
+                    <button type="submit">Search</button>
+
+                </form>
+
+                <!-- these are filters (not connected yet) -->
+                <select>
+                    <option>All Departments</option>
+                </select>
+
+                <select>
+                    <option>All Managers</option>
+                </select>
+
             </div>
 
-            <!-- RIGHT SIDE -->
+
+            <!-- this section is the right side: notifications + user -->
             <div class="profile-area">
 
+                <!-- bell icon -->
                 <div class="notification">🔔</div>
 
+                <!-- this is the user profile dropdown -->
                 <div class="profile-dropdown" onclick="toggleDropdown(event)">
 
                     {% if request.user.is_authenticated and request.user.person %}
+
+                        <!-- show real logged-in user -->
                         <img src="https://ui-avatars.com/api/?name={{ request.user.person.name|urlencode }}&background=0072ce&color=fff" class="profile-img">
                         <span>{{ request.user.person.name }} ▼</span>
+
                     {% else %}
+
+                        <!-- fallback -->
                         <img src="https://ui-avatars.com/api/?name=User&background=0072ce&color=fff" class="profile-img">
                         <span>User ▼</span>
+
                     {% endif %}
 
+                    <!-- dropdown -->
                     <div class="dropdown-menu">
                         <a href="{% url 'profile' %}">👁 View Profile</a>
                         <a href="{% url 'settings' %}">⚙️ Settings</a>
                         <a href="{% url 'login' %}">🚪 Sign Out</a>
                     </div>
+
                 </div>
 
             </div>
 
         </div>
 
+
+        <!-- this is where other pages appear -->
         {% block content %}
         {% endblock %}
 
-        <!-- FOOTER -->
+
+        <!-- footer -->
         <div class="footer">
             <a href="#">Privacy Options</a>
             <a href="#">Terms and Conditions</a>
@@ -214,7 +262,10 @@
 
 </div>
 
+
+<!-- this script controls dropdown menu -->
 <script>
+
 function toggleDropdown(event) {
     event.stopPropagation();
     const menu = document.querySelector(".dropdown-menu");
@@ -227,7 +278,12 @@ document.addEventListener("click", function() {
         menu.classList.remove("show");
     }
 });
+
 </script>
 
 </body>
 </html>
+
+<!-- this file is the main layout of the whole website.
+it shows sidebar, header, footer, and loads other pages inside it.
+request.user.person.name shows real logged-in user from database -->

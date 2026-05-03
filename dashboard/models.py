@@ -61,3 +61,20 @@ class Message(models.Model):
 """This file defines the database.
 It creates tables for departments, people, teams, and messages.
 Each model represents a table, and each field is a column."""
+
+
+"""this file creates 4 main tables:
+
+Person → people
+Department → groups
+Team → smaller groups inside departments
+Message → communication
+
+
+example:
+Olivia Carter → Person
+xTV_Web → Department
+Code Warriors → Team
+Olivia → Team Leader
+
+"""

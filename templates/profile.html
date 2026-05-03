@@ -1,46 +1,90 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html", so it will automatically include the sidebar, header, and footer -->
 
 {% block content %}
+<!-- everything inside this block will appear in the main area of the page -->
 
+
+<!-- this is the title of the page -->
 <h2>👤 View Profile</h2>
 
+
+<!-- this link takes the user back to the dashboard page -->
+<!-- {% url 'dashboard' %} means Django finds the correct link from "urls.py" -->
 <a href="{% url 'dashboard' %}" style="text-decoration:none; color:#0072ce;">
     ⬅ Back to Dashboard
 </a>
 
+
+<!-- this is the main profile box -->
+<!-- it contains user information -->
 <div style="margin-top:20px; border:1px solid #ccc; padding:20px; max-width:500px;">
 
-    <!-- PROFILE HEADER -->
+
+    <!-- this section shows the profile picture and basic info -->
     <div style="display:flex; align-items:center; gap:15px;">
 
+
+        <!-- this image is generated automatically using the user's name -->
+        <!-- it creates a circle avatar with initials -->
         <img src="https://ui-avatars.com/api/?name={{ user.name }}&background=0072ce&color=fff"
              style="width:60px; height:60px; border-radius:50%;">
 
+
         <div>
+            <!-- this shows the user's name from the database -->
             <h3 style="margin:0;">{{ user.name }}</h3>
+
+            <!-- this is currently a fixed job title (not dynamic) -->
             <p style="margin:0; color:#555;">Backend Developer</p>
-            <p style="margin:0; color:#777;">{{ user.department.name|default:"Engineering Department" }}</p>
+
+            <!-- this shows the user's department if it exists -->
+            <!-- if not, it shows a default value -->
+            <p style="margin:0; color:#777;">
+                {{ user.department.name|default:"Engineering Department" }}
+            </p>
         </div>
 
     </div>
 
+
+    <!-- this line separates sections visually -->
     <hr style="margin:15px 0;">
 
-    <!-- INFO -->
+
+    <!-- this shows the user's email -->
+    <!-- email is coming from "views.py" -->
     <p>📧 <strong>Email:</strong> {{ email }}</p>
 
+
+    <!-- this section contains action buttons -->
     <div style="margin-top:15px;">
 
+        <!-- this button would allow editing profile (not implemented yet) -->
         <button style="background:#0072ce; color:white; border:none; padding:6px 12px;">
             ✏️ Edit Profile
         </button>
 
+
+        <!-- this button could link to schedule feature -->
         <button style="background:purple; color:white; border:none; padding:6px 12px;">
             📅 Schedule
         </button>
 
     </div>
 
+
 </div>
 
 {% endblock %}
+
+
+<!-- This page shows user information
+
+User can see:
+
+name
+email
+department
+profile picture
+-->

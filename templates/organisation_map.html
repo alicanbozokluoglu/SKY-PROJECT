@@ -1,49 +1,67 @@
 {% extends "base.html" %}
+<!-- this page uses "base.html", so it automatically gets the sidebar, header, and footer -->
+
 {% load static %}
+<!-- this lets us use static files like images from the "static" folder -->
 
 {% block content %}
+<!-- everything inside this block will appear in the main content area -->
 
+
+<!-- this is the main title of the page -->
 <h2>🗺 Organisation Map</h2>
 
-<!-- TOP ROW -->
+
+<!-- this section is the top row of the page -->
+<!-- it shows the page name on the left and a user name on the right -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
     <div><strong>Organisation Map</strong></div>
     <div>👤 Sarah Johnson ▼</div>
 </div>
 
-<!-- CONTROLS -->
+
+<!-- this section contains control buttons and a search box -->
+<!-- users can change how they view the map or search for teams -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
 
     <div style="display:flex; gap:10px;">
+        <!-- these buttons are for changing how the map looks -->
         <button>🔲 Grid View</button>
         <button>🕸 Network View</button>
         <button>⬇ Export</button>
     </div>
 
     <div>
+        <!-- this input lets the user search for teams or connections -->
         🔍 <input type="text" placeholder="Search teams or dependencies..." style="padding:6px;">
     </div>
 
 </div>
 
-<!-- TOOLBAR -->
+
+<!-- this section is a toolbar for interacting with the map -->
+<!-- these buttons usually control zoom, refresh, or screenshots -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
 
     <div style="display:flex; gap:10px;">
-        <button>➕</button>
-        <button>➖</button>
-        <button>🔄</button>
-        <button>📸</button>
+        <button>➕</button>   <!-- zoom in -->
+        <button>➖</button>   <!-- zoom out -->
+        <button>🔄</button>   <!-- refresh -->
+        <button>📸</button>   <!-- take screenshot -->
     </div>
 
     <div>
+        <!-- this shows simple statistics -->
+        <!-- these numbers are currently static (not from database) -->
         <strong>Teams:</strong> 15 &nbsp;&nbsp;
         <strong>Dependencies:</strong> 28
     </div>
 
 </div>
 
-<!-- MAP IMAGE -->
+
+<!-- this section displays the organisation map image -->
+<!-- the image comes from the "static/images" folder -->
 <div style="border:1px solid #ccc; padding:10px; text-align:center;">
 
     <img src="{% static 'images/org_map.png' %}" 
@@ -51,9 +69,13 @@
 
 </div>
 
-<!-- LEGEND -->
+
+<!-- this section explains what the colours/icons mean -->
+<!-- this helps users understand the map -->
 <div style="margin-top:15px;">
     <strong>Legend:</strong><br>
+
+    <!-- each colour represents a type of team -->
     🔵 Core Team &nbsp;
     🟢 Backend &nbsp;
     🟡 QA &nbsp;
@@ -63,4 +85,14 @@
     ⚫ Mobile
 </div>
 
+
 {% endblock %}
+
+<!--This page shows a big picture of all teams
+
+User can:
+
+see teams
+search teams
+zoom in/out
+change view-->

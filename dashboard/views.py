@@ -90,17 +90,22 @@ def dashboard(request):
     # send data to dashboard page
 
 
-@login_required
 def teams_view(request):
-    # shows all teams
+    # this function shows all teams and also handles search
+
+    query = request.GET.get("q")
+    # this gets what user typed in search box (q = query)
 
     teams = Team.objects.select_related("department", "team_leader")
-    # get all teams with related data
+
+    if query:
+        # if user typed something, filter teams by name
+        teams = teams.filter(name__icontains=query)
+        # icontains means: search without case sensitivity (Backend = backend)
 
     return render(request, "teams.html", {
         "teams": teams
     })
-
 
 @login_required
 def team_detail(request, id):
