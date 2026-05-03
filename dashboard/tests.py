@@ -12,10 +12,8 @@ from .models import Department, Team, Person
 # this imports our database tables from "models.py"
 
 
-# -------------------------
 # this section tests the database models
 # it checks if data like teams and users are created correctly
-# -------------------------
 class ModelTest(TestCase):
 
     def setUp(self):
@@ -63,10 +61,8 @@ class ModelTest(TestCase):
         self.assertEqual(self.person.user.username, "testuser")
 
 
-# -------------------------
 # this section tests the pages (views)
 # it checks if pages load and behave correctly
-# -------------------------
 class ViewTest(TestCase):
 
     def setUp(self):
@@ -100,10 +96,8 @@ class ViewTest(TestCase):
         # 200 means the page works after login
 
 
-# -------------------------
 # this section tests login system (authentication)
 # it checks if login works correctly
-# -------------------------
 class AuthTest(TestCase):
 
     def setUp(self):
@@ -132,6 +126,83 @@ class AuthTest(TestCase):
         )
         self.assertFalse(login)
         # False means login failed (correct behaviour)
+
+# this section tests search function
+# it checks if search finds correct teams
+
+class SearchTest(TestCase):
+
+    def setUp(self):
+        # create user and data
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123"
+        )
+
+        self.person = Person.objects.create(name="Olivia Carter", user=self.user)
+
+        self.department = Department.objects.create(name="Engineering")
+
+        self.team1 = Team.objects.create(
+            name="Backend Team",
+            department=self.department,
+            team_leader=self.person
+        )
+
+        self.team2 = Team.objects.create(
+            name="Frontend Team",
+            department=self.department,
+            team_leader=self.person
+        )
+
+    def test_search_by_name(self):   # ✅ NOW INSIDE CLASS
+
+        # login first
+        self.client.login(username="testuser", password="testpass123")
+
+        # search for backend
+        response = self.client.get(reverse("teams"), {"q": "Backend"})
+        # check page loads
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertTemplateUsed(response, "teams.html")
+
+        # check correct results
+        self.assertContains(response, "Backend Team")
+        self.assertNotContains(response, "Frontend Team")
+        
+# this section tests new team fields
+# it checks if description, email and repo are saved
+class TeamFieldTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123"
+        )
+
+        self.person = Person.objects.create(name="Test Person", user=self.user)
+
+        self.department = Department.objects.create(name="Engineering")
+
+        self.team = Team.objects.create(
+            name="DevOps Team",
+            department=self.department,
+            team_leader=self.person,
+            description="Handles deployment",
+            contact_email="devops@sky.com",
+            repo_link="https://github.com/devops"
+        )
+
+    def test_description_saved(self):
+        self.assertEqual(self.team.description, "Handles deployment")
+
+    def test_email_saved(self):
+        self.assertEqual(self.team.contact_email, "devops@sky.com")
+
+    def test_repo_saved(self):
+        self.assertEqual(self.team.repo_link, "https://github.com/devops")
+
 
 """This file checks if your system works.
 
