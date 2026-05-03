@@ -1,74 +1,165 @@
 {% extends "base.html" %}
-<!-- this page uses "base.html", so it automatically includes the sidebar, header, and footer -->
 
 {% block content %}
-<!-- everything inside this block will appear in the main content area of the page -->
 
+<style>
+    .new-message-wrap {
+        max-width: 920px;
+        margin: 0 auto;
+    }
 
-<h2>✉️ New Message</h2>
-<!-- this is the title of the page, showing the user they are creating a new message -->
+    .page-title {
+        font-size: 28px;
+        margin: 0 0 24px;
+        color: #1f2937;
+    }
 
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
 
-<!-- this form is used to collect information from the user and send it to the backend -->
-<form method="POST">
-    {% csrf_token %}
-    <!-- this is a security token required by Django to protect the form -->
+    .form-group {
+        margin-bottom: 18px;
+    }
 
+    label {
+        display: block;
+        font-weight: bold;
+        color: #334155;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
 
-    <!-- this section lets the user choose which team they want to send the message to -->
-    <div style="margin-bottom:15px;">
-        <label><strong>To:</strong></label><br>
+    select,
+    input,
+    textarea {
+        width: 100%;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 13px 14px;
+        font-size: 15px;
+        outline: none;
+        font-family: Arial, sans-serif;
+    }
 
-        <!-- this dropdown list is filled using data from "views.py" -->
-        <select name="team" required style="width:300px; padding:5px;">
-            {% for team in teams %}
-                <!-- each option represents one team from the database -->
-                <option value="{{ team.id }}">{{ team.name }}</option>
+    select:focus,
+    input:focus,
+    textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    textarea {
+        min-height: 160px;
+        resize: vertical;
+    }
+
+    .button-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .cancel-btn {
+        padding: 12px 18px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        color: #334155;
+        background: white;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .send-btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .send-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        font-size: 15px;
+    }
+</style>
+
+<div class="new-message-wrap">
+
+    <h1 class="page-title">New Message</h1>
+
+    <div class="form-card">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-box">{{ message }}</div>
             {% endfor %}
-        </select>
+        {% endif %}
+
+        {% if teams %}
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Select Team</label>
+
+                    <select name="team" required>
+                        <option value="">Choose a team...</option>
+
+                        {% for team in teams %}
+                            <option value="{{ team.id }}">{{ team.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" name="subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea name="body" required></textarea>
+                </div>
+
+                <div class="button-row">
+                    <a href="{% url 'messages' %}" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="send-btn">Send Message</button>
+                </div>
+            </form>
+        {% else %}
+            <div class="empty">
+                No teams exist in the database. Add teams before sending messages.
+            </div>
+        {% endif %}
+
     </div>
 
-
-    <!-- this section lets the user enter the subject of the message -->
-    <div style="margin-bottom:15px;">
-        <label><strong>Subject:</strong></label><br>
-
-        <!-- this is a text input where the user types the message title -->
-        <input type="text" name="subject" required style="width:400px; padding:5px;">
-    </div>
-
-
-    <!-- this section lets the user write the message content -->
-    <div style="margin-bottom:15px;">
-        <label><strong>Message:</strong></label><br>
-
-        <!-- this is a larger text area for writing the full message -->
-        <textarea name="body" rows="6" style="width:400px; padding:5px;"></textarea>
-    </div>
-
-
-    <!-- this section contains the action buttons -->
-    <div style="margin-top:20px;">
-
-        <!-- when clicked, this sends the form data to "views.py" to create a new message -->
-        <button type="submit" style="background:#0072ce; color:white; border:none; padding:8px 15px;">
-            Send Message
-        </button>
-
-
-        <!-- this link takes the user back to the messages page without sending anything -->
-        <a href="{% url 'messages' %}" style="margin-left:10px;">
-            Cancel
-        </a>
-
-    </div>
-
-</form>
-
+</div>
 
 {% endblock %}
-<!-- this ends the content section -->
-
-<!--This page lets the user send a new message.
-They choose a team, write a subject, and write the message.
-When they click send, the message is saved in the database-->

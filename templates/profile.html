@@ -1,90 +1,553 @@
 {% extends "base.html" %}
-<!-- this page uses "base.html", so it will automatically include the sidebar, header, and footer -->
 
 {% block content %}
-<!-- everything inside this block will appear in the main area of the page -->
 
+<style>
+    .profile-wrap {
+        max-width: 1220px;
+        margin: 0 auto;
+    }
 
-<!-- this is the title of the page -->
-<h2>👤 View Profile</h2>
+    .profile-hero {
+        background: linear-gradient(135deg, #3156c9, #20aee3);
+        color: white;
+        border-radius: 16px;
+        padding: 34px;
+        margin-bottom: 28px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 24px;
+        align-items: center;
+        box-shadow: 0 12px 28px rgba(37,99,235,0.18);
+    }
 
+    .profile-photo {
+        width: 112px;
+        height: 112px;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.8);
+        object-fit: cover;
+        background: white;
+    }
 
-<!-- this link takes the user back to the dashboard page -->
-<!-- {% url 'dashboard' %} means Django finds the correct link from "urls.py" -->
-<a href="{% url 'dashboard' %}" style="text-decoration:none; color:#0072ce;">
-    ⬅ Back to Dashboard
-</a>
+    .profile-name {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
 
+    .profile-role {
+        font-size: 18px;
+        opacity: 0.95;
+        margin-bottom: 10px;
+    }
 
-<!-- this is the main profile box -->
-<!-- it contains user information -->
-<div style="margin-top:20px; border:1px solid #ccc; padding:20px; max-width:500px;">
+    .profile-meta {
+        font-size: 14px;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
 
+    .edit-btn {
+        background: white;
+        color: #2563eb;
+        text-decoration: none;
+        padding: 12px 18px;
+        border-radius: 9px;
+        font-weight: bold;
+    }
 
-    <!-- this section shows the profile picture and basic info -->
-    <div style="display:flex; align-items:center; gap:15px;">
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 28px;
+    }
 
+    .stat-card {
+        background: white;
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 22px;
+    }
 
-        <!-- this image is generated automatically using the user's name -->
-        <!-- it creates a circle avatar with initials -->
-        <img src="https://ui-avatars.com/api/?name={{ user.name }}&background=0072ce&color=fff"
-             style="width:60px; height:60px; border-radius:50%;">
+    .stat-label {
+        color: #334e7d;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
 
+    .stat-number {
+        font-size: 30px;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 8px;
+    }
 
+    .stat-source {
+        color: green;
+        font-size: 13px;
+    }
+
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 28px;
+    }
+
+    .panel {
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 12px;
+        padding: 26px;
+        margin-bottom: 28px;
+    }
+
+    .panel h2 {
+        margin: 0 0 20px;
+        color: #1f2937;
+        font-size: 24px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .info-box {
+        border: 1px solid #eef2f7;
+        background: #fbfcfe;
+        border-radius: 10px;
+        padding: 16px;
+    }
+
+    .info-label {
+        color: #667085;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .info-value {
+        color: #111827;
+        font-weight: bold;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .team-card {
+        border: 1px solid #dce3ee;
+        background: #fbfcfe;
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    .team-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .team-meta {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 14px;
+    }
+
+    .team-link {
+        display: inline-block;
+        color: #2563eb;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .member-list,
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .member-row,
+    .activity-row {
+        border: 1px solid #eef2f7;
+        background: #fbfcfe;
+        border-radius: 10px;
+        padding: 14px;
+    }
+
+    .member-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .member-row img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .member-name,
+    .activity-title {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+
+    .member-meta,
+    .activity-meta {
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .setting-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid #eef2f7;
+        padding-bottom: 12px;
+    }
+
+    .setting-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .setting-label {
+        color: #667085;
+    }
+
+    .setting-value {
+        font-weight: bold;
+        color: #111827;
+        text-align: right;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        font-size: 15px;
+    }
+
+    @media (max-width: 1000px) {
+        .profile-hero,
+        .profile-layout,
+        .stats-grid,
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-hero {
+            text-align: center;
+        }
+
+        .profile-photo {
+            margin: 0 auto;
+        }
+    }
+</style>
+
+<div class="profile-wrap">
+
+    <div class="profile-hero">
         <div>
-            <!-- this shows the user's name from the database -->
-            <h3 style="margin:0;">{{ user.name }}</h3>
-
-            <!-- this is currently a fixed job title (not dynamic) -->
-            <p style="margin:0; color:#555;">Backend Developer</p>
-
-            <!-- this shows the user's department if it exists -->
-            <!-- if not, it shows a default value -->
-            <p style="margin:0; color:#777;">
-                {{ user.department.name|default:"Engineering Department" }}
-            </p>
+            {% if person and person.photo %}
+                <img class="profile-photo" src="{{ person.photo.url }}" alt="{{ person.name }}">
+            {% elif person %}
+                <img class="profile-photo" src="https://ui-avatars.com/api/?name={{ person.name|urlencode }}&background=0072ce&color=fff" alt="{{ person.name }}">
+            {% else %}
+                <img class="profile-photo" src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=0072ce&color=fff" alt="{{ request.user.username }}">
+            {% endif %}
         </div>
 
+        <div>
+            <div class="profile-name">
+                {% if person %}
+                    {{ person.name }}
+                {% elif request.user.first_name %}
+                    {{ request.user.first_name }}
+                {% else %}
+                    {{ request.user.username }}
+                {% endif %}
+            </div>
+
+            <div class="profile-role">
+                {% if person and person.role %}
+                    {{ person.role }}
+                {% elif user_setting.job_title %}
+                    {{ user_setting.job_title }}
+                {% else %}
+                    User
+                {% endif %}
+            </div>
+
+            <div class="profile-meta">
+                Username: {{ username }}<br>
+                Email: {{ email }}<br>
+
+                {% if user_team %}
+                    Team: {{ user_team.name }}
+                {% else %}
+                    Team: Not assigned
+                {% endif %}
+            </div>
+        </div>
+
+        <div>
+            <a href="{% url 'settings' %}" class="edit-btn">Edit Profile</a>
+        </div>
     </div>
 
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">My Team Members</div>
+            <div class="stat-number">{{ team_members.count }}</div>
+            <div class="stat-source">Database</div>
+        </div>
 
-    <!-- this line separates sections visually -->
-    <hr style="margin:15px 0;">
+        <div class="stat-card">
+            <div class="stat-label">Sent Messages</div>
+            <div class="stat-number">{{ user_messages_sent.count }}</div>
+            <div class="stat-source">Database</div>
+        </div>
 
+        <div class="stat-card">
+            <div class="stat-label">Team Events</div>
+            <div class="stat-number">{{ user_schedule_events.count }}</div>
+            <div class="stat-source">Database</div>
+        </div>
 
-    <!-- this shows the user's email -->
-    <!-- email is coming from "views.py" -->
-    <p>📧 <strong>Email:</strong> {{ email }}</p>
-
-
-    <!-- this section contains action buttons -->
-    <div style="margin-top:15px;">
-
-        <!-- this button would allow editing profile (not implemented yet) -->
-        <button style="background:#0072ce; color:white; border:none; padding:6px 12px;">
-            ✏️ Edit Profile
-        </button>
-
-
-        <!-- this button could link to schedule feature -->
-        <button style="background:purple; color:white; border:none; padding:6px 12px;">
-            📅 Schedule
-        </button>
-
+        <div class="stat-card">
+            <div class="stat-label">Admin Access</div>
+            <div class="stat-number">
+                {% if request.user.is_staff %}
+                    Yes
+                {% else %}
+                    No
+                {% endif %}
+            </div>
+            <div class="stat-source">Database</div>
+        </div>
     </div>
 
+    <div class="profile-layout">
+
+        <main>
+
+            <div class="panel">
+                <h2>Profile Information</h2>
+
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">
+                            {% if person %}
+                                {{ person.name }}
+                            {% else %}
+                                {{ request.user.first_name }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ email }}</div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">
+                            {% if person and person.phone %}
+                                {{ person.phone }}
+                            {% else %}
+                                Not added
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">Role</div>
+                        <div class="info-value">
+                            {% if person and person.role %}
+                                {{ person.role }}
+                            {% else %}
+                                Not added
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">Department</div>
+                        <div class="info-value">
+                            {% if user_department %}
+                                {{ user_department.name }}
+                            {% elif user_setting.department %}
+                                {{ user_setting.department.name }}
+                            {% else %}
+                                Not assigned
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">Account Status</div>
+                        <div class="info-value">
+                            {% if request.user.is_active %}
+                                Active
+                            {% else %}
+                                Inactive
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>My Team</h2>
+
+                {% if user_team %}
+                    <div class="team-card">
+                        <div class="team-name">{{ user_team.name }}</div>
+
+                        <div class="team-meta">
+                            {% if user_team.department %}
+                                Department: {{ user_team.department.name }}<br>
+                            {% endif %}
+
+                            {% if user_team.team_leader %}
+                                Team Lead: {{ user_team.team_leader.name }}<br>
+                            {% endif %}
+
+                            Members: {{ user_team.total_members }}<br>
+                            Repositories: {{ user_team.total_repositories }}
+                        </div>
+
+                        <a href="{% url 'team_detail' user_team.id %}" class="team-link">View Team</a>
+                    </div>
+                {% else %}
+                    <div class="empty">This user is not connected to any team in the database.</div>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <h2>Recent Sent Messages</h2>
+
+                <div class="activity-list">
+                    {% for message in user_messages_sent %}
+                        <div class="activity-row">
+                            <div class="activity-title">{{ message.subject }}</div>
+                            <div class="activity-meta">
+                                To {{ message.receiver.name }} · {{ message.created_at }}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty">No sent messages found for this user.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </main>
+
+        <aside>
+
+            <div class="panel">
+                <h2>Preferences</h2>
+
+                <div class="setting-list">
+                    <div class="setting-item">
+                        <div class="setting-label">Default View</div>
+                        <div class="setting-value">{{ user_setting.default_view }}</div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">Theme</div>
+                        <div class="setting-value">{{ user_setting.theme }}</div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">Language</div>
+                        <div class="setting-value">{{ user_setting.language }}</div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">Timezone</div>
+                        <div class="setting-value">{{ user_setting.timezone }}</div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">Visibility</div>
+                        <div class="setting-value">{{ user_setting.profile_visibility }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Team Members</h2>
+
+                <div class="member-list">
+                    {% for member in team_members|slice:":6" %}
+                        <div class="member-row">
+                            {% if member.photo %}
+                                <img src="{{ member.photo.url }}" alt="{{ member.name }}">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&background=0072ce&color=fff" alt="{{ member.name }}">
+                            {% endif %}
+
+                            <div>
+                                <div class="member-name">{{ member.name }}</div>
+                                <div class="member-meta">
+                                    {% if member.role %}
+                                        {{ member.role }}
+                                    {% else %}
+                                        Team Member
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty">No team members found.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Upcoming Team Events</h2>
+
+                <div class="activity-list">
+                    {% for event in user_schedule_events %}
+                        <div class="activity-row">
+                            <div class="activity-title">{{ event.title }}</div>
+                            <div class="activity-meta">
+                                {{ event.date }} · {{ event.start_time }} - {{ event.end_time }}
+
+                                {% if event.platform %}
+                                    <br>{{ event.platform }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty">No upcoming team events found.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
 
 </div>
 
 {% endblock %}
-
-
-<!-- This page shows user information
-
-User can see:
-
-name
-email
-department
-profile picture
--->

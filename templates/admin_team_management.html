@@ -1,0 +1,630 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .management-wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .page-title {
+        margin: 0;
+        font-size: 30px;
+        color: #111827;
+    }
+
+    .page-subtitle {
+        margin-top: 6px;
+        color: #667085;
+        font-size: 15px;
+    }
+
+    .top-button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 12px 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 22px;
+    }
+
+    .stat-label {
+        color: #334e7d;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 10px;
+    }
+
+    .stat-source {
+        color: green;
+        font-size: 13px;
+    }
+
+    .panel {
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 12px;
+        padding: 26px;
+        margin-bottom: 28px;
+    }
+
+    .panel h2 {
+        margin: 0 0 20px;
+        font-size: 24px;
+        color: #1f2937;
+    }
+
+    .success-box {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: 1fr 220px 180px;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 15px;
+        outline: none;
+        background: white;
+        font-family: Arial, sans-serif;
+    }
+
+    input,
+    select {
+        height: 46px;
+    }
+
+    textarea {
+        min-height: 95px;
+        resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    .create-form {
+        display: none;
+        margin-top: 20px;
+        border-top: 1px solid #eef2f7;
+        padding-top: 22px;
+    }
+
+    .create-form.show {
+        display: block;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        color: #334155;
+        font-size: 14px;
+        margin-bottom: 7px;
+    }
+
+    .save-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 12px 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    .secondary-btn {
+        background: white;
+        color: #334155;
+        border: 1px solid #d0d5dd;
+        border-radius: 9px;
+        padding: 12px 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    .team-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    .team-table th {
+        text-align: left;
+        background: #f8fafc;
+        color: #334155;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 10px;
+    }
+
+    .team-table td {
+        border-bottom: 1px solid #eef2f7;
+        padding: 12px 10px;
+        color: #334155;
+        vertical-align: top;
+    }
+
+    .badge {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 4px 9px;
+        font-size: 12px;
+        font-weight: bold;
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .edit-btn {
+        border: none;
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .delete-btn {
+        border: none;
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .detail-link {
+        display: inline-block;
+        background: #f1f5f9;
+        color: #334155;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .edit-form-row {
+        display: none;
+        background: #f8fafc;
+    }
+
+    .edit-form-row.show {
+        display: table-row;
+    }
+
+    .edit-box {
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: white;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        font-size: 15px;
+    }
+
+    @media (max-width: 1100px) {
+        .stats-grid,
+        .filters,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .title-row {
+            flex-direction: column;
+        }
+
+        .team-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="management-wrap">
+
+    <div class="title-row">
+        <div>
+            <h1 class="page-title">Team Management</h1>
+            <div class="page-subtitle">
+                Create, update, filter and delete real team records from the database.
+            </div>
+        </div>
+
+        <button class="top-button" onclick="toggleCreateForm()">+ Add Team</button>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <div class="error-box">{{ message }}</div>
+            {% else %}
+                <div class="success-box">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Teams</div>
+            <div class="stat-number">{{ total_teams }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Departments</div>
+            <div class="stat-number">{{ total_departments }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">People</div>
+            <div class="stat-number">{{ total_members }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Repositories</div>
+            <div class="stat-number">{{ total_repositories }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Manage Teams</h2>
+
+        <form method="get" class="filters">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search teams..."
+                value="{{ search }}"
+            >
+
+            <select name="department" onchange="this.form.submit()">
+                <option value="">All Departments</option>
+
+                {% for department in departments %}
+                    <option value="{{ department.id }}" {% if selected_department == department.id|stringformat:"s" %}selected{% endif %}>
+                        {{ department.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="status" onchange="this.form.submit()">
+                <option value="">All Statuses</option>
+                <option value="Active" {% if selected_status == "Active" %}selected{% endif %}>Active</option>
+                <option value="Inactive" {% if selected_status == "Inactive" %}selected{% endif %}>Inactive</option>
+                <option value="Archived" {% if selected_status == "Archived" %}selected{% endif %}>Archived</option>
+            </select>
+        </form>
+
+        <form method="post" class="create-form" id="createForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_team">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Team Name</label>
+                    <input type="text" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Department</label>
+                    <select name="department">
+                        <option value="">No department</option>
+                        {% for department in departments %}
+                            <option value="{{ department.id }}">{{ department.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Team Leader</label>
+                    <select name="team_leader">
+                        <option value="">No leader</option>
+                        {% for person in people %}
+                            <option value="{{ person.id }}">{{ person.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location">
+                </div>
+
+                <div class="form-group">
+                    <label>Active Projects Count</label>
+                    <input type="number" name="active_projects_count" value="0" min="0">
+                </div>
+
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea name="description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>GitHub Link</label>
+                    <input type="url" name="github_link">
+                </div>
+
+                <div class="form-group">
+                    <label>Documentation Link</label>
+                    <input type="url" name="documentation_link">
+                </div>
+
+                <div class="form-group">
+                    <label>Calendar Link</label>
+                    <input type="url" name="calendar_link">
+                </div>
+            </div>
+
+            <button type="submit" class="save-btn">Create Team</button>
+            <button type="button" class="secondary-btn" onclick="toggleCreateForm()">Cancel</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Team Records</h2>
+
+        <table class="team-table">
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Department</th>
+                    <th>Leader</th>
+                    <th>Members</th>
+                    <th>Repositories</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for team in teams %}
+                    <tr>
+                        <td>
+                            <strong>{{ team.name }}</strong><br>
+                            <small>{{ team.location }}</small>
+                        </td>
+
+                        <td>
+                            {% if team.department %}
+                                {{ team.department.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if team.team_leader %}
+                                {{ team.team_leader.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>{{ team.total_members }}</td>
+                        <td>{{ team.total_repositories }}</td>
+                        <td><span class="badge">{{ team.status }}</span></td>
+
+                        <td>
+                            <div class="action-row">
+                                <a href="{% url 'team_detail' team.id %}" class="detail-link">View</a>
+                                <button type="button" class="edit-btn" onclick="toggleEditForm('{{ team.id }}')">Edit</button>
+
+                                <form method="post" onsubmit="return confirm('Are you sure you want to delete this team?');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete_team">
+                                    <input type="hidden" name="team_id" value="{{ team.id }}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="edit-form-row" id="edit-row-{{ team.id }}">
+                        <td colspan="7">
+                            <div class="edit-box">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="update_team">
+                                    <input type="hidden" name="team_id" value="{{ team.id }}">
+
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Team Name</label>
+                                            <input type="text" name="name" value="{{ team.name }}" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Department</label>
+                                            <select name="department">
+                                                <option value="">No department</option>
+                                                {% for department in departments %}
+                                                    <option value="{{ department.id }}" {% if team.department and team.department.id == department.id %}selected{% endif %}>
+                                                        {{ department.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Team Leader</label>
+                                            <select name="team_leader">
+                                                <option value="">No leader</option>
+                                                {% for person in people %}
+                                                    <option value="{{ person.id }}" {% if team.team_leader and team.team_leader.id == person.id %}selected{% endif %}>
+                                                        {{ person.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <select name="status">
+                                                <option value="Active" {% if team.status == "Active" %}selected{% endif %}>Active</option>
+                                                <option value="Inactive" {% if team.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                                                <option value="Archived" {% if team.status == "Archived" %}selected{% endif %}>Archived</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Location</label>
+                                            <input type="text" name="location" value="{{ team.location }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Active Projects Count</label>
+                                            <input type="number" name="active_projects_count" value="{{ team.active_projects_count }}" min="0">
+                                        </div>
+
+                                        <div class="form-group full">
+                                            <label>Description</label>
+                                            <textarea name="description">{{ team.description }}</textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>GitHub Link</label>
+                                            <input type="url" name="github_link" value="{{ team.github_link }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Documentation Link</label>
+                                            <input type="url" name="documentation_link" value="{{ team.documentation_link }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Calendar Link</label>
+                                            <input type="url" name="calendar_link" value="{{ team.calendar_link }}">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="save-btn">Save Changes</button>
+                                    <button type="button" class="secondary-btn" onclick="toggleEditForm('{{ team.id }}')">Cancel</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty">No teams found in the database.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    function toggleCreateForm() {
+        const form = document.getElementById("createForm");
+        form.classList.toggle("show");
+    }
+
+    function toggleEditForm(teamId) {
+        const row = document.getElementById("edit-row-" + teamId);
+        row.classList.toggle("show");
+    }
+</script>
+
+{% endblock %}

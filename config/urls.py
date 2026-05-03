@@ -1,114 +1,57 @@
 from django.contrib import admin
-# this lets us use the Django admin panel (a special page for managing data)
-
 from django.urls import path
-# this is used to create website links (URLs)
-
 from dashboard import views
-# this imports all the functions from "views.py"
-# each function is a page (like dashboard, teams, etc.)
-
 from django.contrib.auth import views as auth_views
-# this imports ready-made login and password reset tools from Django
+from django.conf import settings
+from django.conf.urls.static import static
 
-
-# this list connects URL links to functions (pages)
 urlpatterns = [
-
-    # when user goes to the main page ("/")
-    # it will show the login page
     path("", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
 
-
-    # this opens the dashboard page
     path("dashboard/", views.dashboard, name="dashboard"),
+    path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    path("admin-team-management/", views.admin_team_management, name="admin_team_management"),
+    path("admin-user-access/", views.admin_user_access, name="admin_user_access"),
 
-
-    # this shows all teams
     path("teams/", views.teams_view, name="teams"),
-
-
-    # this shows ONE team
-    # <int:id> means Django takes a number from the URL
-    # example: /team/3/ → shows team with id=3
     path("team/<int:id>/", views.team_detail, name="team_detail"),
 
-
-    # this shows all departments
     path("departments/", views.departments_view, name="departments"),
-
-
-    # this opens the settings page
     path("settings/", views.settings_view, name="settings"),
-
-
-    # this opens Django admin panel (for managing data like users)
-    path("admin/", admin.site.urls),
-
-
-    # this opens the register page
     path("register/", views.register_view, name="register"),
 
-
-    # this opens page where user creates new password
-    path("new-password/", views.new_password_view, name="new_password"),
-
-
-    # this shows ONE message
+    path("messages/", views.messages_view, name="messages"),
+    path("messages/new/", views.new_message, name="new_message"),
     path("messages/<int:id>/", views.message_detail, name="message_detail"),
-
-
-    # this lets user reply to a message
     path("messages/<int:id>/reply/", views.reply_message, name="reply_message"),
 
-
-    # this shows all messages (inbox + sent)
-    path("messages/", views.messages_view, name="messages"),
-
-
-    # this lets user create a new message
-    path("messages/new/", views.new_message, name="new_message"),
-
-
-    # this shows the user profile page
     path("profile/", views.profile_view, name="profile"),
-
-
-    # this shows the schedule page
     path("schedule/", views.schedule_view, name="schedule"),
-
-
-    # this shows organisation map page
     path("organisation-map/", views.organisation_map_view, name="organisation_map"),
 
+    path("admin/", admin.site.urls),
 
+    path("reset/", auth_views.PasswordResetView.as_view(
+        template_name="password_reset_form.html",
+        email_template_name="password_reset_email.html",
+        subject_template_name="password_reset_subject.txt",
+        success_url="/reset/done/"
+    ), name="password_reset"),
 
-    # this page shows the form where user enters email
-    # it uses a template file: "password_reset_form.html"
-    path('reset/', auth_views.PasswordResetView.as_view(
-        template_name='password_reset_form.html'
-    ), name='password_reset'),
+    path("reset/done/", auth_views.PasswordResetDoneView.as_view(
+        template_name="password_reset_done.html"
+    ), name="password_reset_done"),
 
+    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(
+        template_name="password_reset_confirm.html",
+        success_url="/reset/complete/"
+    ), name="password_reset_confirm"),
 
-    # after user submits email, they see a "check your email" page
-    path('reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='password_reset_done.html'
-    ), name='password_reset_done'),
-
-
-    # this is the special link sent in email
-    # it contains a unique id and token (security)
-    # example: /reset/abc123/token123/
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='password_reset_confirm.html'
-    ), name='password_reset_confirm'),
-
-
-    # after user changes password, they see success page
-    path('reset/complete/', auth_views.PasswordResetCompleteView.as_view(
-        template_name='password_reset_complete.html'
-    ), name='password_reset_complete'),
+    path("reset/complete/", auth_views.PasswordResetCompleteView.as_view(
+        template_name="password_reset_complete.html"
+    ), name="password_reset_complete"),
 ]
 
-"""This file connects URLs to pages.
-When the user clicks a link, Django uses this file to decide which function to run and which page to show."""
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,98 +1,783 @@
 {% extends "base.html" %}
-<!-- this page uses "base.html", so it automatically gets the sidebar, header, and footer -->
-
-{% load static %}
-<!-- this lets us use static files like images from the "static" folder -->
 
 {% block content %}
-<!-- everything inside this block will appear in the main content area -->
 
+<style>
+    .org-page {
+        max-width: 1320px;
+        margin: 0 auto;
+    }
 
-<!-- this is the main title of the page -->
-<h2>🗺 Organisation Map</h2>
+    .top-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 20px;
+    }
 
+    .view-buttons {
+        display: flex;
+        gap: 12px;
+    }
 
-<!-- this section is the top row of the page -->
-<!-- it shows the page name on the left and a user name on the right -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <div><strong>Organisation Map</strong></div>
-    <div>👤 Sarah Johnson ▼</div>
-</div>
+    .tool-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 16px;
+        cursor: pointer;
+        background: white;
+        color: #1f2937;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
 
+    .tool-btn.active {
+        background: #0b3a91;
+        color: white;
+    }
 
-<!-- this section contains control buttons and a search box -->
-<!-- users can change how they view the map or search for teams -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    .tool-btn.export {
+        background: #129cf3;
+        color: white;
+    }
 
-    <div style="display:flex; gap:10px;">
-        <!-- these buttons are for changing how the map looks -->
-        <button>🔲 Grid View</button>
-        <button>🕸 Network View</button>
-        <button>⬇ Export</button>
+    .org-search {
+        position: relative;
+        width: 360px;
+    }
+
+    .org-search input {
+        width: 100%;
+        height: 46px;
+        border: 1px solid #d9dee8;
+        border-radius: 10px;
+        padding: 0 44px 0 16px;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .org-search span {
+        position: absolute;
+        right: 14px;
+        top: 11px;
+        font-size: 22px;
+        color: #667085;
+    }
+
+    .count-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 28px;
+        color: #475569;
+        margin-bottom: 18px;
+        font-size: 15px;
+    }
+
+    .network-panel {
+        position: relative;
+        height: 760px;
+        border-radius: 12px;
+        overflow: hidden;
+        background:
+            radial-gradient(circle at 50% 45%, rgba(14,165,233,0.20), transparent 26%),
+            radial-gradient(circle at 25% 70%, rgba(99,102,241,0.18), transparent 24%),
+            #172a45;
+        box-shadow: 0 18px 45px rgba(15,23,42,0.25);
+    }
+
+    .network-inner {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        transform-origin: center center;
+    }
+
+    .zoom-tools {
+        position: absolute;
+        left: 22px;
+        top: 18px;
+        z-index: 20;
+        display: flex;
+        gap: 12px;
+    }
+
+    .zoom-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.12);
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .zoom-btn:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+    .legend {
+        position: absolute;
+        right: 24px;
+        top: 30px;
+        width: 260px;
+        background: white;
+        border-radius: 9px;
+        padding: 20px;
+        z-index: 30;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    }
+
+    .legend-title {
+        font-weight: bold;
+        margin-bottom: 14px;
+        color: #111827;
+    }
+
+    .legend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #1f2937;
+        font-size: 15px;
+    }
+
+    .dot {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .network-svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: visible;
+    }
+
+    .edge-line {
+        stroke: rgba(96, 190, 255, 0.65);
+        stroke-width: 2.3;
+        fill: none;
+        marker-end: url(#arrowHead);
+        filter: drop-shadow(0 0 5px rgba(96,190,255,0.35));
+    }
+
+    .edge-label {
+        fill: #e0f2fe;
+        font-size: 12px;
+        font-weight: bold;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+        pointer-events: none;
+    }
+
+    .node {
+        position: absolute;
+        z-index: 4;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+        text-decoration: none;
+        overflow: hidden;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .node:hover {
+        transform: translate(-50%, -50%) scale(1.06);
+        box-shadow: 0 18px 36px rgba(0,0,0,0.32);
+        z-index: 10;
+    }
+
+    .node.circle {
+        width: 112px;
+        height: 112px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 12px;
+    }
+
+    .node.rect {
+        width: 164px;
+        min-height: 84px;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: left;
+    }
+
+    .node.core {
+        width: 132px;
+        height: 132px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 14px;
+        background: #ef4444 !important;
+    }
+
+    .node-title {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+
+    .node.core .node-title {
+        font-size: 17px;
+    }
+
+    .node-sub {
+        margin-top: 5px;
+        font-size: 12px;
+        opacity: 0.95;
+        word-break: break-word;
+    }
+
+    .node-members {
+        margin-top: 6px;
+        font-size: 12px;
+    }
+
+    .node.hidden {
+        display: none;
+    }
+
+    .grid-panel {
+        display: none;
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .grid-panel.active {
+        display: block;
+    }
+
+    .network-panel.hidden {
+        display: none;
+    }
+
+    .grid-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .grid-card {
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    .grid-card h3 {
+        margin: 0 0 8px;
+    }
+
+    .grid-card p {
+        color: #667085;
+        line-height: 1.5;
+        margin: 0 0 12px;
+    }
+
+    .grid-card a {
+        color: #2563eb;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .dependency-panel {
+        margin-top: 24px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 22px;
+    }
+
+    .dependency-panel h2 {
+        margin: 0 0 16px;
+        font-size: 22px;
+    }
+
+    .dependency-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .dependency-card {
+        border: 1px solid #dce3ee;
+        border-radius: 10px;
+        padding: 14px;
+        background: #f8fafc;
+    }
+
+    .dependency-title {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .dependency-meta {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .empty {
+        background: white;
+        border: 1px dashed #d0d5dd;
+        border-radius: 10px;
+        padding: 18px;
+        color: #667085;
+    }
+
+    @media (max-width: 1000px) {
+        .top-tools {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .org-search {
+            width: 100%;
+        }
+
+        .network-panel {
+            height: 900px;
+        }
+
+        .legend {
+            position: absolute;
+            left: 20px;
+            right: auto;
+            top: auto;
+            bottom: 20px;
+        }
+
+        .grid-list,
+        .dependency-list {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="org-page">
+
+    <div class="top-tools">
+        <div class="view-buttons">
+            <button class="tool-btn" onclick="showGrid()">▦ Grid View</button>
+            <button class="tool-btn active" onclick="showNetwork()">⛓ Network View</button>
+            <button class="tool-btn export" onclick="window.print()">⬇ Export</button>
+        </div>
+
+        <div class="org-search">
+            <input id="orgSearch" type="text" placeholder="Search teams or dependencies...">
+            <span>⌕</span>
+        </div>
     </div>
 
-    <div>
-        <!-- this input lets the user search for teams or connections -->
-        🔍 <input type="text" placeholder="Search teams or dependencies..." style="padding:6px;">
+    <div class="count-row">
+        <div>Teams: {{ total_teams }}</div>
+        <div>Dependencies: {{ total_dependencies }}</div>
+    </div>
+
+    <div class="network-panel" id="networkPanel">
+
+        <div class="zoom-tools">
+            <button type="button" class="zoom-btn" onclick="zoomIn()">+</button>
+            <button type="button" class="zoom-btn" onclick="zoomOut()">−</button>
+            <button type="button" class="zoom-btn" onclick="resetZoom()">↻</button>
+            <button type="button" class="zoom-btn" onclick="toggleFullscreen()">⛶</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">Legend</div>
+
+            <div class="legend-grid">
+                {% for department in departments %}
+                    <div class="legend-item">
+                        <span class="dot legend-dot" data-index="{{ forloop.counter0 }}"></span>
+                        {{ department.name }}
+                    </div>
+                {% empty %}
+                    <div class="legend-item">
+                        <span class="dot" style="background:#ef4444;"></span>
+                        Teams
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="network-inner" id="networkInner">
+            <svg class="network-svg" id="networkSvg">
+                <defs>
+                    <marker
+                        id="arrowHead"
+                        markerWidth="12"
+                        markerHeight="12"
+                        refX="10"
+                        refY="4"
+                        orient="auto"
+                        markerUnits="strokeWidth"
+                    >
+                        <path d="M0,0 L0,8 L11,4 z" fill="rgba(96,190,255,0.9)"></path>
+                    </marker>
+                </defs>
+            </svg>
+
+            {% for team in teams %}
+                <a
+                    href="{% url 'team_detail' team.id %}"
+                    class="node {% if forloop.first %}core{% else %}{% cycle 'circle' 'rect' 'circle' 'rect' %}{% endif %}"
+                    data-team-id="{{ team.id }}"
+                    data-team-name="{{ team.name|lower }}"
+                    data-department="{% if team.department %}{{ team.department.name|lower }}{% endif %}"
+                    data-department-id="{% if team.department %}{{ team.department.id }}{% else %}0{% endif %}"
+                    data-index="{{ forloop.counter0 }}"
+                >
+                    <div class="node-title">{{ team.name }}</div>
+
+                    <div class="node-sub">
+                        {% if team.department %}
+                            {{ team.department.name }}
+                        {% else %}
+                            Unassigned
+                        {% endif %}
+                    </div>
+
+                    <div class="node-members">
+                        {{ team.total_members }} Members
+                    </div>
+                </a>
+            {% empty %}
+                <div class="empty">No teams found in the database.</div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="grid-panel" id="gridPanel">
+        <div class="grid-list">
+            {% for team in teams %}
+                <div class="grid-card">
+                    <h3>{{ team.name }}</h3>
+
+                    <p>
+                        {% if team.department %}
+                            {{ team.department.name }}<br>
+                        {% endif %}
+
+                        {% if team.team_leader %}
+                            Lead: {{ team.team_leader.name }}<br>
+                        {% endif %}
+
+                        Members: {{ team.total_members }}<br>
+                        Repositories: {{ team.total_repositories }}
+                    </p>
+
+                    <a href="{% url 'team_detail' team.id %}">View Team</a>
+                </div>
+            {% empty %}
+                <div class="empty">No teams found in the database.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="dependency-panel">
+        <h2>Database Dependencies</h2>
+
+        <div class="dependency-list">
+            {% for dependency in dependencies %}
+                <div class="dependency-card">
+                    <div class="dependency-title">
+                        {{ dependency.source_team.name }} → {{ dependency.target_team.name }}
+                    </div>
+
+                    <div class="dependency-meta">
+                        {% if dependency.dependency_type %}
+                            Type: {{ dependency.dependency_type }}<br>
+                        {% endif %}
+
+                        Status: {{ dependency.status }}
+
+                        {% if dependency.description %}
+                            <br>{{ dependency.description }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty">
+                    No dependencies exist yet. Add them from Django Admin → Team Dependencies.
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
 </div>
 
+<script>
+    let currentScale = 1;
 
-<!-- this section is a toolbar for interacting with the map -->
-<!-- these buttons usually control zoom, refresh, or screenshots -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    const colors = [
+        "#ef4444", "#3b82f6", "#10b981", "#8b5cf6", "#f97316",
+        "#6366f1", "#ec4899", "#f59e0b", "#14b8a6", "#06b6d4"
+    ];
 
-    <div style="display:flex; gap:10px;">
-        <button>➕</button>   <!-- zoom in -->
-        <button>➖</button>   <!-- zoom out -->
-        <button>🔄</button>   <!-- refresh -->
-        <button>📸</button>   <!-- take screenshot -->
-    </div>
+    const nodes = document.querySelectorAll(".node");
+    const svg = document.getElementById("networkSvg");
+    const networkPanel = document.getElementById("networkPanel");
+    const networkInner = document.getElementById("networkInner");
+    const gridPanel = document.getElementById("gridPanel");
+    const searchInput = document.getElementById("orgSearch");
 
-    <div>
-        <!-- this shows simple statistics -->
-        <!-- these numbers are currently static (not from database) -->
-        <strong>Teams:</strong> 15 &nbsp;&nbsp;
-        <strong>Dependencies:</strong> 28
-    </div>
+    const dependencies = [
+        {% for dependency in dependencies %}
+            {
+                source: "{{ dependency.source_team.id }}",
+                target: "{{ dependency.target_team.id }}",
+                label: "{% if dependency.dependency_type %}{{ dependency.dependency_type|escapejs }}{% else %}depends on{% endif %}"
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
 
-</div>
+    function getDepartmentColor(node) {
+        const departmentId = node.dataset.departmentId || "0";
+        let number = parseInt(departmentId);
 
+        if (isNaN(number)) {
+            number = 0;
+        }
 
-<!-- this section displays the organisation map image -->
-<!-- the image comes from the "static/images" folder -->
-<div style="border:1px solid #ccc; padding:10px; text-align:center;">
+        return colors[number % colors.length];
+    }
 
-    <img src="{% static 'images/org_map.png' %}" 
-         style="width:100%; max-width:100%;">
+    function setNodeColor() {
+        nodes.forEach(node => {
+            if (!node.classList.contains("core")) {
+                node.style.background = getDepartmentColor(node);
+            }
+        });
+    }
 
-</div>
+    function placeNodes() {
+        const panelWidth = networkPanel.clientWidth;
+        const panelHeight = networkPanel.clientHeight;
 
+        const centerX = panelWidth / 2;
+        const centerY = panelHeight / 2;
 
-<!-- this section explains what the colours/icons mean -->
-<!-- this helps users understand the map -->
-<div style="margin-top:15px;">
-    <strong>Legend:</strong><br>
+        const usableWidth = panelWidth - 360;
+        const usableHeight = panelHeight - 180;
 
-    <!-- each colour represents a type of team -->
-    🔵 Core Team &nbsp;
-    🟢 Backend &nbsp;
-    🟡 QA &nbsp;
-    🟣 Data &nbsp;
-    🔴 Security &nbsp;
-    🟠 DevOps &nbsp;
-    ⚫ Mobile
-</div>
+        const radiusX = usableWidth / 2.45;
+        const radiusY = usableHeight / 2.55;
 
+        nodes.forEach((node, index) => {
+            let x;
+            let y;
+
+            if (index === 0) {
+                x = centerX;
+                y = centerY;
+            } else {
+                const angle = ((index - 1) / Math.max(nodes.length - 1, 1)) * Math.PI * 2;
+
+                const wave = index % 2 === 0 ? 0.86 : 1.08;
+
+                x = centerX + Math.cos(angle) * radiusX * wave;
+                y = centerY + Math.sin(angle) * radiusY * wave;
+
+                x += Math.sin(index * 1.7) * 28;
+                y += Math.cos(index * 1.3) * 22;
+            }
+
+            node.style.left = x + "px";
+            node.style.top = y + "px";
+        });
+
+        setNodeColor();
+        drawEdges();
+    }
+
+    function getNodeRadius(node) {
+        if (node.classList.contains("core")) {
+            return 70;
+        }
+
+        if (node.classList.contains("circle")) {
+            return 60;
+        }
+
+        return 86;
+    }
+
+    function drawEdges() {
+        svg.innerHTML = `
+            <defs>
+                <marker
+                    id="arrowHead"
+                    markerWidth="12"
+                    markerHeight="12"
+                    refX="10"
+                    refY="4"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                >
+                    <path d="M0,0 L0,8 L11,4 z" fill="rgba(96,190,255,0.9)"></path>
+                </marker>
+            </defs>
+        `;
+
+        dependencies.forEach(dep => {
+            const source = document.querySelector(`[data-team-id="${dep.source}"]`);
+            const target = document.querySelector(`[data-team-id="${dep.target}"]`);
+
+            if (!source || !target) {
+                return;
+            }
+
+            if (source.classList.contains("hidden") || target.classList.contains("hidden")) {
+                return;
+            }
+
+            let sourceX = parseFloat(source.style.left);
+            let sourceY = parseFloat(source.style.top);
+            let targetX = parseFloat(target.style.left);
+            let targetY = parseFloat(target.style.top);
+
+            const dx = targetX - sourceX;
+            const dy = targetY - sourceY;
+            const length = Math.sqrt(dx * dx + dy * dy);
+
+            if (length === 0) {
+                return;
+            }
+
+            const sourceRadius = getNodeRadius(source);
+            const targetRadius = getNodeRadius(target);
+
+            const startX = sourceX + (dx / length) * sourceRadius;
+            const startY = sourceY + (dy / length) * sourceRadius;
+            const endX = targetX - (dx / length) * targetRadius;
+            const endY = targetY - (dy / length) * targetRadius;
+
+            const midX = (startX + endX) / 2;
+            const midY = (startY + endY) / 2;
+
+            const curveOffset = 55;
+            const controlX = midX - dy / length * curveOffset;
+            const controlY = midY + dx / length * curveOffset;
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const d = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`;
+
+            path.setAttribute("d", d);
+            path.setAttribute("class", "edge-line");
+
+            svg.appendChild(path);
+
+            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.setAttribute("x", controlX);
+            label.setAttribute("y", controlY - 7);
+            label.setAttribute("class", "edge-label");
+            label.setAttribute("text-anchor", "middle");
+            label.textContent = dep.label;
+
+            svg.appendChild(label);
+        });
+    }
+
+    function applyZoom() {
+        networkInner.style.transform = "scale(" + currentScale + ")";
+    }
+
+    function zoomIn() {
+        currentScale = Math.min(currentScale + 0.1, 1.6);
+        applyZoom();
+    }
+
+    function zoomOut() {
+        currentScale = Math.max(currentScale - 0.1, 0.6);
+        applyZoom();
+    }
+
+    function resetZoom() {
+        currentScale = 1;
+        applyZoom();
+        placeNodes();
+    }
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            networkPanel.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    function showGrid() {
+        networkPanel.classList.add("hidden");
+        gridPanel.classList.add("active");
+
+        document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active"));
+        document.querySelectorAll(".tool-btn")[0].classList.add("active");
+    }
+
+    function showNetwork() {
+        gridPanel.classList.remove("active");
+        networkPanel.classList.remove("hidden");
+
+        document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active"));
+        document.querySelectorAll(".tool-btn")[1].classList.add("active");
+
+        setTimeout(placeNodes, 50);
+    }
+
+    searchInput.addEventListener("input", function() {
+        const value = searchInput.value.toLowerCase().trim();
+
+        nodes.forEach(node => {
+            const teamName = node.dataset.teamName || "";
+            const department = node.dataset.department || "";
+
+            if (teamName.includes(value) || department.includes(value)) {
+                node.classList.remove("hidden");
+            } else {
+                node.classList.add("hidden");
+            }
+        });
+
+        drawEdges();
+    });
+
+    document.querySelectorAll(".legend-dot").forEach((dot, index) => {
+        dot.style.background = colors[index % colors.length];
+    });
+
+    window.addEventListener("resize", placeNodes);
+
+    document.addEventListener("fullscreenchange", function() {
+        setTimeout(placeNodes, 200);
+    });
+
+    placeNodes();
+</script>
 
 {% endblock %}
-
-<!--This page shows a big picture of all teams
-
-User can:
-
-see teams
-search teams
-zoom in/out
-change view-->

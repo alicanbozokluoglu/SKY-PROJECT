@@ -1,288 +1,396 @@
 {% load static %}
-<!-- this lets Django load images, CSS, and static files -->
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SKY</title>
+    <title>Open Sky</title>
 
     <style>
-        /* this styles the whole page */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
         }
 
-        /* this is the big layout container (sidebar + main content) */
-        .page-wrapper {
+        .layout {
             display: flex;
             min-height: 100vh;
-            border: 18px solid #b5b5b5;
         }
 
-        /* this section is the left sidebar */
         .sidebar {
-            width: 220px;
-            border-right: 1px solid #ccc;
-            padding: 20px;
+            width: 250px;
+            background: #0757b8;
+            color: white;
+            padding: 24px 22px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .brand {
             display: flex;
-            flex-direction: column;
-            height: 100vh;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 42px;
         }
 
-        /* this controls the SKY logo */
-        .logo img {
-            width: 100px;
+        .brand img {
+            width: 72px;
         }
 
-        /* this styles each menu link */
-        .menu a {
-            display: block;
-            padding: 10px 0;
+        .brand span {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 16px;
+            border-radius: 9px;
+            color: white;
             text-decoration: none;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255,255,255,0.28);
+        }
+
+        .nav-section {
+            margin: 24px 0 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.75;
+            font-weight: bold;
+        }
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        .topbar {
+            height: 112px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 14px 28px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: start;
+            column-gap: 24px;
+        }
+
+        .top-left h1 {
+            margin: 0 0 16px;
+            font-size: 28px;
+            color: #1f2937;
+        }
+
+        .top-search {
+            position: relative;
+            width: 560px;
+        }
+
+        .top-search input {
+            width: 100%;
+            padding: 13px 46px 13px 18px;
+            border: 1px solid #d9dee8;
+            border-radius: 10px;
+            font-size: 18px;
+            color: #667085;
+            outline: none;
+        }
+
+        .top-search input:focus {
+            border-color: #00a9df;
+            box-shadow: 0 0 0 4px rgba(0,169,223,0.12);
+        }
+
+        .top-search button {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            font-size: 22px;
+            cursor: pointer;
+            color: #667085;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            padding: 0;
+        }
+
+        .top-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            height: 48px;
+            margin-top: 18px;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f3f6fb;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #334155;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .header-icon:hover {
+            background: #e6f7fc;
             color: #0072ce;
         }
 
-        /* this keeps menu items vertical */
-        .menu {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        /* this pushes bottom menu items to bottom */
-        .menu-bottom {
-            margin-top: auto;
-            border-top: 1px solid #ccc;
-            padding-top: 15px;
-        }
-
-        /* this is the main content area */
-        .main {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* this is the header (top bar) */
-        .filters {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        /* right side (profile + bell) */
-        .profile-area {
+        .profile-box {
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .notification {
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .profile-dropdown {
+            gap: 10px;
             position: relative;
             cursor: pointer;
+            height: 48px;
         }
 
-        .profile-img {
-            width: 32px;
-            height: 32px;
+        .profile-box img {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
+            object-fit: cover;
         }
 
-        /* dropdown menu */
-        .dropdown-menu {
+        .profile-name {
+            font-size: 18px;
+            color: #334155;
+            line-height: 48px;
+        }
+
+        .dropdown-arrow {
+            color: #334155;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 48px;
+        }
+
+        .dropdown-arrow svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        .dropdown {
             display: none;
             position: absolute;
             right: 0;
-            top: 40px;
+            top: 58px;
+            width: 180px;
             background: white;
-            border: 1px solid #ccc;
-            width: 150px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+            overflow: hidden;
+            z-index: 20;
         }
 
-        .dropdown-menu a {
+        .dropdown a {
             display: block;
-            padding: 10px;
+            padding: 13px 15px;
             text-decoration: none;
-            color: black;
+            color: #1f2937;
+            font-size: 14px;
         }
 
-        .dropdown-menu a:hover {
-            background: #f2f2f2;
+        .dropdown a:hover {
+            background: #f3f7fc;
         }
 
-        .dropdown-menu.show {
+        .dropdown.show {
             display: block;
         }
 
-        /* footer */
+        .content {
+            padding: 32px;
+        }
+
         .footer {
-            margin-top: auto;
-            text-align: right;
+            padding: 18px 32px;
+            color: #667085;
             font-size: 12px;
-            color: #555;
-            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
         }
 
-        .footer a {
-            margin-left: 15px;
-            text-decoration: none;
-            color: #555;
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+
+            .top-search {
+                width: 380px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<!-- this is the main layout wrapper -->
-<div class="page-wrapper">
+<div class="layout">
 
-
-    <!-- this is the sidebar -->
-    <div class="sidebar">
-
-        <!-- SKY logo -->
-        <div class="logo">
-            <img src="{% static 'images/sky.png' %}">
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="{% static 'images/sky.png' %}" alt="Open Sky">
+            <span>Open Sky</span>
         </div>
 
-        <!-- menu -->
-        <div class="menu">
+        <nav class="nav">
+            <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                🏠 Dashboard
+            </a>
 
-            <!-- links go to pages defined in "urls.py" -->
-            <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
-            <a href="{% url 'teams' %}">👥 Teams</a>
-            <a href="{% url 'departments' %}">🏢 Departments</a>
-            <a href="{% url 'organisation_map' %}">🗺 Organisation Map</a>
-            <a href="{% url 'messages' %}">💬 Messages</a>
-            <a href="{% url 'schedule' %}">📅 Schedule</a>
+            <a href="{% url 'teams' %}" class="{% if request.resolver_match.url_name == 'teams' or request.resolver_match.url_name == 'team_detail' %}active{% endif %}">
+                👥 Teams
+            </a>
 
-            <div class="menu-bottom">
-                <a href="{% url 'settings' %}">⚙️ Settings</a>
-                <a href="{% url 'login' %}">🚪 Logout</a>
-            </div>
+            <a href="{% url 'organisation_map' %}" class="{% if request.resolver_match.url_name == 'organisation_map' %}active{% endif %}">
+                🔗 Organisation
+            </a>
 
-        </div>
+            <a href="{% url 'messages' %}" class="{% if request.resolver_match.url_name == 'messages' or request.resolver_match.url_name == 'new_message' or request.resolver_match.url_name == 'message_detail' or request.resolver_match.url_name == 'reply_message' %}active{% endif %}">
+                💬 Messages
+            </a>
 
-    </div>
+            <a href="{% url 'schedule' %}" class="{% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
+                📅 Schedule
+            </a>
 
+            {% if request.user.is_staff %}
+                <div class="nav-section">Admin</div>
 
-    <!-- this is the main content area -->
-    <div class="main">
+                <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                    🛠 Admin Dashboard
+                </a>
 
+                <a href="{% url 'admin_team_management' %}" class="{% if request.resolver_match.url_name == 'admin_team_management' %}active{% endif %}">
+                    👥 Team Management
+                </a>
 
-        <!-- this is the header (top bar) -->
-        <div class="filters">
+                <a href="{% url 'admin_user_access' %}" class="{% if request.resolver_match.url_name == 'admin_user_access' %}active{% endif %}">
+                    🔐 User Access
+                </a>
+            {% endif %}
+        </nav>
+    </aside>
 
-            <!-- this section is the left side: search + filters -->
-            <div style="display:flex; gap:10px; align-items:center;">
+    <main class="main">
 
-                <!-- this is the search form, it sends data to "teams_view" in views.py -->
-                <form method="get" action="{% url 'teams' %}" style="display:flex; gap:5px;">
+        <header class="topbar">
+            <div class="top-left">
+                {% if request.user.is_authenticated and request.user.person %}
+                    <h1>Welcome, {{ request.user.person.name }}!</h1>
+                {% elif request.user.is_authenticated %}
+                    <h1>Welcome, {{ request.user.username }}!</h1>
+                {% else %}
+                    <h1>Welcome!</h1>
+                {% endif %}
 
-                    <!-- user types here -->
-                    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="🔍 Search teams, departments, or managers..." style="padding:5px;">
-                    <!-- this button makes sure form submits -->
-                    <button type="submit">Search</button>
-
+                <form class="top-search" method="get" action="{% url 'teams' %}">
+                    <input type="text" name="search" placeholder="Search teams, departments, or managers...">
+                    <button type="submit">⌕</button>
                 </form>
-
-                <!-- these are filters (not connected yet) -->
-                <select>
-                    <option>All Departments</option>
-                </select>
-
-                <select>
-                    <option>All Managers</option>
-                </select>
-
             </div>
 
+            <div class="top-profile">
+                <a href="{% url 'messages' %}" class="header-icon" title="Messages">💬</a>
 
-            <!-- this section is the right side: notifications + user -->
-            <div class="profile-area">
-
-                <!-- bell icon -->
-                <div class="notification">🔔</div>
-
-                <!-- this is the user profile dropdown -->
-                <div class="profile-dropdown" onclick="toggleDropdown(event)">
-
-                    {% if request.user.is_authenticated and request.user.person %}
-
-                        <!-- show real logged-in user -->
-                        <img src="https://ui-avatars.com/api/?name={{ request.user.person.name|urlencode }}&background=0072ce&color=fff" class="profile-img">
-                        <span>{{ request.user.person.name }} ▼</span>
-
+                <div class="profile-box" onclick="toggleDropdown(event)">
+                    {% if request.user.is_authenticated and request.user.person and request.user.person.photo %}
+                        <img src="{{ request.user.person.photo.url }}" alt="{{ request.user.person.name }}">
+                        <span class="profile-name">{{ request.user.person.name }}</span>
+                    {% elif request.user.is_authenticated and request.user.person %}
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.person.name|urlencode }}&background=0072ce&color=fff">
+                        <span class="profile-name">{{ request.user.person.name }}</span>
+                    {% elif request.user.is_authenticated %}
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=0072ce&color=fff">
+                        <span class="profile-name">{{ request.user.username }}</span>
                     {% else %}
-
-                        <!-- fallback -->
-                        <img src="https://ui-avatars.com/api/?name=User&background=0072ce&color=fff" class="profile-img">
-                        <span>User ▼</span>
-
+                        <img src="https://ui-avatars.com/api/?name=User&background=0072ce&color=fff">
+                        <span class="profile-name">User</span>
                     {% endif %}
 
-                    <!-- dropdown -->
-                    <div class="dropdown-menu">
-                        <a href="{% url 'profile' %}">👁 View Profile</a>
-                        <a href="{% url 'settings' %}">⚙️ Settings</a>
-                        <a href="{% url 'login' %}">🚪 Sign Out</a>
+                    <span class="dropdown-arrow">
+                        <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M5.5 7.5L10 12L14.5 7.5"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+
+                    <div class="dropdown">
+                        <a href="{% url 'profile' %}">View Profile</a>
+                        <a href="{% url 'settings' %}">Settings</a>
+                        <a href="{% url 'logout' %}">Sign Out</a>
                     </div>
-
                 </div>
-
             </div>
+        </header>
 
-        </div>
+        <section class="content">
+            {% block content %}
+            {% endblock %}
+        </section>
 
+        <footer class="footer">
+            <div>© 2025 Sky Engineering Directory. All rights reserved.</div>
+            <div>Privacy Policy &nbsp; Terms of Service &nbsp; Help Center</div>
+        </footer>
 
-        <!-- this is where other pages appear -->
-        {% block content %}
-        {% endblock %}
-
-
-        <!-- footer -->
-        <div class="footer">
-            <a href="#">Privacy Options</a>
-            <a href="#">Terms and Conditions</a>
-            <a href="#">Contact</a>
-            <a href="#">Help</a>
-        </div>
-
-    </div>
+    </main>
 
 </div>
 
-
-<!-- this script controls dropdown menu -->
 <script>
-
 function toggleDropdown(event) {
     event.stopPropagation();
-    const menu = document.querySelector(".dropdown-menu");
-    menu.classList.toggle("show");
+    const menu = document.querySelector(".dropdown");
+    if (menu) {
+        menu.classList.toggle("show");
+    }
 }
 
 document.addEventListener("click", function() {
-    const menu = document.querySelector(".dropdown-menu");
+    const menu = document.querySelector(".dropdown");
     if (menu) {
         menu.classList.remove("show");
     }
 });
-
 </script>
 
 </body>
 </html>
-
-<!-- this file is the main layout of the whole website.
-it shows sidebar, header, footer, and loads other pages inside it.
-request.user.person.name shows real logged-in user from database -->

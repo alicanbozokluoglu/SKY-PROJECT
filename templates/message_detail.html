@@ -1,42 +1,131 @@
-<!-- this page shows one single message (like opening an email) -->
+{% extends "base.html" %}
 
-<h2>{{ message.subject }}</h2>
-<!-- this shows the title of the message
-the data comes from "views.py" -->
+{% block content %}
 
+<style>
+    .detail-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
-<p><strong>From:</strong> {{ message.sender.name }}</p>
-<!-- shows who sent the message -->
+    .detail-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
 
-<p><strong>To:</strong> {{ message.receiver.name }}</p>
-<!-- shows which team received the message -->
+    .subject {
+        font-size: 28px;
+        margin: 0 0 18px;
+        color: #1f2937;
+    }
 
-<p><strong>Date:</strong> {{ message.created_at }}</p>
-<!-- shows when the message was created -->
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eef2f7;
+    }
 
+    .meta-box {
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        border-radius: 10px;
+        padding: 14px;
+    }
 
-<hr>
-<!-- this draws a line to separate header from message content -->
+    .meta-label {
+        color: #667085;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
 
+    .meta-value {
+        color: #111827;
+        font-weight: bold;
+        font-size: 15px;
+    }
 
-<p>{{ message.body }}</p>
-<!-- this shows the main content of the message -->
+    .body {
+        color: #334155;
+        font-size: 16px;
+        line-height: 1.7;
+        white-space: pre-line;
+        margin-bottom: 28px;
+    }
 
+    .button-row {
+        display: flex;
+        gap: 12px;
+    }
 
-<br>
+    .primary-btn {
+        background: #2563eb;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
 
+    .secondary-btn {
+        background: white;
+        color: #334155;
+        border: 1px solid #d0d5dd;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
 
-<!-- this button takes user to reply page -->
-<a href="{% url 'reply_message' message.id %}">
-    <button>Reply</button>
-</a>
+<div class="detail-wrap">
 
+    <div class="detail-card">
+        <h1 class="subject">{{ message.subject }}</h1>
 
-<!-- this button takes user back to messages page -->
-<a href="{% url 'messages' %}">
-    <button>Back</button>
-</a>
+        <div class="meta-grid">
+            <div class="meta-box">
+                <div class="meta-label">From</div>
+                <div class="meta-value">{{ message.sender.name }}</div>
+            </div>
 
-<!---This page shows a single message.
-It displays the subject, sender, receiver, date, and message content.
-There is also a button to reply and a button to go back.-->
+            <div class="meta-box">
+                <div class="meta-label">To Team</div>
+                <div class="meta-value">{{ message.receiver.name }}</div>
+            </div>
+
+            <div class="meta-box">
+                <div class="meta-label">Date</div>
+                <div class="meta-value">{{ message.created_at|date:"M d, Y H:i" }}</div>
+            </div>
+
+            <div class="meta-box">
+                <div class="meta-label">Status</div>
+                <div class="meta-value">
+                    {% if message.is_read %}
+                        Read
+                    {% else %}
+                        Unread
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="body">
+            {{ message.body }}
+        </div>
+
+        <div class="button-row">
+            <a href="{% url 'reply_message' message.id %}" class="primary-btn">Reply</a>
+            <a href="{% url 'messages' %}" class="secondary-btn">Back</a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

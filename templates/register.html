@@ -1,146 +1,194 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Register</title>
+    <title>OpenSky Register</title>
 
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: white;
-        }
-
-        .page-wrapper {
+            background: linear-gradient(135deg, #064fb0, #10b7df);
             min-height: 100vh;
-            border: 18px solid #b5b5b5;
-            box-sizing: border-box;
+        }
+
+        .top-bar, .bottom-bar {
+            height: 42px;
+            background: white;
             display: flex;
-            justify-content: center;
             align-items: center;
-            position: relative;
+            justify-content: space-between;
+            padding: 0 18px;
+            box-sizing: border-box;
+        }
+
+        .sky-logo { width: 55px; }
+
+        .top-links a, .bottom-bar a {
+            color: #555;
+            font-size: 12px;
+            text-decoration: none;
+            margin-left: 12px;
+        }
+
+        .register-area {
+            min-height: calc(100vh - 84px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-card {
+            width: 380px;
             background: white;
-        }
-
-        .container {
-            background: white;
-            width: 420px;
-            padding: 30px;
-        }
-
-        /* LOGO IMAGE */
-        .logo img {
-            width: 140px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-
-        .header {
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.25);
             text-align: center;
+        }
+
+        .app-logo {
+            width: 130px;
             margin-bottom: 10px;
         }
 
-        .header img {
-            width: 120px;        /* control size */
-            max-width: 100%;
-            height: auto;
+        .subtitle {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 22px;
+        }
+
+        label {
             display: block;
-            margin: 0 auto;
-        }
-
-        h2 {
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        .divider {
-            height: 1px;
-            background: #ccc;
-            margin: 10px 0 20px 0;
+            text-align: left;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 12px;
+            margin-bottom: 6px;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 11px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
             box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
 
-        button {
+        .register-btn {
             width: 100%;
-            padding: 10px;
-            background-color: #0072ce;
+            padding: 12px;
+            margin-top: 18px;
+            background: #00a9df;
             color: white;
             border: none;
+            border-radius: 6px;
+            font-weight: bold;
             cursor: pointer;
+        }
+
+        .register-btn:hover {
+            background: #008fc0;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #b00020;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .success {
+            background: #e7f7ec;
+            color: #166534;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #009edb;
+            text-decoration: none;
             font-weight: bold;
         }
 
-        button:hover {
-            background-color: #005fa3;
-        }
-
-        .links {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 15px;
-            right: 25px;
+        .bottom-bar {
             font-size: 12px;
-            color: grey;
-            font-style: italic;
-            text-align: right;
+            color: #777;
         }
     </style>
 </head>
 
 <body>
 
-<div class="page-wrapper">
+<div class="top-bar">
+    <img src="{% static 'images/sky.png' %}" class="sky-logo" alt="Sky">
+    <div class="top-links">
+        <a href="#">Help</a>
+        <a href="#">Contact</a>
+    </div>
+</div>
 
-    <div class="container">
+<div class="register-area">
+    <div class="register-card">
 
-        <!-- HEADER WITH LOGO LEFT -->
-        <div class="header">
-            <img src="/static/images/sky.png" alt="SKY Logo">
-        </div>
+        <img src="{% static 'images/sky.png' %}" class="app-logo" alt="OpenSky">
 
         <h2>Create Account</h2>
-        <div class="divider"></div>
+        <div class="subtitle">Join OpenSky Engineering Team Directory</div>
 
         {% if messages %}
             {% for message in messages %}
-                <p style="color:red;">{{ message }}</p>
+                <div class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
 
         <form method="post">
             {% csrf_token %}
 
-            <input type="text" name="fullname" placeholder="Full Name">
-            <input type="text" name="username" placeholder="Username">
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
-            <input type="password" name="confirm_password" placeholder="Confirm Password">
+            <label>Full Name</label>
+            <input type="text" name="fullname" required>
 
-            <button type="submit">REGISTER</button>
+            <label>Username</label>
+            <input type="text" name="username" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" required>
+
+            <button type="submit" class="register-btn">Register</button>
         </form>
 
-        <div class="links">
-            Already have an account? <a href="/">Login</a>
+        <div class="login-link">
+            Already have an account? <a href="/">Sign in</a>
         </div>
 
     </div>
+</div>
 
-    <div class="footer">
-        Privacy Options | Terms and Conditions | Contact | Help
+<div class="bottom-bar">
+    <div>© 2025 Sky</div>
+    <div>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
     </div>
-
 </div>
 
 </body>

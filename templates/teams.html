@@ -1,147 +1,301 @@
 {% extends "base.html" %}
-<!-- this page uses base.html layout -->
 
 {% block content %}
-<!-- this content goes into main area -->
 
-<h2>👥 Teams</h2>
+<style>
+    .teams-wrap {
+        max-width: 1260px;
+        margin: 0 auto;
+    }
 
+    .teams-title {
+        font-size: 28px;
+        margin: 0 0 24px;
+        color: #1f2937;
+    }
 
-<!-- this section is the top bar with options -->
-<div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+    .filters {
+        display: grid;
+        grid-template-columns: 1fr 220px 180px;
+        gap: 14px;
+        margin-bottom: 26px;
+    }
 
-    <div>
-        <strong>Team List</strong>
+    .filters input,
+    .filters select {
+        height: 46px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 0 14px;
+        font-size: 15px;
+        background: white;
+    }
 
-        <!-- these are visual only -->
-        <span style="margin-left:10px;">📋 List</span>
-        <span style="margin-left:10px;">🔲 Grid</span>
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .team-card {
+        background: white;
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 2px 7px rgba(0,0,0,0.04);
+    }
+
+    .team-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .team-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #111827;
+    }
+
+    .status {
+        background: #dcfce7;
+        color: #166534;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: bold;
+        height: fit-content;
+    }
+
+    .manager {
+        color: #667085;
+        margin-bottom: 18px;
+        font-size: 15px;
+    }
+
+    .stats {
+        display: flex;
+        gap: 16px;
+        color: #334155;
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .avatars {
+        display: flex;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .avatars img {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 2px solid white;
+        margin-right: -8px;
+    }
+
+    .more {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #eef2ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        border: 2px solid white;
+    }
+
+    .card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .contact {
+        color: #2563eb;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .details {
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        padding: 9px 13px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .empty {
+        background: white;
+        border: 1px dashed #d0d5dd;
+        border-radius: 12px;
+        padding: 22px;
+        color: #667085;
+        font-size: 15px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media (max-width: 1100px) {
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filters {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="teams-wrap">
+
+    <h1 class="teams-title">Team Directory</h1>
+
+    <form method="get" class="filters" id="teamFilterForm">
+        <input
+            type="text"
+            name="search"
+            id="teamSearch"
+            placeholder="Search teams..."
+            value="{{ search }}"
+            autocomplete="off"
+        >
+
+        <select name="department" id="departmentFilter">
+            <option value="">All Departments</option>
+
+            {% for department in departments %}
+                <option value="{{ department.id }}" {% if selected_department == department.id|stringformat:"s" %}selected{% endif %}>
+                    {{ department.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select name="sort" id="sortFilter">
+            <option value="name" {% if sort == "name" %}selected{% endif %}>Sort by Name</option>
+            <option value="members" {% if sort == "members" %}selected{% endif %}>Sort by Members</option>
+            <option value="repositories" {% if sort == "repositories" %}selected{% endif %}>Sort by Repositories</option>
+            <option value="newest" {% if sort == "newest" %}selected{% endif %}>Sort by Newest</option>
+        </select>
+    </form>
+
+    <div class="team-grid" id="teamGrid">
+        {% for team in teams %}
+            <div
+                class="team-card"
+                data-name="{{ team.name|lower }}"
+                data-manager="{% if team.team_leader %}{{ team.team_leader.name|lower }}{% endif %}"
+                data-department="{% if team.department %}{{ team.department.id }}{% endif %}"
+            >
+
+                <div class="team-header">
+                    <div class="team-name">{{ team.name }}</div>
+                    <div class="status">{{ team.status }}</div>
+                </div>
+
+                <div class="manager">
+                    {% if team.team_leader %}
+                        {{ team.team_leader.name }}
+                    {% else %}
+                        No manager assigned
+                    {% endif %}
+                </div>
+
+                <div class="stats">
+                    <span>{{ team.total_members }} Members</span>
+                    <span>{{ team.total_repositories }} Repositories</span>
+                </div>
+
+                <div class="avatars">
+                    {% if team.team_leader %}
+                        <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
+                    {% endif %}
+
+                    {% for member in team.members.all|slice:":3" %}
+                        <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&background=random&color=fff">
+                    {% endfor %}
+
+                    {% if team.total_members > 4 %}
+                        <div class="more">+{{ team.total_members|add:"-4" }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="card-actions">
+                    <a href="{% url 'new_message' %}" class="contact">Contact</a>
+                    <a href="{% url 'team_detail' team.id %}" class="details">Details</a>
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="empty">No teams found in the database.</div>
+        {% endfor %}
     </div>
 
-    <!-- filter and sort (not connected yet) -->
-    <div>
-        🔍 Filter &nbsp;&nbsp; 🔃 Sort
+    <div class="empty hidden" id="noResults">
+        No teams match your search.
     </div>
 
 </div>
 
+<script>
+    const searchInput = document.getElementById("teamSearch");
+    const departmentFilter = document.getElementById("departmentFilter");
+    const sortFilter = document.getElementById("sortFilter");
+    const noResults = document.getElementById("noResults");
 
-<!-- this section shows all teams in grid -->
-<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+    function filterTeams() {
+        const searchValue = searchInput.value.toLowerCase().trim();
+        const selectedDepartment = departmentFilter.value;
+        const cards = document.querySelectorAll(".team-card");
 
+        let visibleCount = 0;
 
-    <!-- loop through all teams -->
-    {% for team in teams %}
+        cards.forEach(function(card) {
+            const name = card.dataset.name || "";
+            const manager = card.dataset.manager || "";
+            const department = card.dataset.department || "";
 
-    <div style="border:1px solid #ccc; padding:15px;">
+            const matchesSearch =
+                name.includes(searchValue) ||
+                manager.includes(searchValue);
 
+            const matchesDepartment =
+                selectedDepartment === "" ||
+                department === selectedDepartment;
 
-        <!-- icon based on team name -->
-        <div style="font-size:28px; margin-bottom:8px;">
-            {% if "Frontend" in team.name %}
-                🖥️
-            {% elif "Backend" in team.name %}
-                ⚙️
-            {% elif "DevOps" in team.name %}
-                ☁️
-            {% else %}
-                👨‍💻
-            {% endif %}
-        </div>
+            if (matchesSearch && matchesDepartment) {
+                card.classList.remove("hidden");
+                visibleCount++;
+            } else {
+                card.classList.add("hidden");
+            }
+        });
 
+        if (visibleCount === 0) {
+            noResults.classList.remove("hidden");
+        } else {
+            noResults.classList.add("hidden");
+        }
+    }
 
-        <!-- team name -->
-        <h3>{{ team.name }}</h3>
+    searchInput.addEventListener("input", filterTeams);
+    departmentFilter.addEventListener("change", filterTeams);
 
+    sortFilter.addEventListener("change", function() {
+        document.getElementById("teamFilterForm").submit();
+    });
 
-        <!-- department -->
-        <p style="color:#555;">{{ team.department.name }}</p>
-
-
-        <!-- team leader -->
-        <p>
-            👤 <strong>{{ team.team_leader.name }}</strong>
-        </p>
-
-
-        <!-- simple member count (visual only) -->
-        <p style="color:#777;">
-            👥 Members · {{ forloop.counter|add:4 }}
-        </p>
-
-
-        <!-- skills (based on type) -->
-        <p>
-            🧠 <strong>Skills:</strong>
-
-            {% if "Frontend" in team.name %}
-                React, JavaScript
-            {% elif "Backend" in team.name %}
-                Python, Django
-            {% elif "DevOps" in team.name %}
-                AWS, Kubernetes
-            {% else %}
-                Engineering Tools
-            {% endif %}
-        </p>
-
-
-        <!-- dependencies (simple logic) -->
-        <p>
-            🔗 <strong>Dependencies:</strong>
-
-            {% if "Frontend" in team.name %}
-                Backend Team
-            {% elif "Backend" in team.name %}
-                API Team
-            {% elif "DevOps" in team.name %}
-                Security Team
-            {% else %}
-                Internal Systems
-            {% endif %}
-        </p>
-
-
-        <!-- action buttons -->
-        <div style="margin-top:10px; display:flex; gap:10px;">
-
-
-            <!-- go to team detail page -->
-            <a href="{% url 'team_detail' team.id %}">
-                <button style="background:#0072ce; color:white; border:none; padding:5px 10px;">
-                    👁 View
-                </button>
-            </a>
-
-
-            <!-- UI buttons -->
-            <button style="background:green; color:white; border:none; padding:5px 10px;">
-                ✉ Email
-            </button>
-
-            <button style="background:purple; color:white; border:none; padding:5px 10px;">
-                📅 Schedule
-            </button>
-
-        </div>
-
-    </div>
-
-    {% endfor %}
-
-</div>
+    filterTeams();
+</script>
 
 {% endblock %}
-
-<!--
-this page shows all teams in a grid.
-
-each team shows:
-- name
-- department
-- leader
-- skills
-- dependencies
-
-user can click "view" to open full team page.
--->

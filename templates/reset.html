@@ -4,63 +4,54 @@
     <title>Reset Password</title>
 
     <style>
-        /* this section controls how the whole page looks */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background: white;
         }
 
-        /* this creates the big outer box that holds everything in the page */
         .page-wrapper {
-            min-height: 100vh; /* makes the page take full screen height */
-            border: 18px solid #b5b5b5; /* grey border around page */
+            min-height: 100vh;
+            border: 18px solid #b5b5b5;
             display: flex;
-            justify-content: center; /* center horizontally */
-            align-items: center; /* center vertically */
+            justify-content: center;
+            align-items: center;
             position: relative;
         }
 
-        /* this is the main white box in the middle */
         .container {
             width: 420px;
             padding: 30px;
         }
 
-        /* this styles the logo image at the top */
         .header img {
             width: 120px;
             display: block;
-            margin: 0 auto; /* center the image */
+            margin: 0 auto;
         }
 
-        /* this centers the main title */
         h2 {
             text-align: center;
         }
 
-        /* this styles the small text under the title */
         .subtitle {
             text-align: center;
             font-size: 14px;
             margin-bottom: 10px;
         }
 
-        /* this is the grey line separating sections */
         .divider {
             height: 1px;
             background: #ccc;
             margin: 15px 0;
         }
 
-        /* this styles the email input box */
         input {
             width: 100%;
             padding: 10px;
             margin: 8px 0;
         }
 
-        /* this styles the button */
         button {
             width: 100%;
             padding: 10px;
@@ -69,19 +60,16 @@
             border: none;
         }
 
-        /* this section holds the explanation steps at the bottom */
         .steps {
             margin-top: 25px;
         }
 
-        /* this controls each step row (number + text) */
         .step {
             display: flex;
             gap: 10px;
             margin-bottom: 10px;
         }
 
-        /* this creates the blue circle with numbers (1, 2, 3) */
         .circle {
             background: #0072ce;
             color: white;
@@ -93,7 +81,6 @@
             justify-content: center;
         }
 
-        /* this styles the small footer at the bottom right */
         .footer {
             position: absolute;
             bottom: 15px;
@@ -105,66 +92,47 @@
 
 <body>
 
-<!-- this is the main outer wrapper that centers everything on the page -->
 <div class="page-wrapper">
 
-    <!-- this is the main content box -->
     <div class="container">
 
-        <!-- this section shows the SKY logo from the static folder -->
         <div class="header">
             <img src="/static/images/sky.png">
         </div>
 
-        <!-- this is the main title shown to the user -->
         <h2>Reset Password</h2>
-
-        <!-- this tells the user what to do -->
         <p class="subtitle">Enter your email to reset password</p>
 
-        <!-- this is just a visual line -->
         <div class="divider"></div>
 
-        <!-- this section shows messages from Django (from "views.py") -->
-        <!-- for example: error or success message -->
+        <!-- messages from Django -->
         {% if messages %}
             {% for message in messages %}
                 <p style="color:red;">{{ message }}</p>
             {% endfor %}
         {% endif %}
 
-        <!-- this form sends the email to "views.py" when user clicks button -->
         <form method="post">
-
-            <!-- this is required for security in Django -->
             {% csrf_token %}
-
-            <!-- this is where the user types their email -->
             <input type="email" name="email" placeholder="Email Address">
-
-            <!-- when clicked, it sends data to the backend -->
             <button type="submit">Send Reset Link</button>
-
         </form>
 
-        <!-- this section explains to the user what will happen next -->
+        <!-- WHAT HAPPENS NEXT -->
         <div class="steps">
 
             <h3>What happens next?</h3>
 
-            <!-- step 1 -->
             <div class="step">
                 <div class="circle">1</div>
                 <div>We’ll send you an email with a secure reset link</div>
             </div>
 
-            <!-- step 2 -->
             <div class="step">
                 <div class="circle">2</div>
                 <div>Click the link in your email</div>
             </div>
 
-            <!-- step 3 -->
             <div class="step">
                 <div class="circle">3</div>
                 <div>Log in with your new password</div>
@@ -174,7 +142,6 @@
 
     </div>
 
-    <!-- this is a simple footer with links (not functional yet) -->
     <div class="footer">
         Privacy Options | Terms | Contact | Help
     </div>
@@ -183,11 +150,3 @@
 
 </body>
 </html>
-
-<!--What this page does :
-User opens this page
-Types email
-Clicks button
-Form sends data to "views.py"
-Django sends email
-User gets reset link-->

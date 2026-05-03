@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .admin-wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .admin-title {
+        margin: 0 0 8px;
+        font-size: 30px;
+        color: #111827;
+    }
+
+    .admin-subtitle {
+        color: #667085;
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 22px;
+    }
+
+    .stat-label {
+        color: #334e7d;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 10px;
+    }
+
+    .stat-source {
+        color: green;
+        font-size: 13px;
+    }
+
+    .panel {
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 12px;
+        padding: 26px;
+        margin-bottom: 28px;
+    }
+
+    .panel h2 {
+        margin: 0 0 20px;
+        font-size: 24px;
+        color: #1f2937;
+    }
+
+    .success-box {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        border: none;
+        background: #f1f5f9;
+        color: #334155;
+        border-radius: 999px;
+        padding: 9px 13px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .tab-btn.active {
+        background: #2563eb;
+        color: white;
+    }
+
+    .admin-form {
+        display: none;
+    }
+
+    .admin-form.active {
+        display: block;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        color: #334155;
+        font-size: 14px;
+        margin-bottom: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 15px;
+        outline: none;
+        font-family: Arial, sans-serif;
+        background: white;
+    }
+
+    input {
+        height: 46px;
+    }
+
+    textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .save-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 12px 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 28px;
+    }
+
+    .list-item {
+        border: 1px solid #eef2f7;
+        background: #fbfcfe;
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    .item-title {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .item-meta {
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        font-size: 15px;
+    }
+
+    @media (max-width: 1100px) {
+        .stats-grid,
+        .admin-layout,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-wrap">
+
+    <h1 class="admin-title">Admin Dashboard</h1>
+    <div class="admin-subtitle">
+        Create and manage real database records used across the website.
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <div class="error-box">{{ message }}</div>
+            {% else %}
+                <div class="success-box">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Teams</div>
+            <div class="stat-number">{{ total_teams }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Departments</div>
+            <div class="stat-number">{{ total_departments }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">People</div>
+            <div class="stat-number">{{ total_members }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Messages</div>
+            <div class="stat-number">{{ total_messages }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Meetings</div>
+            <div class="stat-number">{{ total_meetings }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+    </div>
+
+    <div class="admin-layout">
+
+        <main>
+            <div class="panel">
+                <h2>Create Database Records</h2>
+
+                <div class="tabs">
+                    <button type="button" class="tab-btn active" data-form="departmentForm">Department</button>
+                    <button type="button" class="tab-btn" data-form="teamForm">Team</button>
+                    <button type="button" class="tab-btn" data-form="personForm">Person</button>
+                    <button type="button" class="tab-btn" data-form="repositoryForm">Repository</button>
+                    <button type="button" class="tab-btn" data-form="dependencyForm">Dependency</button>
+                    <button type="button" class="tab-btn" data-form="eventForm">Event</button>
+                </div>
+
+                <form method="post" class="admin-form active" id="departmentForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_department">
+
+                    <div class="form-group">
+                        <label>Department Name</label>
+                        <input type="text" name="department_name" required>
+                    </div>
+
+                    <button type="submit" class="save-btn">Create Department</button>
+                </form>
+
+                <form method="post" class="admin-form" id="teamForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_team">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Team Name</label>
+                            <input type="text" name="team_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select name="department">
+                                <option value="">No department</option>
+                                {% for department in departments %}
+                                    <option value="{{ department.id }}">{{ department.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Team Leader</label>
+                            <select name="team_leader">
+                                <option value="">No leader</option>
+                                {% for person in people %}
+                                    <option value="{{ person.id }}">{{ person.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status</label>
+                            <input type="text" name="status" value="Active">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" name="location">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Active Projects Count</label>
+                            <input type="number" name="active_projects_count" value="0" min="0">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Description</label>
+                            <textarea name="description"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Create Team</button>
+                </form>
+
+                <form method="post" enctype="multipart/form-data" class="admin-form" id="personForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_person">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="person_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input type="text" name="role">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="phone">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Team</label>
+                            <select name="team">
+                                <option value="">No team</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Photo</label>
+                            <input type="file" name="photo" accept="image/*">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Create Person</button>
+                </form>
+
+                <form method="post" class="admin-form" id="repositoryForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_repository">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Repository Name</label>
+                            <input type="text" name="repository_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Team</label>
+                            <select name="team" required>
+                                <option value="">Choose team</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Technology</label>
+                            <input type="text" name="technology">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Last Updated</label>
+                            <input type="date" name="last_updated">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>URL</label>
+                            <input type="url" name="url">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Description</label>
+                            <textarea name="description"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Create Repository</button>
+                </form>
+
+                <form method="post" class="admin-form" id="dependencyForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_dependency">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Source Team</label>
+                            <select name="source_team" required>
+                                <option value="">Choose source team</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Target Team</label>
+                            <select name="target_team" required>
+                                <option value="">Choose target team</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dependency Type</label>
+                            <input type="text" name="dependency_type" placeholder="API, Database, Service...">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status</label>
+                            <input type="text" name="status" value="Active">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Description</label>
+                            <textarea name="description"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Create Dependency</button>
+                </form>
+
+                <form method="post" class="admin-form" id="eventForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_event">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Event Title</label>
+                            <input type="text" name="event_title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Team</label>
+                            <select name="team">
+                                <option value="">No team</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Platform / Location</label>
+                            <input type="text" name="platform">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="time" name="start_time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" name="end_time" required>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Notes</label>
+                            <textarea name="notes"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Create Event</button>
+                </form>
+            </div>
+        </main>
+
+        <aside>
+            <div class="panel">
+                <h2>Latest Teams</h2>
+
+                {% for team in latest_teams %}
+                    <div class="list-item">
+                        <div class="item-title">{{ team.name }}</div>
+                        <div class="item-meta">
+                            {% if team.department %}{{ team.department.name }}{% else %}No department{% endif %}<br>
+                            {% if team.team_leader %}Leader: {{ team.team_leader.name }}{% else %}Leader: Not assigned{% endif %}<br>
+                            Members: {{ team.total_members }} · Repositories: {{ team.total_repositories }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">No teams found.</div>
+                {% endfor %}
+            </div>
+
+            <div class="panel">
+                <h2>Recent Activities</h2>
+
+                {% for activity in activities %}
+                    <div class="list-item">
+                        <div class="item-title">{{ activity.title }}</div>
+                        <div class="item-meta">
+                            {% if activity.description %}
+                                {{ activity.description }}<br>
+                            {% endif %}
+                            {{ activity.created_at }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">No activities found.</div>
+                {% endfor %}
+            </div>
+        </aside>
+
+    </div>
+
+</div>
+
+<script>
+    const buttons = document.querySelectorAll(".tab-btn");
+    const forms = document.querySelectorAll(".admin-form");
+
+    buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            const target = button.dataset.form;
+
+            buttons.forEach(function(item) {
+                item.classList.remove("active");
+            });
+
+            forms.forEach(function(form) {
+                form.classList.remove("active");
+            });
+
+            button.classList.add("active");
+            document.getElementById(target).classList.add("active");
+        });
+    });
+</script>
+
+{% endblock %}

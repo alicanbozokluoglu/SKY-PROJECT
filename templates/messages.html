@@ -1,171 +1,320 @@
 {% extends "base.html" %}
-<!-- this page uses the layout from "base.html". 
-this means the sidebar, header, and footer are automatically added to this page -->
 
 {% block content %}
-<!-- everything inside this block will appear in the main area of the page -->
 
+<style>
+    .messages-wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
 
-<h2>📩 Messages</h2>
-<!-- this is the main title of the page and tells the user they are in the messages section -->
+    .messages-title {
+        font-size: 28px;
+        margin: 0 0 24px;
+        color: #1f2937;
+    }
 
+    .messages-layout {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        gap: 28px;
+    }
 
-<!-- this section creates the top area of the page where the user can see message categories 
-and also a button to write a new message -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    .messages-sidebar {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 18px;
+        height: fit-content;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
 
+    .new-btn {
+        display: block;
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-bottom: 18px;
+    }
 
-    <!-- this part shows different message categories like inbox, sent, and drafts -->
-    <div style="display:flex; gap:20px; align-items:center;">
+    .new-btn:hover {
+        background: #1d4ed8;
+    }
 
+    .mail-tab {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 8px;
+        border-radius: 8px;
+        color: #334155;
+        font-size: 15px;
+        text-decoration: none;
+        margin-bottom: 6px;
+    }
 
-        <!-- this shows the inbox label and a blue circle with the number of messages -->
-        <div style="font-weight:bold; color:#0072ce;">
-            Inbox 
-            <span style="background:#0072ce; color:white; padding:3px 8px; border-radius:12px;">
-                3
-            </span>
-        </div>
+    .mail-tab.active,
+    .mail-tab:hover {
+        background: #eef6ff;
+        color: #0757b8;
+    }
 
+    .badge {
+        background: #ef4444;
+        color: white;
+        border-radius: 999px;
+        font-size: 12px;
+        padding: 3px 8px;
+        font-weight: bold;
+    }
 
-        <!-- this shows the sent messages section -->
-        <div>
-            Sent
-        </div>
+    .badge-blue {
+        background: #2563eb;
+    }
 
+    .content-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
 
-        <!-- this shows the drafts section with a purple number badge -->
-        <div>
-            Drafts 
-            <span style="background:purple; color:white; padding:3px 8px; border-radius:12px;">
-                2
-            </span>
-        </div>
+    .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
 
+    .section-head h2 {
+        margin: 0;
+        font-size: 22px;
+        color: #1f2937;
+    }
+
+    .success-box {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .message-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message-row {
+        display: grid;
+        grid-template-columns: 46px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px solid #eef2f7;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .message-row:last-child {
+        border-bottom: none;
+    }
+
+    .message-row:hover {
+        background: #f8fafc;
+    }
+
+    .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+    }
+
+    .message-subject {
+        font-size: 16px;
+        color: #111827;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .message-preview {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .message-meta {
+        text-align: right;
+        color: #667085;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .status-pill {
+        display: inline-block;
+        margin-top: 6px;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .unread {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .read {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .sent-pill {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        font-size: 15px;
+    }
+
+    @media (max-width: 900px) {
+        .messages-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="messages-wrap">
+
+    <h1 class="messages-title">Contact Teams</h1>
+
+    <div class="messages-layout">
+
+        <aside class="messages-sidebar">
+            <a href="{% url 'new_message' %}" class="new-btn">✉ New Message</a>
+
+            <a href="{% url 'messages' %}?tab=inbox" class="mail-tab {% if active_tab == 'inbox' %}active{% endif %}">
+                <span>Inbox</span>
+                <span class="badge">{{ unread_count }}</span>
+            </a>
+
+            <a href="{% url 'messages' %}?tab=sent" class="mail-tab {% if active_tab == 'sent' %}active{% endif %}">
+                <span>Sent</span>
+                <span class="badge badge-blue">{{ sent_count }}</span>
+            </a>
+        </aside>
+
+        <main>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="success-box">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            {% if active_tab == "inbox" %}
+
+                <div class="content-card">
+                    <div class="section-head">
+                        <h2>Inbox</h2>
+                        <span>{{ inbox_count }} messages</span>
+                    </div>
+
+                    <div class="message-list">
+                        {% for m in inbox %}
+                            <a href="{% url 'message_detail' m.id %}" class="message-row">
+                                <img
+                                    class="avatar"
+                                    src="https://ui-avatars.com/api/?name={{ m.sender.name|urlencode }}&background=0072ce&color=fff"
+                                    alt="{{ m.sender.name }}"
+                                >
+
+                                <div>
+                                    <div class="message-subject">{{ m.subject }}</div>
+                                    <div class="message-preview">
+                                        From {{ m.sender.name }} to {{ m.receiver.name }} —
+                                        {{ m.body|truncatechars:85 }}
+                                    </div>
+                                </div>
+
+                                <div class="message-meta">
+                                    {{ m.created_at|date:"M d, H:i" }}
+
+                                    {% if not m.is_read %}
+                                        <br><span class="status-pill unread">New</span>
+                                    {% else %}
+                                        <br><span class="status-pill read">Read</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class="empty">
+                                No inbox messages found in the database.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            {% endif %}
+
+            {% if active_tab == "sent" %}
+
+                <div class="content-card">
+                    <div class="section-head">
+                        <h2>Sent</h2>
+                        <span>{{ sent_count }} messages</span>
+                    </div>
+
+                    <div class="message-list">
+                        {% for m in sent %}
+                            <a href="{% url 'message_detail' m.id %}" class="message-row">
+                                <img
+                                    class="avatar"
+                                    src="https://ui-avatars.com/api/?name={{ m.receiver.name|urlencode }}&background=0757b8&color=fff"
+                                    alt="{{ m.receiver.name }}"
+                                >
+
+                                <div>
+                                    <div class="message-subject">{{ m.subject }}</div>
+                                    <div class="message-preview">
+                                        To {{ m.receiver.name }} —
+                                        {{ m.body|truncatechars:85 }}
+                                    </div>
+                                </div>
+
+                                <div class="message-meta">
+                                    {{ m.created_at|date:"M d, H:i" }}
+                                    <br><span class="status-pill sent-pill">Sent</span>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class="empty">
+                                No sent messages found in the database.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </main>
 
     </div>
-
-
-    <!-- this button takes the user to another page called "new_message" where they can write a new message -->
-    <a href="{% url 'new_message' %}">
-        <button style="background:#0072ce; color:white; border:none; padding:8px 12px;">
-            ✉️ New Message
-        </button>
-    </a>
 
 </div>
-
-
-<hr>
-<!-- this line separates the top section from the message list -->
-
-
-<!-- this section shows example messages that are hardcoded.
-these are only for design and do not come from the database -->
-<h3>📌 Recent Messages</h3>
-
-
-<!-- this is one example message showing a team and a short preview -->
-<div style="border-bottom:1px solid #ccc; padding:12px 0; display:flex; justify-content:space-between;">
-
-    <!-- this part shows the team name and short message -->
-    <div>
-        <strong>Frontend Development</strong><br>
-        <small>Request for API documentation update ...</small>
-    </div>
-
-    <!-- this part shows when the message was sent and its status -->
-    <div style="text-align:right;">
-        <small>2 hours ago</small><br>
-        <span style="color:#0072ce; font-weight:bold;">● New</span>
-    </div>
-
-</div>
-
-
-<!-- this is another example message -->
-<div style="border-bottom:1px solid #ccc; padding:12px 0; display:flex; justify-content:space-between;">
-
-    <div>
-        <strong>Backend Services</strong><br>
-        <small>Database optimisation inquiry ...</small>
-    </div>
-
-    <div style="text-align:right;">
-        <small>Yesterday</small><br>
-        <span style="color:green;">✔ Replied</span>
-    </div>
-
-</div>
-
-
-<!-- this is another example message -->
-<div style="border-bottom:1px solid #ccc; padding:12px 0; display:flex; justify-content:space-between;">
-
-    <div>
-        <strong>Security Team</strong><br>
-        <small>Encryption compliance review ...</small>
-    </div>
-
-    <div style="text-align:right;">
-        <small>2 days ago</small><br>
-        <span style="color:gray;">Sent</span>
-    </div>
-
-</div>
-
-
-<hr>
-<!-- this separates the example messages from the real database messages -->
-
-
-<!-- this section shows real messages that come from the database.
-these messages are sent from "views.py" using the variable called inbox -->
-<h3>Database Messages</h3>
-
-
-<!-- this loop goes through each message in the inbox list -->
-{% for m in inbox %}
-
-
-<!-- for each message, it creates a block to display it -->
-<div style="border-bottom:1px solid #ccc; padding:10px 0; {% if not m.is_read %}font-weight:bold;{% endif %}">
-<!-- if the message has not been read, the text becomes bold -->
-
-
-    <!-- if the message is unread, show a blue dot -->
-    {% if not m.is_read %}
-        <span style="color:#0072ce;">●</span>
-    {% endif %}
-
-
-    <!-- this shows the subject (title) of the message -->
-    <strong>{{ m.subject }}</strong><br>
-
-
-    <!-- this shows the name of the sender -->
-    <small>From: {{ m.sender.name }}</small><br>
-
-
-    <!-- this link opens the full message page using the message id -->
-    <a href="{% url 'message_detail' m.id %}">Open</a>
-
-</div>
-
-
-<!-- if there are no messages in the inbox, this text will be shown -->
-{% empty %}
-<p>No messages</p>
-
-
-{% endfor %}
-
 
 {% endblock %}
-<!-- this ends the main content section of the page -->
-
-<!--This page shows messages.
-At the top, there are tabs like inbox and drafts.
-Then we show example messages for design.
-After that, we show real messages from the database using a loop.
-Each message shows subject, sender, and a link to open it.-->

@@ -1,88 +1,617 @@
 {% extends "base.html" %}
-<!-- this page uses base.html so it gets sidebar, header, and footer -->
 
 {% block content %}
-<!-- everything here appears inside the main page -->
 
-<!-- this shows the team name -->
-<h2>{{ team.name }}</h2>
+<style>
+    .team-wrap {
+        max-width: 1260px;
+        margin: 0 auto;
+    }
 
+    .team-hero {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        margin-bottom: 24px;
+    }
 
-<!-- this section shows basic team information from the database -->
-<p><strong>Department:</strong> {{ team.department.name }}</p>
-<p><strong>Leader:</strong> {{ team.team_leader.name }}</p>
+    .hero-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+    }
 
+    .team-title {
+        margin: 0 0 8px;
+        font-size: 30px;
+        color: #111827;
+    }
 
-<hr>
-<!-- this line separates sections -->
+    .team-subtitle {
+        color: #667085;
+        font-size: 15px;
+    }
 
+    .hero-actions {
+        display: flex;
+        gap: 12px;
+    }
 
-<!-- this section shows REAL team information (important for marks) -->
-<h3>Team Information</h3>
+    .btn {
+        padding: 11px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+    }
 
-<!-- this shows team purpose (if added in model) -->
-<p>
-    <strong>Purpose:</strong>
-    {{ team.description|default:"No description added yet" }}
-</p>
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
 
-<!-- this shows contact email -->
-<p>
-    <strong>Contact Email:</strong>
-    {{ team.contact_email|default:"Not provided" }}
-</p>
+    .btn-outline {
+        border: 1px solid #d0d5dd;
+        color: #334155;
+        background: white;
+    }
 
-<!-- this shows repository link -->
-<p>
-    <strong>Code Repository:</strong>
-    {% if team.repo_link %}
-        <a href="{{ team.repo_link }}" target="_blank">View Repository</a>
-    {% else %}
-        Not available
+    .tabs {
+        display: flex;
+        gap: 24px;
+        margin-top: 28px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .tab {
+        padding-bottom: 12px;
+        color: #667085;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .tab.active {
+        color: #2563eb;
+        border-bottom: 3px solid #2563eb;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+
+    .panel {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 26px;
+        margin-bottom: 24px;
+    }
+
+    .panel h2 {
+        margin: 0 0 18px;
+        color: #111827;
+        font-size: 22px;
+    }
+
+    .description {
+        color: #334155;
+        line-height: 1.7;
+        font-size: 16px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-top: 24px;
+    }
+
+    .info-box {
+        border: 1px solid #eef2f7;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    .info-label {
+        color: #667085;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .info-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #111827;
+    }
+
+    .member-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .member-card,
+    .repo-card,
+    .dependency-card {
+        border: 1px solid #eef2f7;
+        background: #fbfcfe;
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .member-card {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .member-card img {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+    }
+
+    .member-name,
+    .repo-name,
+    .dependency-name {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 5px;
+    }
+
+    .member-meta,
+    .repo-meta,
+    .dependency-meta {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .leader-pill {
+        display: inline-block;
+        margin-top: 6px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .repo-list,
+    .dependency-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .repo-link {
+        display: inline-block;
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    .contact-card {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .contact-card img {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+    }
+
+    .contact-name {
+        font-weight: bold;
+        color: #111827;
+    }
+
+    .contact-role {
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .link-list a {
+        display: block;
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .item {
+        padding: 14px 0;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .item:last-child {
+        border-bottom: none;
+    }
+
+    .item-title {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 5px;
+    }
+
+    .item-meta {
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    @media (max-width: 1000px) {
+        .grid,
+        .info-grid,
+        .member-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-top {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="team-wrap">
+
+    <div class="team-hero">
+        <div class="hero-top">
+            <div>
+                <h1 class="team-title">{{ team.name }} Team</h1>
+
+                <div class="team-subtitle">
+                    {% if team.department %}
+                        {{ team.department.name }}
+                    {% else %}
+                        No department assigned
+                    {% endif %}
+
+                    {% if team.location %}
+                        · {{ team.location }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <a href="{% url 'new_message' %}" class="btn btn-primary">Email Team</a>
+                <a href="{% url 'schedule' %}" class="btn btn-outline">Schedule Meeting</a>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <a href="{% url 'team_detail' team.id %}?tab=overview" class="tab {% if active_tab == 'overview' %}active{% endif %}">Overview</a>
+            <a href="{% url 'team_detail' team.id %}?tab=members" class="tab {% if active_tab == 'members' %}active{% endif %}">Members</a>
+            <a href="{% url 'team_detail' team.id %}?tab=repositories" class="tab {% if active_tab == 'repositories' %}active{% endif %}">Repositories</a>
+            <a href="{% url 'team_detail' team.id %}?tab=dependencies" class="tab {% if active_tab == 'dependencies' %}active{% endif %}">Dependencies</a>
+        </div>
+    </div>
+
+    {% if active_tab == "overview" %}
+
+        <div class="grid">
+
+            <main>
+
+                <div class="panel">
+                    <h2>About the Team</h2>
+
+                    <div class="description">
+                        {% if team.description %}
+                            {{ team.description }}
+                        {% else %}
+                            No team description exists in the database.
+                        {% endif %}
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <div class="info-label">Active Projects</div>
+                            <div class="info-value">{{ team.active_projects_count }}</div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-label">Team Members</div>
+                            <div class="info-value">{{ team.total_members }}</div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-label">Repositories</div>
+                            <div class="info-value">{{ team.total_repositories }}</div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-label">Dependencies</div>
+                            <div class="info-value">{{ team.total_dependencies }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Recent Team Messages</h2>
+
+                    {% for message in team_messages %}
+                        <div class="item">
+                            <div class="item-title">{{ message.subject }}</div>
+                            <div class="item-meta">
+                                From {{ message.sender.name }} · {{ message.created_at|date:"M d, H:i" }}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty">No messages exist for this team.</div>
+                    {% endfor %}
+                </div>
+
+                <div class="panel">
+                    <h2>Team Schedule</h2>
+
+                    {% for event in team_events %}
+                        <div class="item">
+                            <div class="item-title">{{ event.title }}</div>
+                            <div class="item-meta">
+                                {{ event.date }} · {{ event.start_time }} - {{ event.end_time }}
+                                {% if event.platform %}
+                                    · {{ event.platform }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty">No schedule events exist for this team.</div>
+                    {% endfor %}
+                </div>
+
+            </main>
+
+            <aside>
+
+                <div class="panel">
+                    <h2>Key Contacts</h2>
+
+                    {% if team.team_leader %}
+                        <div class="contact-card">
+                            <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
+
+                            <div>
+                                <div class="contact-name">{{ team.team_leader.name }}</div>
+                                <div class="contact-role">
+                                    {% if team.team_leader.role %}
+                                        {{ team.team_leader.role }}
+                                    {% else %}
+                                        Team Lead
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="empty">No team leader assigned.</div>
+                    {% endif %}
+                </div>
+
+                <div class="panel">
+                    <h2>Quick Links</h2>
+
+                    <div class="link-list">
+                        {% if team.github_link %}
+                            <a href="{{ team.github_link }}" target="_blank">GitHub Organization</a>
+                        {% endif %}
+
+                        {% if team.documentation_link %}
+                            <a href="{{ team.documentation_link }}" target="_blank">Team Documentation</a>
+                        {% endif %}
+
+                        {% if team.calendar_link %}
+                            <a href="{{ team.calendar_link }}" target="_blank">Team Calendar</a>
+                        {% endif %}
+
+                        {% if not team.github_link and not team.documentation_link and not team.calendar_link %}
+                            <div class="empty">No quick links stored for this team.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Recent Activities</h2>
+
+                    {% for activity in team_activities %}
+                        <div class="item">
+                            <div class="item-title">{{ activity.title }}</div>
+
+                            {% if activity.description %}
+                                <div class="item-meta">{{ activity.description }}</div>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="empty">No activities exist for this team.</div>
+                    {% endfor %}
+                </div>
+
+            </aside>
+
+        </div>
+
     {% endif %}
-</p>
 
+    {% if active_tab == "members" %}
 
-<hr>
+        <div class="panel">
+            <h2>Team Members</h2>
 
+            <div class="member-grid">
 
-<!-- this section shows quick actions -->
-<h3>Quick Actions</h3>
+                {% if team.team_leader and not leader_in_members %}
+                    <div class="member-card">
+                        <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
 
-<!-- these buttons are UI only (not functional yet) -->
-<button>Send Email</button>
-<button>Book Meeting</button>
+                        <div>
+                            <div class="member-name">{{ team.team_leader.name }}</div>
+                            <div class="member-meta">
+                                {% if team.team_leader.role %}
+                                    {{ team.team_leader.role }}
+                                {% else %}
+                                    Team Lead
+                                {% endif %}
 
+                                {% if team.team_leader.email %}
+                                    <br>{{ team.team_leader.email }}
+                                {% endif %}
+                            </div>
+                            <span class="leader-pill">Team Leader</span>
+                        </div>
+                    </div>
+                {% endif %}
 
-<hr>
+                {% for member in members %}
+                    <div class="member-card">
+                        <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&background=random&color=fff">
 
+                        <div>
+                            <div class="member-name">{{ member.name }}</div>
+                            <div class="member-meta">
+                                {% if member.role %}
+                                    {{ member.role }}
+                                {% else %}
+                                    Team Member
+                                {% endif %}
 
-<!-- this section shows simple team stats -->
-<h3>Team Stats</h3>
+                                {% if member.email %}
+                                    <br>{{ member.email }}
+                                {% endif %}
 
-<!-- these are still simple but clearer -->
-<p>Total Teams in System: {{ team.department.team_set.count }}</p>
-<p>Total Departments: {{ team.department.id }}</p>
+                                {% if member.phone %}
+                                    <br>{{ member.phone }}
+                                {% endif %}
+                            </div>
 
+                            {% if team.team_leader and member.id == team.team_leader.id %}
+                                <span class="leader-pill">Team Leader</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    {% if not team.team_leader %}
+                        <div class="empty">No members exist for this team.</div>
+                    {% endif %}
+                {% endfor %}
 
-<hr>
+            </div>
+        </div>
 
+    {% endif %}
 
-<!-- this button goes back to teams page -->
-<a href="{% url 'teams' %}">← Back to Teams</a>
+    {% if active_tab == "repositories" %}
 
+        <div class="panel">
+            <h2>Repositories</h2>
+
+            <div class="repo-list">
+                {% for repository in repositories %}
+                    <div class="repo-card">
+                        <div class="repo-name">{{ repository.name }}</div>
+
+                        <div class="repo-meta">
+                            {% if repository.description %}
+                                {{ repository.description }}<br>
+                            {% endif %}
+
+                            {% if repository.technology %}
+                                Technology: {{ repository.technology }}<br>
+                            {% endif %}
+
+                            {% if repository.last_updated %}
+                                Last updated: {{ repository.last_updated }}
+                            {% endif %}
+                        </div>
+
+                        {% if repository.url %}
+                            <a href="{{ repository.url }}" target="_blank" class="repo-link">Open Repository</a>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div class="empty">No repositories exist for this team.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% endif %}
+
+    {% if active_tab == "dependencies" %}
+
+        <div class="panel">
+            <h2>Outgoing Dependencies</h2>
+
+            <div class="dependency-list">
+                {% for dependency in dependencies %}
+                    <div class="dependency-card">
+                        <div class="dependency-name">
+                            {{ team.name }} depends on {{ dependency.target_team.name }}
+                        </div>
+
+                        <div class="dependency-meta">
+                            {% if dependency.dependency_type %}
+                                Type: {{ dependency.dependency_type }}<br>
+                            {% endif %}
+
+                            Status: {{ dependency.status }}
+
+                            {% if dependency.description %}
+                                <br>{{ dependency.description }}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">No outgoing dependencies exist for this team.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Incoming Dependencies</h2>
+
+            <div class="dependency-list">
+                {% for dependency in incoming_dependencies %}
+                    <div class="dependency-card">
+                        <div class="dependency-name">
+                            {{ dependency.source_team.name }} depends on {{ team.name }}
+                        </div>
+
+                        <div class="dependency-meta">
+                            {% if dependency.dependency_type %}
+                                Type: {{ dependency.dependency_type }}<br>
+                            {% endif %}
+
+                            Status: {{ dependency.status }}
+
+                            {% if dependency.description %}
+                                <br>{{ dependency.description }}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">No incoming dependencies exist for this team.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}
-
-<!--
-this page shows one team in detail.
-it gets data from database using "views.py".
-
-it shows:
-- team name
-- department
-- leader
-- real team information (purpose, contact, repo)
-
-this makes the system more real and useful for users.
--->

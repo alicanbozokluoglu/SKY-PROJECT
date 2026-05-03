@@ -1,27 +1,144 @@
-<!-- this page lets the user reply to a message -->
+{% extends "base.html" %}
 
-<h2>Reply to: {{ original.subject }}</h2>
-<!-- this shows the subject of the original message
-so the user knows what they are replying to -->
+{% block content %}
 
+<style>
+    .reply-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
-<!-- this is a form that sends data to the server -->
-<form method="POST">
-    {% csrf_token %}
-    <!-- this is required by Django for security -->
+    .reply-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
 
+    .page-title {
+        font-size: 28px;
+        margin: 0 0 20px;
+        color: #1f2937;
+    }
 
-    <!-- this is where the user writes their reply -->
-    <textarea name="body" rows="6" style="width:100%;" placeholder="Write your reply..."></textarea>
+    .original-box {
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 22px;
+    }
 
+    .original-title {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 8px;
+    }
 
-    <br><br>
+    .original-meta {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.5;
+    }
 
+    label {
+        display: block;
+        font-weight: bold;
+        color: #334155;
+        margin-bottom: 8px;
+    }
 
-    <!-- this button sends the reply -->
-    <button type="submit">Send Reply</button>
-</form>
+    textarea {
+        width: 100%;
+        min-height: 180px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 13px 14px;
+        font-size: 15px;
+        outline: none;
+        resize: vertical;
+        font-family: Arial, sans-serif;
+    }
 
-<!--- This page allows the user to reply to a message.
-It shows the original subject, and the user can write a reply.
-When they click send, the message is saved and sent.-->
+    textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    .button-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .cancel-btn {
+        padding: 12px 18px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        color: #334155;
+        background: white;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .send-btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="reply-wrap">
+
+    <h1 class="page-title">Reply Message</h1>
+
+    <div class="reply-card">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-box">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="original-box">
+            <div class="original-title">{{ original.subject }}</div>
+
+            <div class="original-meta">
+                From {{ original.sender.name }} to {{ original.receiver.name }}<br>
+                {{ original.created_at|date:"M d, Y H:i" }}
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Your Reply</label>
+            <textarea name="body" required></textarea>
+
+            <div class="button-row">
+                <a href="{% url 'message_detail' original.id %}" class="cancel-btn">Cancel</a>
+                <button type="submit" class="send-btn">Send Reply</button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

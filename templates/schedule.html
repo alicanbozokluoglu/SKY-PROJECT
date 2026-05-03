@@ -1,133 +1,531 @@
 {% extends "base.html" %}
-<!-- this page uses "base.html"
-so it automatically gets the sidebar, header, and footer -->
 
 {% block content %}
-<!-- everything inside this block will go into the main area of the page -->
 
+<style>
+    .schedule-wrap {
+        max-width: 1260px;
+        margin: 0 auto;
+    }
 
-<h2>📅 Schedule</h2>
-<!-- this is the main title of the page -->
+    .schedule-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+    }
 
+    .schedule-title {
+        margin: 0;
+        font-size: 30px;
+        color: #111827;
+    }
 
-<!-- this section is the top row of the page.
-it shows the page title on the left and the user name on the right -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <div>
-        <strong>📅 Schedule</strong>
-    </div>
+    .schedule-subtitle {
+        color: #667085;
+        font-size: 15px;
+        margin-top: 6px;
+    }
 
-    <div>
-        👤 Sarah Johnson
-    </div>
-</div>
+    .add-button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 12px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
+    .add-button:hover {
+        background: #1d4ed8;
+    }
 
-<!-- this section is the navigation row.
-it shows the month, view buttons, and upcoming section title -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 28px;
+    }
 
-    <div>
-        ◀ May 2026 ▶
-        <!-- arrows allow moving between months (just visual for now) -->
-    </div>
+    .stat-card {
+        background: white;
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
 
-    <div>
-        <button>Monthly</button>
-        <button>Weekly</button>
-        <button>Agenda</button>
-        <!-- these buttons change view (currently only visual) -->
-    </div>
+    .stat-label {
+        color: #334e7d;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
 
-    <div>
-        <strong>📌 Upcoming Schedule</strong>
-    </div>
+    .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 10px;
+    }
 
-</div>
+    .stat-source {
+        color: green;
+        font-size: 13px;
+    }
 
+    .schedule-layout {
+        display: grid;
+        grid-template-columns: 1.35fr 0.85fr;
+        gap: 28px;
+    }
 
-<!-- this section creates the main layout with two boxes:
-left = calendar, right = upcoming schedule -->
-<div style="display:flex; gap:20px;">
+    .panel {
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 12px;
+        padding: 26px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        margin-bottom: 28px;
+    }
 
+    .panel h2 {
+        margin: 0 0 20px;
+        font-size: 24px;
+        color: #1f2937;
+    }
 
-    <!-- this is the calendar box -->
-    <div style="flex:2; border:1px solid #ccc; padding:15px;">
+    .filters {
+        display: grid;
+        grid-template-columns: 1fr 220px;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
 
-        <!-- this row shows days of the week -->
-        <div style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-weight:bold;">
-            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    .filters input,
+    .filters select {
+        height: 46px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 0 14px;
+        font-size: 15px;
+        background: white;
+        outline: none;
+    }
+
+    .filters input:focus,
+    .filters select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    .event-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .event-card {
+        border: 1px solid #dce3ee;
+        border-radius: 12px;
+        padding: 18px;
+        display: grid;
+        grid-template-columns: 78px 1fr auto;
+        gap: 18px;
+        align-items: center;
+        background: #fbfcfe;
+    }
+
+    .date-box {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #3156c9, #20aee3);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .date-day {
+        font-size: 26px;
+        line-height: 1;
+    }
+
+    .date-month {
+        font-size: 12px;
+        margin-top: 5px;
+        text-transform: uppercase;
+    }
+
+    .event-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .event-meta {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .event-team {
+        display: inline-block;
+        background: #e0f2fe;
+        color: #0369a1;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+
+    .time-pill {
+        background: #eef2ff;
+        color: #3730a3;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        color: #334155;
+        font-size: 14px;
+        margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        outline: none;
+    }
+
+    .form-group textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .save-button {
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 13px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .save-button:hover {
+        background: #1d4ed8;
+    }
+
+    .success-box {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .empty {
+        color: #667085;
+        border: 1px dashed #d0d5dd;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        font-size: 15px;
+    }
+
+    .next-event-card {
+        border-radius: 12px;
+        background: linear-gradient(135deg, #3156c9, #20aee3);
+        color: white;
+        padding: 22px;
+        margin-bottom: 22px;
+    }
+
+    .next-event-label {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-bottom: 10px;
+    }
+
+    .next-event-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .next-event-meta {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 1000px) {
+        .schedule-layout,
+        .stats-grid,
+        .filters,
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .schedule-title-row {
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .event-card {
+            grid-template-columns: 1fr;
+        }
+
+        .time-pill {
+            width: fit-content;
+        }
+    }
+</style>
+
+<div class="schedule-wrap">
+
+    <div class="schedule-title-row">
+        <div>
+            <h1 class="schedule-title">Schedule</h1>
+            <div class="schedule-subtitle">
+                Team meetings and events loaded from the database.
+            </div>
         </div>
 
-        <!-- this row shows dates -->
-        <div style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; margin-top:10px; gap:10px;">
+        <button class="add-button" onclick="document.getElementById('addEventPanel').scrollIntoView({behavior: 'smooth'})">
+            + New Event
+        </button>
+    </div>
 
-            <div>30</div>
-            <div>31</div>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <div class="error-box">{{ message }}</div>
+            {% else %}
+                <div class="success-box">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
-            <!-- this date has a meeting -->
-            <div style="background:#eef; padding:10px; border-radius:5px;">
-                1<br>
-                <small>10:00 AM</small>
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-label">Total Events</div>
+            <div class="stat-number">{{ total_events }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Teams With Events</div>
+            <div class="stat-number">{{ total_teams_with_events }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Available Teams</div>
+            <div class="stat-number">{{ teams.count }}</div>
+            <div class="stat-source">Database</div>
+        </div>
+
+    </div>
+
+    <div class="schedule-layout">
+
+        <main>
+
+            <div class="panel">
+                <h2>Upcoming Schedule</h2>
+
+                <form method="get" class="filters">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search schedule..."
+                        value="{{ search }}"
+                    >
+
+                    <select name="team" onchange="this.form.submit()">
+                        <option value="">All Teams</option>
+
+                        {% for team in teams %}
+                            <option value="{{ team.id }}" {% if selected_team == team.id|stringformat:"s" %}selected{% endif %}>
+                                {{ team.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+
+                <div class="event-list">
+                    {% for event in events %}
+                        <div class="event-card">
+                            <div class="date-box">
+                                <div class="date-day">{{ event.date|date:"d" }}</div>
+                                <div class="date-month">{{ event.date|date:"M" }}</div>
+                            </div>
+
+                            <div>
+                                <div class="event-title">{{ event.title }}</div>
+
+                                <div class="event-meta">
+                                    {{ event.date|date:"l, F d, Y" }}
+
+                                    {% if event.platform %}
+                                        <br>{{ event.platform }}
+                                    {% endif %}
+
+                                    {% if event.notes %}
+                                        <br>{{ event.notes }}
+                                    {% endif %}
+                                </div>
+
+                                {% if event.team %}
+                                    <span class="event-team">{{ event.team.name }}</span>
+                                {% else %}
+                                    <span class="event-team">No team assigned</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="time-pill">
+                                {{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty">No schedule events found in the database.</div>
+                    {% endfor %}
+                </div>
             </div>
 
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
+        </main>
 
-        </div>
+        <aside>
+
+            {% if next_event %}
+                <div class="next-event-card">
+                    <div class="next-event-label">Next Event</div>
+                    <div class="next-event-title">{{ next_event.title }}</div>
+
+                    <div class="next-event-meta">
+                        {{ next_event.date|date:"F d, Y" }}<br>
+                        {{ next_event.start_time|time:"H:i" }} - {{ next_event.end_time|time:"H:i" }}
+
+                        {% if next_event.team %}
+                            <br>{{ next_event.team.name }}
+                        {% endif %}
+
+                        {% if next_event.platform %}
+                            <br>{{ next_event.platform }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="panel" id="addEventPanel">
+                <h2>Create Event</h2>
+
+                <form method="post" class="form-grid">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>Event Title</label>
+                        <input type="text" name="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Team</label>
+                        <select name="team">
+                            <option value="">No team</option>
+
+                            {% for team in teams %}
+                                <option value="{{ team.id }}">{{ team.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" name="date" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="time" name="start_time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" name="end_time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Platform / Location</label>
+                        <input type="text" name="platform" placeholder="Google Meet, Teams, Office...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea name="notes" placeholder="Optional notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="save-button">Save Event</button>
+                </form>
+            </div>
+
+        </aside>
 
     </div>
 
-
-    <!-- this is the upcoming schedule box -->
-    <div style="flex:1; border:1px solid #ccc; padding:15px;">
-
-        <h3>📌 Upcoming Schedule</h3>
-
-        <!-- this shows the next meeting -->
-        <div style="margin-bottom:15px;">
-            <strong>10:00 AM - 11:00 AM</strong><br>
-            Product Team
-        </div>
-
-        <!-- this section shows small profile images (avatars) -->
-        <div style="display:flex; align-items:center; gap:5px; margin-bottom:10px;">
-
-            <!-- these images are generated using an online avatar service -->
-            <img src="https://ui-avatars.com/api/?name=John+Smith&background=0072ce&color=fff" style="width:30px; border-radius:50%;">
-            <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=28a745&color=fff" style="width:30px; border-radius:50%;">
-            <img src="https://ui-avatars.com/api/?name=James+Brown&background=6f42c1&color=fff" style="width:30px; border-radius:50%;">
-
-            <!-- this shows there are more people -->
-            <span style="margin-left:5px;">+3 more</span>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- this is a big button at the bottom to create a meeting -->
-<div style="margin-top:20px;">
-    <button style="
-        width:100%;
-        padding:12px;
-        background:#0072ce;
-        color:white;
-        border:none;
-        font-size:16px;
-        cursor:pointer;
-    ">
-        ➕ Schedule Meeting
-    </button>
 </div>
 
 {% endblock %}
-
-<!-- This page shows a calendar and upcoming meetings.
-On the left side, we show dates like a calendar.
-On the right side, we show the next meeting and people involved.
-At the bottom, there is a button to create a new meeting.-->

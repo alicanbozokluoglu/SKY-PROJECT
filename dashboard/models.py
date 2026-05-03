@@ -2,113 +2,243 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# this class represents a person (a real user in the system)
-class Person(models.Model):
-
-    # this connects Django login user to our custom person
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-
-    # this stores the person's full name
+class Department(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
-    # this shows the name in admin panel
 
 
-# this class represents a department (like Engineering)
-class Department(models.Model):
+class Person(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
-    # department name
-    name = models.CharField(max_length=100)
-
-    # this links to a person who is the head of department
-    department_head = models.ForeignKey(
-        'Person',
+    team = models.ForeignKey(
+        "Team",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="headed_departments"
+        related_name="members"
     )
+
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+    photo = models.ImageField(upload_to="people/", null=True, blank=True)
 
     def __str__(self):
         return self.name
 
 
-# this class represents a team inside a department
-class Team(models.Model):
+class UserSetting(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="settings_profile"
+    )
 
-    # team name
-    name = models.CharField(max_length=100)
-
-    # which department this team belongs to
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-
-    # who is leading this team
-    team_leader = models.ForeignKey(
-        Person,
+    job_title = models.CharField(max_length=120, blank=True)
+    department = models.ForeignKey(
+        Department,
         on_delete=models.SET_NULL,
         null=True,
         blank=True
     )
 
-    # ✅ IMPORTANT: these are the new REAL fields (for higher marks)
+    email_notifications = models.BooleanField(default=True)
+    message_notifications = models.BooleanField(default=True)
+    meeting_notifications = models.BooleanField(default=True)
 
-    # this explains what the team does
+    profile_visibility = models.CharField(
+        max_length=50,
+        choices=[
+            ("public", "Public"),
+            ("team_only", "Team Only"),
+            ("private", "Private"),
+        ],
+        default="public"
+    )
+
+    default_view = models.CharField(
+        max_length=50,
+        choices=[
+            ("dashboard", "Dashboard"),
+            ("teams", "Teams"),
+            ("messages", "Messages"),
+            ("schedule", "Schedule"),
+        ],
+        default="dashboard"
+    )
+
+    theme = models.CharField(
+        max_length=50,
+        choices=[
+            ("light", "Light"),
+            ("dark", "Dark"),
+            ("system", "System"),
+        ],
+        default="light"
+    )
+
+    language = models.CharField(max_length=50, default="English")
+    timezone = models.CharField(max_length=100, default="UTC")
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} settings"
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=100)
+
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    team_leader = models.ForeignKey(
+        Person,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="leading_teams"
+    )
+
     description = models.TextField(blank=True)
+    location = models.CharField(max_length=100, blank=True)
 
-    # this stores contact email of team
-    contact_email = models.EmailField(blank=True)
+    members_count = models.PositiveIntegerField(default=0)
+    repositories_count = models.PositiveIntegerField(default=0)
+    active_projects_count = models.PositiveIntegerField(default=0)
 
-    # this stores github or repo link
-    repo_link = models.URLField(blank=True)
+    status = models.CharField(max_length=50, default="Active")
+
+    github_link = models.URLField(blank=True)
+    documentation_link = models.URLField(blank=True)
+    calendar_link = models.URLField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def total_members(self):
+        count = self.members.count()
+
+        if self.team_leader:
+            if self.team_leader.team_id != self.id:
+                count += 1
+
+        return count
+
+    def total_repositories(self):
+        return self.repositories.count()
+
+    def total_dependencies(self):
+        return self.dependencies_from.count()
 
     def __str__(self):
         return self.name
 
 
-# this class represents messages between people and teams
+class Repository(models.Model):
+    team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name="repositories"
+    )
+
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True)
+    technology = models.CharField(max_length=100, blank=True)
+    last_updated = models.DateField(null=True, blank=True)
+    url = models.URLField(blank=True)
+
+    class Meta:
+        verbose_name_plural = "Repositories"
+
+    def __str__(self):
+        return self.name
+
+
+class TeamDependency(models.Model):
+    source_team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name="dependencies_from"
+    )
+
+    target_team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name="dependencies_to"
+    )
+
+    description = models.TextField(blank=True)
+    dependency_type = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=50, default="Active")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Team Dependencies"
+
+    def __str__(self):
+        return f"{self.source_team.name} → {self.target_team.name}"
+
+
 class Message(models.Model):
-
-    # who sent the message
     sender = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="sent_messages")
-
-    # which team receives the message
     receiver = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="received_messages")
 
-    # message title
     subject = models.CharField(max_length=200)
-
-    # message content
     body = models.TextField()
 
-    # whether message is read or not
     is_read = models.BooleanField(default=False)
-
-    # when message was created
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.subject
 
 
-"""
-this file defines the database.
+class Activity(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
 
-it creates 4 tables:
-- person → users
-- department → groups
-- team → teams inside departments
-- message → communication
+    related_team = models.ForeignKey(
+        Team,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
-each class = one table
-each field = one column in database
+    created_at = models.DateTimeField(auto_now_add=True)
 
-important:
-team now has real fields:
-- description (what team does)
-- contact_email (how to contact)
-- repo_link (code location)
+    class Meta:
+        verbose_name_plural = "Activities"
 
-this makes the system more real and useful.
-"""
+    def __str__(self):
+        return self.title
+
+
+class ScheduleEvent(models.Model):
+    title = models.CharField(max_length=200)
+
+    team = models.ForeignKey(
+        Team,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    platform = models.CharField(max_length=100, blank=True)
+    notes = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

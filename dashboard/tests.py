@@ -1,213 +1,362 @@
-from django.test import TestCase
-# this imports Django testing tool
-# it helps us check if our code works correctly
-
+from django.test import TestCase, Client
 from django.contrib.auth.models import User
-# this is the built-in user system (login, password, etc.)
-
 from django.urls import reverse
-# this helps us find URLs from "urls.py" using names
+from django.core.management import call_command
+from unittest.mock import patch
+import pandas as pd
 
-from .models import Department, Team, Person
-# this imports our database tables from "models.py"
+from .models import (
+    Department, Team, Person, UserSetting,
+    Repository, TeamDependency, Message,
+    Activity, ScheduleEvent
+)
 
 
-# this section tests the database models
-# it checks if data like teams and users are created correctly
-class ModelTest(TestCase):
-
+class BaseTestSetup(TestCase):
     def setUp(self):
-        # this function runs before each test
-        # it creates sample data for testing
+        self.client = Client()
 
-        self.user = User.objects.create_user(
-            username="testuser",
-            password="testpass123"
-        )
-        # this creates a test login user
+        # Create users
+        self.user = User.objects.create_user(username="user", password="pass123")
+        self.admin = User.objects.create_user(username="admin", password="pass123", is_staff=True)
 
-        self.person = Person.objects.create(
-            name="Test Person",
-            user=self.user
-        )
-        # this creates a person and links it to the user
+        # Create department
+        self.department = Department.objects.create(name="IT")
 
-        self.department = Department.objects.create(
-            name="Engineering",
-            department_head=self.person
-        )
-        # this creates a department and assigns a head
+        # Create person
+        self.person = Person.objects.create(user=self.user, name="Test User")
 
+        # Create team
         self.team = Team.objects.create(
-            name="Backend Team",
+            name="Dev Team",
             department=self.department,
             team_leader=self.person
         )
-        # this creates a team and connects it to department and leader
+
+        self.person.team = self.team
+        self.person.save()
 
 
-    def test_team_created(self):
-        # this test checks if the team name is saved correctly
-        self.assertEqual(self.team.name, "Backend Team")
+# =========================
+# MODEL TESTS
+# =========================
 
+class ModelTests(BaseTestSetup):
 
-    def test_department_link(self):
-        # this test checks if the team is linked to the correct department
-        self.assertEqual(self.team.department.name, "Engineering")
+    def test_team_total_members_leader_not_in_team(self):
+        leader = Person.objects.create(name="Leader")
+        self.team.team_leader = leader
+        self.team.save()
 
+        self.assertEqual(self.team.total_members(), 1)
 
-    def test_person_link(self):
-        # this test checks if the person is linked to the correct user
-        self.assertEqual(self.person.user.username, "testuser")
+    def test_repository_creation(self):
+        repo = Repository.objects.create(team=self.team, name="Repo1")
+        self.assertEqual(repo.team, self.team)
 
+    def test_dependency_creation(self):
+        team2 = Team.objects.create(name="Team2")
+        dep = TeamDependency.objects.create(source_team=self.team, target_team=team2)
+        self.assertEqual(dep.source_team, self.team)
 
-# this section tests the pages (views)
-# it checks if pages load and behave correctly
-class ViewTest(TestCase):
-
-    def setUp(self):
-        # create a test user for login tests
-        self.user = User.objects.create_user(
-            username="testuser",
-            password="testpass123"
+    def test_message_creation(self):
+        msg = Message.objects.create(
+            sender=self.person,
+            receiver=self.team,
+            subject="Hello",
+            body="Test"
         )
+        self.assertFalse(msg.is_read)
 
-
-    def test_login_page_loads(self):
-        # this test checks if the login page opens correctly
-        response = self.client.get("/")
-        self.assertEqual(response.status_code, 200)
-        # 200 means the page loaded successfully
-
-
-    def test_dashboard_requires_login(self):
-        # this test checks if dashboard blocks users who are not logged in
-        response = self.client.get("/dashboard/")
-        self.assertEqual(response.status_code, 302)
-        # 302 means it redirects (because login is required)
-
-
-    def test_dashboard_after_login(self):
-        # this test logs in and checks if dashboard works
-        self.client.login(username="testuser", password="testpass123")
-
-        response = self.client.get("/dashboard/")
-        self.assertEqual(response.status_code, 200)
-        # 200 means the page works after login
-
-
-# this section tests login system (authentication)
-# it checks if login works correctly
-class AuthTest(TestCase):
-
-    def setUp(self):
-        # create a user for login testing
-        self.user = User.objects.create_user(
-            username="testuser",
-            password="testpass123"
+    def test_schedule_event(self):
+        event = ScheduleEvent.objects.create(
+            title="Meeting",
+            team=self.team,
+            date="2026-01-01",
+            start_time="10:00",
+            end_time="11:00"
         )
+        self.assertEqual(event.team, self.team)
 
+
+# =========================
+# AUTH TESTS
+# =========================
+
+class AuthTests(BaseTestSetup):
 
     def test_login_success(self):
-        # this test checks if login works with correct password
-        login = self.client.login(
-            username="testuser",
-            password="testpass123"
-        )
-        self.assertTrue(login)
-        # True means login was successful
-
+        response = self.client.post(reverse("login"), {
+            "username": "user",
+            "password": "pass123"
+        })
+        self.assertEqual(response.status_code, 302)
 
     def test_login_fail(self):
-        # this test checks if login fails with wrong password
-        login = self.client.login(
-            username="testuser",
-            password="wrongpass"
-        )
-        self.assertFalse(login)
-        # False means login failed (correct behaviour)
-
-# this section tests search function
-# it checks if search finds correct teams
-
-class SearchTest(TestCase):
-
-    def setUp(self):
-        # create user and data
-        self.user = User.objects.create_user(
-            username="testuser",
-            password="testpass123"
-        )
-
-        self.person = Person.objects.create(name="Olivia Carter", user=self.user)
-
-        self.department = Department.objects.create(name="Engineering")
-
-        self.team1 = Team.objects.create(
-            name="Backend Team",
-            department=self.department,
-            team_leader=self.person
-        )
-
-        self.team2 = Team.objects.create(
-            name="Frontend Team",
-            department=self.department,
-            team_leader=self.person
-        )
-
-    def test_search_by_name(self):   # ✅ NOW INSIDE CLASS
-
-        # login first
-        self.client.login(username="testuser", password="testpass123")
-
-        # search for backend
-        response = self.client.get(reverse("teams"), {"q": "Backend"})
-        # check page loads
+        response = self.client.post(reverse("login"), {
+            "username": "user",
+            "password": "wrong"
+        })
         self.assertEqual(response.status_code, 200)
-        
-        self.assertTemplateUsed(response, "teams.html")
 
-        # check correct results
-        self.assertContains(response, "Backend Team")
-        self.assertNotContains(response, "Frontend Team")
-        
-# this section tests new team fields
-# it checks if description, email and repo are saved
-class TeamFieldTest(TestCase):
+    def test_register_user(self):
+        self.client.post(reverse("register"), {
+            "fullname": "New User",
+            "username": "newuser",
+            "email": "test@test.com",
+            "password": "12345678",
+            "confirm_password": "12345678"
+        })
+        self.assertTrue(User.objects.filter(username="newuser").exists())
+
+
+# =========================
+# DASHBOARD TESTS
+# =========================
+
+class DashboardTests(BaseTestSetup):
+
+    def test_dashboard_requires_login(self):
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_dashboard_logged_in(self):
+        self.client.login(username="user", password="pass123")
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+
+
+# =========================
+# ADMIN TESTS
+# =========================
+
+class AdminTests(BaseTestSetup):
+
+    def test_admin_access_denied(self):
+        self.client.login(username="user", password="pass123")
+        response = self.client.get(reverse("admin_dashboard"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_admin_access_allowed(self):
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("admin_dashboard"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_team(self):
+        self.client.login(username="admin", password="pass123")
+
+        response = self.client.post(reverse("admin_team_management"), {
+            "action": "create_team",
+            "name": "New Team"
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Team.objects.filter(name="New Team").exists())
+        self.assertEqual(Activity.objects.count(), 1)
+
+    def test_delete_team(self):
+        self.client.login(username="admin", password="pass123")
+
+        self.client.post(reverse("admin_team_management"), {
+            "action": "delete_team",
+            "team_id": self.team.id
+        })
+
+        self.assertFalse(Team.objects.filter(id=self.team.id).exists())
+
+
+# =========================
+# TEAMS
+# =========================
+
+class TeamTests(BaseTestSetup):
+
+    def test_teams_page(self):
+        self.client.login(username="user", password="pass123")
+        response = self.client.get(reverse("teams"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_team_detail(self):
+        self.client.login(username="user", password="pass123")
+        response = self.client.get(reverse("team_detail", args=[self.team.id]))
+        self.assertEqual(response.status_code, 200)
+
+
+# =========================
+# MESSAGES
+# =========================
+
+class MessageTests(BaseTestSetup):
+
+    def test_send_message(self):
+        self.client.login(username="user", password="pass123")
+
+        self.client.post(reverse("new_message"), {
+            "team": self.team.id,
+            "subject": "Test",
+            "body": "Hello"
+        })
+
+        self.assertEqual(Message.objects.count(), 1)
+
+    def test_reply_message(self):
+        msg = Message.objects.create(
+            sender=self.person,
+            receiver=self.team,
+            subject="Hi",
+            body="Test"
+        )
+
+        self.client.login(username="user", password="pass123")
+
+        self.client.post(reverse("reply_message", args=[msg.id]), {
+            "body": "Reply"
+        })
+
+        self.assertEqual(Message.objects.count(), 2)
+
+    def test_unread_message_count(self):
+        self.team.team_leader = self.person
+        self.team.save()
+
+        Message.objects.create(
+            sender=self.person,
+            receiver=self.team,
+            subject="Test",
+            body="Test",
+            is_read=False
+        )
+
+        self.client.login(username="user", password="pass123")
+        response = self.client.get(reverse("messages"))
+
+        self.assertContains(response, "1")
+
+
+# =========================
+# SCHEDULE
+# =========================
+
+class ScheduleTests(BaseTestSetup):
+
+    def test_create_event(self):
+        self.client.login(username="user", password="pass123")
+
+        self.client.post(reverse("schedule"), {
+            "title": "Meeting",
+            "date": "2026-01-01",
+            "start_time": "10:00",
+            "end_time": "11:00"
+        })
+
+        self.assertEqual(ScheduleEvent.objects.count(), 1)
+
+
+# =========================
+# SETTINGS
+# =========================
+
+class SettingsTests(BaseTestSetup):
+
+    def test_update_settings(self):
+        self.client.login(username="user", password="pass123")
+
+        self.client.post(reverse("settings"), {
+            "full_name": "Updated Name",
+            "email": "new@test.com"
+        })
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "Updated Name")
+
+
+# =========================
+# PROFILE
+# =========================
+
+class ProfileTests(BaseTestSetup):
+
+    def test_profile_page(self):
+        self.client.login(username="user", password="pass123")
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+
+
+# =========================
+# FILTERING
+# =========================
+
+class FilteringTests(BaseTestSetup):
 
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser",
-            password="testpass123"
-        )
+        super().setUp()
+        self.client.login(username="user", password="pass123")
+        Team.objects.create(name="Alpha Team", department=self.department)
 
-        self.person = Person.objects.create(name="Test Person", user=self.user)
-
-        self.department = Department.objects.create(name="Engineering")
-
-        self.team = Team.objects.create(
-            name="DevOps Team",
-            department=self.department,
-            team_leader=self.person,
-            description="Handles deployment",
-            contact_email="devops@sky.com",
-            repo_link="https://github.com/devops"
-        )
-
-    def test_description_saved(self):
-        self.assertEqual(self.team.description, "Handles deployment")
-
-    def test_email_saved(self):
-        self.assertEqual(self.team.contact_email, "devops@sky.com")
-
-    def test_repo_saved(self):
-        self.assertEqual(self.team.repo_link, "https://github.com/devops")
+    def test_search_filter(self):
+        response = self.client.get(reverse("teams"), {"search": "Alpha"})
+        self.assertContains(response, "Alpha Team")
 
 
-"""This file checks if your system works.
+# =========================
+# EDGE CASES
+# =========================
 
-It checks:
+class EdgeCaseTests(BaseTestSetup):
 
-data is saved correctly
-pages open correctly
-login works"""
+    def test_register_missing_fields(self):
+        response = self.client.post(reverse("register"), {
+            "username": "",
+            "password": ""
+        })
+        self.assertEqual(response.status_code, 302)
+
+    def test_create_team_no_name(self):
+        self.client.login(username="admin", password="pass123")
+
+        response = self.client.post(reverse("admin_team_management"), {
+            "action": "create_team",
+            "name": ""
+        })
+
+        self.assertEqual(response.status_code, 302)
+
+
+# =========================
+# PERMISSIONS
+# =========================
+
+class PermissionEdgeTests(BaseTestSetup):
+
+    def test_admin_cannot_delete_self(self):
+        self.client.login(username="admin", password="pass123")
+
+        response = self.client.post(reverse("admin_user_access"), {
+            "action": "delete_user",
+            "user_id": self.admin.id
+        })
+
+        self.assertEqual(response.status_code, 302)
+
+
+# =========================
+# IMPORT EXCEL
+# =========================
+
+class ImportExcelTests(TestCase):
+
+    @patch("dashboard.management.commands.import_excel.pd.read_excel")
+    def test_import_excel(self, mock_read_excel):
+        data = {
+            "Department": ["IT"],
+            "Team Leader": ["John Doe"],
+            "Department Head": ["Jane Smith"],
+            "Team Name": ["Dev Team"]
+        }
+
+        mock_read_excel.return_value = pd.DataFrame(data)
+
+        call_command("import_excel")
+
+        self.assertTrue(Team.objects.filter(name="Dev Team").exists())
+        self.assertTrue(Person.objects.filter(name="John Doe").exists()) 
