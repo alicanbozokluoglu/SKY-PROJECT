@@ -279,6 +279,9 @@
             <a href="{% url 'organisation_map' %}" class="{% if request.resolver_match.url_name == 'organisation_map' %}active{% endif %}">
                 🔗 Organisation
             </a>
+            <a href="{% url 'departments' %}"  class="{% if request.resolver_match.url_name == 'departments' %}active{% endif %}">
+                🏢 Departments
+            </a>
 
             <a href="{% url 'messages' %}" class="{% if request.resolver_match.url_name == 'messages' or request.resolver_match.url_name == 'new_message' or request.resolver_match.url_name == 'message_detail' or request.resolver_match.url_name == 'reply_message' %}active{% endif %}">
                 💬 Messages
