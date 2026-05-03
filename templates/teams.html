@@ -1,29 +1,24 @@
 {% extends "base.html" %}
-<!-- this page uses "base.html"
-so it automatically gets sidebar, header, and footer -->
+<!-- this page uses base.html layout -->
 
 {% block content %}
-<!-- everything inside this block appears in the main content area -->
+<!-- this content goes into main area -->
 
-
-<!-- this is the page title -->
 <h2>👥 Teams</h2>
 
 
-<!-- this section is the top control bar -->
-<!-- it shows options like list view, grid view, filter and sort -->
+<!-- this section is the top bar with options -->
 <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
 
-    <!-- left side: title + view options -->
     <div>
         <strong>Team List</strong>
 
-        <!-- these are just visual buttons (not functional yet) -->
+        <!-- these are visual only -->
         <span style="margin-left:10px;">📋 List</span>
         <span style="margin-left:10px;">🔲 Grid</span>
     </div>
 
-    <!-- right side: filter and sort (UI only for now) -->
+    <!-- filter and sort (not connected yet) -->
     <div>
         🔍 Filter &nbsp;&nbsp; 🔃 Sort
     </div>
@@ -31,20 +26,18 @@ so it automatically gets sidebar, header, and footer -->
 </div>
 
 
-<!-- this section go through all teams and show one card for each. It shows all teams in a grid (2 columns) -->
+<!-- this section shows all teams in grid -->
 <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
 
 
-    <!-- this loop goes through all teams sent from "views.py" -->
+    <!-- loop through all teams -->
     {% for team in teams %}
 
-    <!-- this is one team card -->
     <div style="border:1px solid #ccc; padding:15px;">
 
 
-        <!-- this section shows an icon depending on team name -->
+        <!-- icon based on team name -->
         <div style="font-size:28px; margin-bottom:8px;">
-
             {% if "Frontend" in team.name %}
                 🖥️
             {% elif "Backend" in team.name %}
@@ -54,32 +47,30 @@ so it automatically gets sidebar, header, and footer -->
             {% else %}
                 👨‍💻
             {% endif %}
-
         </div>
 
 
-        <!-- this shows the team name -->
+        <!-- team name -->
         <h3>{{ team.name }}</h3>
 
 
-        <!-- this shows the department this team belongs to -->
+        <!-- department -->
         <p style="color:#555;">{{ team.department.name }}</p>
 
 
-        <!-- this shows the team leader -->
+        <!-- team leader -->
         <p>
             👤 <strong>{{ team.team_leader.name }}</strong>
         </p>
 
 
-        <!-- this shows number of members (fake number for design) -->
-        <!-- forloop.counter means position in loop (1,2,3...) -->
+        <!-- simple member count (visual only) -->
         <p style="color:#777;">
             👥 Members · {{ forloop.counter|add:4 }}
         </p>
 
 
-        <!-- this shows skills based on team type -->
+        <!-- skills (based on type) -->
         <p>
             🧠 <strong>Skills:</strong>
 
@@ -92,11 +83,10 @@ so it automatically gets sidebar, header, and footer -->
             {% else %}
                 Engineering Tools
             {% endif %}
-
         </p>
 
 
-        <!-- this shows dependencies (who this team works with) -->
+        <!-- dependencies (simple logic) -->
         <p>
             🔗 <strong>Dependencies:</strong>
 
@@ -109,15 +99,14 @@ so it automatically gets sidebar, header, and footer -->
             {% else %}
                 Internal Systems
             {% endif %}
-
         </p>
 
 
-        <!-- this section shows action buttons -->
+        <!-- action buttons -->
         <div style="margin-top:10px; display:flex; gap:10px;">
 
 
-            <!-- this button goes to team detail page -->
+            <!-- go to team detail page -->
             <a href="{% url 'team_detail' team.id %}">
                 <button style="background:#0072ce; color:white; border:none; padding:5px 10px;">
                     👁 View
@@ -125,13 +114,11 @@ so it automatically gets sidebar, header, and footer -->
             </a>
 
 
-            <!-- this button is for email (UI only for now) -->
+            <!-- UI buttons -->
             <button style="background:green; color:white; border:none; padding:5px 10px;">
                 ✉ Email
             </button>
 
-
-            <!-- this button is for scheduling (UI only for now) -->
             <button style="background:purple; color:white; border:none; padding:5px 10px;">
                 📅 Schedule
             </button>
@@ -144,15 +131,17 @@ so it automatically gets sidebar, header, and footer -->
 
 </div>
 
-
 {% endblock %}
 
-<!--This page:
+<!--
+this page shows all teams in a grid.
 
-shows all teams
-each team has:
-name
-department
-leader
-skills
-buttons-->
+each team shows:
+- name
+- department
+- leader
+- skills
+- dependencies
+
+user can click "view" to open full team page.
+-->

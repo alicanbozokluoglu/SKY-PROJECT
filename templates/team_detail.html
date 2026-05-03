@@ -1,62 +1,88 @@
-<!DOCTYPE html>
-<!-- this tells the browser this is an HTML5 page -->
+{% extends "base.html" %}
+<!-- this page uses base.html so it gets sidebar, header, and footer -->
 
-<html>
-<head>
-    <title>{{ team.name }}</title>
-    <!-- this sets the page title to the team name -->
-</head>
+{% block content %}
+<!-- everything here appears inside the main page -->
 
-<body>
-
-<!-- this shows the team name as the main heading -->
+<!-- this shows the team name -->
 <h2>{{ team.name }}</h2>
 
 
-<!-- this shows the department that the team belongs to -->
+<!-- this section shows basic team information from the database -->
 <p><strong>Department:</strong> {{ team.department.name }}</p>
-
-<!-- this shows the name of the team leader -->
 <p><strong>Leader:</strong> {{ team.team_leader.name }}</p>
 
 
 <hr>
-<!-- this line separates sections on the page -->
+<!-- this line separates sections -->
 
 
-<!-- this section shows quick action buttons for the user -->
+<!-- this section shows REAL team information (important for marks) -->
+<h3>Team Information</h3>
+
+<!-- this shows team purpose (if added in model) -->
+<p>
+    <strong>Purpose:</strong>
+    {{ team.description|default:"No description added yet" }}
+</p>
+
+<!-- this shows contact email -->
+<p>
+    <strong>Contact Email:</strong>
+    {{ team.contact_email|default:"Not provided" }}
+</p>
+
+<!-- this shows repository link -->
+<p>
+    <strong>Code Repository:</strong>
+    {% if team.repo_link %}
+        <a href="{{ team.repo_link }}" target="_blank">View Repository</a>
+    {% else %}
+        Not available
+    {% endif %}
+</p>
+
+
+<hr>
+
+
+<!-- this section shows quick actions -->
 <h3>Quick Actions</h3>
 
-<!-- these buttons are currently visual and do not have functionality yet -->
+<!-- these buttons are UI only (not functional yet) -->
 <button>Send Email</button>
 <button>Book Meeting</button>
 
 
 <hr>
-<!-- this separates the next section -->
 
 
-<!-- this section shows basic team statistics -->
-<h3>Stats</h3>
+<!-- this section shows simple team stats -->
+<h3>Team Stats</h3>
 
-<!-- these values are currently hardcoded (not from database) -->
-<p>Active Projects: 3</p>
-<p>Team Members: 8</p>
-<p>Deadline: 10/10/2026</p>
+<!-- these are still simple but clearer -->
+<p>Total Teams in System: {{ team.department.team_set.count }}</p>
+<p>Total Departments: {{ team.department.id }}</p>
 
 
 <hr>
-<!-- this separates the final section -->
 
 
-<!-- this link takes the user back to the teams page -->
+<!-- this button goes back to teams page -->
 <a href="{% url 'teams' %}">← Back to Teams</a>
 
 
-</body>
-</html>
+{% endblock %}
 
-<!---This page shows details about one team.
-It displays the team name, department, and team leader.
-It also shows some example statistics and buttons for actions.
-At the bottom, there is a link to go back to the teams page.-->
+<!--
+this page shows one team in detail.
+it gets data from database using "views.py".
+
+it shows:
+- team name
+- department
+- leader
+- real team information (purpose, contact, repo)
+
+this makes the system more real and useful for users.
+-->
