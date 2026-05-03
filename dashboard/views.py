@@ -422,7 +422,21 @@ def admin_user_access(request):
 
 @login_required
 def teams_view(request):
-    teams = Team.objects.select_related("department", "team_leader").order_by("name")
+
+    person = getattr(request.user, "person", None)
+    user_department = None
+    if person and person.team:
+        user_department = person.team.department
+
+    teams = Team.objects.select_related("department", "team_leader")
+
+    if not request.user.is_staff:
+        if user_department:
+            teams = teams.filter(department=user_department)
+        else:
+            teams = teams.none()
+
+    teams = teams.order_by("name")
 
     search = request.GET.get("search", "").strip()
     department = request.GET.get("department", "").strip()
@@ -431,9 +445,8 @@ def teams_view(request):
     if search:
         teams = teams.filter(name__icontains=search)
 
-    if department:
+    if department and request.user.is_staff:
         teams = teams.filter(department_id=department)
-
     if sort == "members":
         teams = sorted(teams, key=lambda t: t.total_members(), reverse=True)
     elif sort == "repositories":
@@ -511,12 +524,23 @@ def team_detail(request, id):
 
 @login_required
 def departments_view(request):
-    departments = Department.objects.all().order_by("name")
+
+    person = getattr(request.user, "person", None)
+    user_department = None
+    if person and person.team:
+        user_department = person.team.department
+
+    if request.user.is_staff:
+        departments = Department.objects.all().order_by("name")
+    else:
+        if user_department:
+            departments = Department.objects.filter(id=user_department.id)
+        else:
+            departments = Department.objects.none()
 
     return render(request, "departments.html", {
         "departments": departments
     })
-
 
 @login_required
 def messages_view(request):
@@ -824,9 +848,22 @@ def profile_view(request):
 @login_required
 def organisation_map_view(request):
     departments = Department.objects.all().order_by("name")
-    teams = Team.objects.select_related("department", "team_leader").order_by("name")
-    people = Person.objects.select_related("team").order_by("name")
+    person = getattr(request.user, "person", None)
+    user_department = None
+    if person and person.team:
+        user_department = person.team.department
 
+    if request.user.is_staff:
+        teams = Team.objects.select_related("department", "team_leader").order_by("name")
+        people = Person.objects.select_related("team").order_by("name")
+    else:
+        if user_department:
+            teams = Team.objects.filter(department=user_department)
+            people = Person.objects.filter(team__department=user_department)
+        else:
+            teams = Team.objects.none()
+            people = Person.objects.none()
+            
     dependencies = TeamDependency.objects.select_related(
         "source_team",
         "target_team"

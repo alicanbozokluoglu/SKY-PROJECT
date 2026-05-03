@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.core.management import call_command
 from unittest.mock import patch
 import pandas as pd
-
+from django.core.exceptions import ValidationError
 from .models import (
     Department, Team, Person, UserSetting,
     Repository, TeamDependency, Message,
@@ -23,7 +23,7 @@ class BaseTestSetup(TestCase):
         # Create department
         self.department = Department.objects.create(name="IT")
 
-        # Create person
+        # Create person (leader)
         self.person = Person.objects.create(user=self.user, name="Test User")
 
         # Create team
@@ -36,7 +36,35 @@ class BaseTestSetup(TestCase):
         self.person.team = self.team
         self.person.save()
 
+        for i in range(5):
+            Person.objects.create(name=f"Member {i}", team=self.team)
 
+class AuthTests(BaseTestSetup):
+
+    def test_login_success(self):
+        response = self.client.post(reverse("login"), {
+            "username": "user",
+            "password": "pass123"
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("dashboard"), fetch_redirect_response=False)
+
+    def test_login_fail(self):
+        response = self.client.post(reverse("login"), {
+            "username": "user",
+            "password": "wrong"
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_register_user(self):
+        self.client.post(reverse("register"), {
+            "fullname": "New User",
+            "username": "newuser",
+            "email": "test@test.com",
+            "password": "12345678",
+            "confirm_password": "12345678"
+        })
+        self.assertTrue(User.objects.filter(username="newuser").exists())
 # =========================
 # MODEL TESTS
 # =========================
@@ -48,7 +76,7 @@ class ModelTests(BaseTestSetup):
         self.team.team_leader = leader
         self.team.save()
 
-        self.assertEqual(self.team.total_members(), 1)
+        self.assertEqual(self.team.total_members(), 6)
 
     def test_repository_creation(self):
         repo = Repository.objects.create(team=self.team, name="Repo1")
@@ -78,38 +106,15 @@ class ModelTests(BaseTestSetup):
         )
         self.assertEqual(event.team, self.team)
 
+        team = Team(name="Small Team", department=self.department)
 
-# =========================
-# AUTH TESTS
-# =========================
+        with self.assertRaises(ValidationError):
+            team.save()
+    def test_team_minimum_members_validation(self):
+        team = Team(name="Small Team", department=self.department)
 
-class AuthTests(BaseTestSetup):
-
-    def test_login_success(self):
-        response = self.client.post(reverse("login"), {
-            "username": "user",
-            "password": "pass123"
-        })
-        self.assertEqual(response.status_code, 302)
-
-    def test_login_fail(self):
-        response = self.client.post(reverse("login"), {
-            "username": "user",
-            "password": "wrong"
-        })
-        self.assertEqual(response.status_code, 200)
-
-    def test_register_user(self):
-        self.client.post(reverse("register"), {
-            "fullname": "New User",
-            "username": "newuser",
-            "email": "test@test.com",
-            "password": "12345678",
-            "confirm_password": "12345678"
-        })
-        self.assertTrue(User.objects.filter(username="newuser").exists())
-
-
+        with self.assertRaises(ValidationError):
+            team.save()
 # =========================
 # DASHBOARD TESTS
 # =========================
@@ -346,17 +351,18 @@ class PermissionEdgeTests(BaseTestSetup):
 class ImportExcelTests(TestCase):
 
     @patch("dashboard.management.commands.import_excel.pd.read_excel")
-    def test_import_excel(self, mock_read_excel):
+    def test_import_excel_skips_invalid_rows(self, mock_read_excel):
         data = {
-            "Department": ["IT"],
-            "Team Leader": ["John Doe"],
-            "Department Head": ["Jane Smith"],
-            "Team Name": ["Dev Team"]
+            "Department": ["IT", "IT"],
+            "Team Leader": ["John Doe", None],  # invalid row
+            "Department Head": ["Jane Smith", "Jane Smith"],
+            "Team Name": ["Dev Team", None]     # invalid row
         }
 
         mock_read_excel.return_value = pd.DataFrame(data)
 
         call_command("import_excel")
 
+        # Only valid row should be created
+        self.assertEqual(Team.objects.count(), 1)
         self.assertTrue(Team.objects.filter(name="Dev Team").exists())
-        self.assertTrue(Person.objects.filter(name="John Doe").exists()) 

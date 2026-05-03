@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.exceptions import ValidationError
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
@@ -139,7 +139,15 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+    def clean(self):
+        total = self.total_members()
 
+        if total < 5:
+            raise ValidationError("Each team must have at least 5 members.")
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()   # validate FIRST
+        super().save(*args, **kwargs)
 
 class Repository(models.Model):
     team = models.ForeignKey(
