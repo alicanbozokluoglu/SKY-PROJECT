@@ -3,90 +3,207 @@
 {% block content %}
 
 <style>
-    .org-page {
-        max-width: 1320px;
-        margin: 0 auto;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
     }
 
-    .top-tools {
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all organisation map content. */
+    .organisationmapwholepagearea {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
+    .organisationmapbigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This adds a circle decoration. */
+    .organisationmapbigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .organisationmappagetitle {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .organisationmaptextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 760px;
+    }
+
+    /* This holds view buttons and search. */
+    .viewbuttonsandsearcharea {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 22px;
         gap: 20px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 18px;
+        box-shadow: var(--smallboxshadow);
     }
 
-    .view-buttons {
+    /* This puts view buttons next to each other. */
+    .viewbuttonrow {
         display: flex;
-        gap: 12px;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .tool-btn {
+    /* This styles grid and network buttons. */
+    .viewtypebutton {
         border: none;
-        border-radius: 8px;
-        padding: 12px 18px;
-        font-size: 16px;
+        border-radius: 14px;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 900;
         cursor: pointer;
-        background: white;
-        color: #1f2937;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        background: #f8fafc;
+        color: #334155;
+        transition: 0.2s ease;
     }
 
-    .tool-btn.active {
-        background: #0b3a91;
+    /* This changes view buttons when the mouse is on them. */
+    .viewtypebutton:hover {
+        transform: translateY(-1px);
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+    }
+
+    /* This shows the selected view button. */
+    .viewtypebutton.active {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
     }
 
-    .tool-btn.export {
-        background: #129cf3;
-        color: white;
-    }
-
-    .org-search {
+    /* This holds the search box. */
+    .organisationmapsearchbox {
         position: relative;
-        width: 360px;
+        width: 380px;
     }
 
-    .org-search input {
+    /* This styles the search input. */
+    .organisationmapsearchbox input {
         width: 100%;
-        height: 46px;
-        border: 1px solid #d9dee8;
-        border-radius: 10px;
+        height: 48px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         padding: 0 44px 0 16px;
-        font-size: 16px;
+        font-size: 14px;
         outline: none;
+        background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
     }
 
-    .org-search span {
+    /* This highlights the search input when clicked. */
+    .organisationmapsearchbox input:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This styles the search icon. */
+    .organisationmapsearchbox span {
         position: absolute;
-        right: 14px;
-        top: 11px;
+        right: 15px;
+        top: 12px;
         font-size: 22px;
-        color: #667085;
+        color: var(--mutedtextcolor);
     }
 
-    .count-row {
+    /* This shows team and dependency counts. */
+    .teamdependencycountrow {
         display: flex;
         justify-content: flex-end;
-        gap: 28px;
-        color: #475569;
+        gap: 16px;
+        color: #334155;
         margin-bottom: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 900;
     }
 
-    .network-panel {
+    /* This styles each count label. */
+    .teamdependencycountrow div {
+        background: white;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 999px;
+        padding: 8px 13px;
+        box-shadow: var(--smallboxshadow);
+    }
+
+    /* This styles the network map area. */
+    .networkmapbox {
         position: relative;
         height: 760px;
-        border-radius: 12px;
+        border-radius: 28px;
         overflow: hidden;
         background:
-            radial-gradient(circle at 50% 45%, rgba(14,165,233,0.20), transparent 26%),
-            radial-gradient(circle at 25% 70%, rgba(99,102,241,0.18), transparent 24%),
-            #172a45;
-        box-shadow: 0 18px 45px rgba(15,23,42,0.25);
+            radial-gradient(circle at 50% 45%, rgba(56,189,248,0.22), transparent 26%),
+            radial-gradient(circle at 25% 70%, rgba(99,102,241,0.22), transparent 24%),
+            linear-gradient(135deg, #0f172a, #172554 55%, #1e3a8a);
+        box-shadow: 0 22px 55px rgba(15,23,42,0.24);
+        border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .network-inner {
+    /* This holds all moving network items. */
+    .networkmapinnerarea {
         position: absolute;
         left: 0;
         top: 0;
@@ -95,71 +212,88 @@
         transform-origin: center center;
     }
 
-    .zoom-tools {
+    /* This holds zoom buttons. */
+    .zoombuttonarea {
         position: absolute;
         left: 22px;
         top: 18px;
         z-index: 20;
         display: flex;
-        gap: 12px;
+        gap: 10px;
     }
 
-    .zoom-btn {
-        width: 36px;
-        height: 36px;
-        border: none;
-        border-radius: 8px;
+    /* This styles zoom buttons. */
+    .zoombutton {
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 13px;
         background: rgba(255,255,255,0.12);
         color: white;
-        font-size: 22px;
-        font-weight: bold;
+        font-size: 20px;
+        font-weight: 900;
         cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: 0.2s ease;
     }
 
-    .zoom-btn:hover {
+    /* This changes zoom buttons when the mouse is on them. */
+    .zoombutton:hover {
         background: rgba(255,255,255,0.25);
+        transform: translateY(-1px);
     }
 
-    .legend {
+    /* This styles the legend box. */
+    .departmentcolorguidebox {
         position: absolute;
         right: 24px;
         top: 30px;
-        width: 260px;
-        background: white;
-        border-radius: 9px;
+        width: 270px;
+        background: rgba(255,255,255,0.94);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 18px;
         padding: 20px;
         z-index: 30;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+        box-shadow: var(--bigboxshadow);
     }
 
-    .legend-title {
-        font-weight: bold;
+    /* This styles the legend title. */
+    .departmentcolorguidetitle {
+        font-weight: 900;
         margin-bottom: 14px;
-        color: #111827;
+        color: var(--maintextcolor);
+        letter-spacing: -0.02em;
     }
 
-    .legend-grid {
+    /* This puts legend items in two columns. */
+    .departmentcolorguidegrid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
 
-    .legend-item {
+    /* This styles one legend item. */
+    .departmentcolorguideitem {
         display: flex;
         align-items: center;
         gap: 9px;
-        color: #1f2937;
-        font-size: 15px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 800;
     }
 
-    .dot {
+    /* This styles small legend color dots. */
+    .departmentcolordot {
         width: 13px;
         height: 13px;
         border-radius: 50%;
         display: inline-block;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
     }
 
-    .network-svg {
+    /* This holds SVG dependency lines. */
+    .dependencylinessvg {
         position: absolute;
         left: 0;
         top: 0;
@@ -169,43 +303,49 @@
         overflow: visible;
     }
 
-    .edge-line {
-        stroke: rgba(96, 190, 255, 0.65);
-        stroke-width: 2.3;
+    /* This styles dependency lines. */
+    .dependencyline {
+        stroke: rgba(125, 211, 252, 0.72);
+        stroke-width: 2.5;
         fill: none;
         marker-end: url(#arrowHead);
-        filter: drop-shadow(0 0 5px rgba(96,190,255,0.35));
+        filter: drop-shadow(0 0 6px rgba(96,190,255,0.42));
     }
 
-    .edge-label {
+    /* This styles dependency line labels. */
+    .dependencylinelabel {
         fill: #e0f2fe;
         font-size: 12px;
-        font-weight: bold;
+        font-weight: 900;
         text-shadow: 0 1px 4px rgba(0,0,0,0.8);
         pointer-events: none;
     }
 
-    .node {
+    /* This styles one team node. */
+    .teamnode {
         position: absolute;
         z-index: 4;
         transform: translate(-50%, -50%);
         color: white;
         text-align: center;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+        box-shadow: 0 14px 32px rgba(0,0,0,0.26);
         text-decoration: none;
         overflow: hidden;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition: 0.18s ease;
+        border: 1px solid rgba(255,255,255,0.18);
     }
 
-    .node:hover {
+    /* This makes a team node bigger when the mouse is on it. */
+    .teamnode:hover {
         transform: translate(-50%, -50%) scale(1.06);
-        box-shadow: 0 18px 36px rgba(0,0,0,0.32);
+        box-shadow: 0 22px 42px rgba(0,0,0,0.34);
         z-index: 10;
     }
 
-    .node.circle {
-        width: 112px;
-        height: 112px;
+    /* This makes a round node. */
+    .teamnode.circlenode {
+        width: 114px;
+        height: 114px;
         border-radius: 50%;
         display: flex;
         flex-direction: column;
@@ -213,157 +353,216 @@
         padding: 12px;
     }
 
-    .node.rect {
-        width: 164px;
-        min-height: 84px;
-        border-radius: 8px;
+    /* This makes a rectangle node. */
+    .teamnode.rectanglenode {
+        width: 168px;
+        min-height: 88px;
+        border-radius: 18px;
         padding: 14px;
         text-align: left;
     }
 
-    .node.core {
-        width: 132px;
-        height: 132px;
+    /* This styles the main core node. */
+    .teamnode.corenode {
+        width: 138px;
+        height: 138px;
         border-radius: 50%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         padding: 14px;
-        background: #ef4444 !important;
+        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
     }
 
-    .node-title {
-        font-weight: bold;
+    /* This styles the node title. */
+    .teamnodetitle {
+        font-weight: 900;
         font-size: 14px;
         line-height: 1.25;
         word-break: break-word;
+        color: white;
     }
 
-    .node.core .node-title {
+    /* This makes the core node title larger. */
+    .teamnode.corenode .teamnodetitle {
         font-size: 17px;
     }
 
-    .node-sub {
+    /* This styles the node department text. */
+    .teamnodedepartmenttext {
         margin-top: 5px;
         font-size: 12px;
         opacity: 0.95;
         word-break: break-word;
+        color: white;
     }
 
-    .node-members {
+    /* This styles the node members text. */
+    .teamnodemembertext {
         margin-top: 6px;
         font-size: 12px;
+        color: rgba(255,255,255,0.92);
     }
 
-    .node.hidden {
+    /* This hides a node. */
+    .teamnode.hideitem {
         display: none;
     }
 
-    .grid-panel {
+    /* This hides the grid view first. */
+    .gridviewbox {
         display: none;
-        background: white;
-        border-radius: 12px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border-radius: var(--boxroundcorner);
         padding: 24px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid rgba(226,232,240,0.95);
+        box-shadow: var(--smallboxshadow);
     }
 
-    .grid-panel.active {
+    /* This shows the grid view. */
+    .gridviewbox.active {
         display: block;
     }
 
-    .network-panel.hidden {
+    /* This hides the network view. */
+    .networkmapbox.hideitem {
         display: none;
     }
 
-    .grid-list {
+    /* This puts grid cards in a grid. */
+    .teamgridcardlist {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 18px;
     }
 
-    .grid-card {
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
+    /* This styles one grid team card. */
+    .teamgridcard {
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
         padding: 18px;
+        background: white;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .grid-card h3 {
+    /* This moves grid cards and dependency cards when the mouse is on them. */
+    .teamgridcard:hover,
+    .dependencycard:hover,
+    .dependencylistwhitebox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This styles grid card titles. */
+    .teamgridcard h3 {
         margin: 0 0 8px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
     }
 
-    .grid-card p {
-        color: #667085;
-        line-height: 1.5;
+    /* This styles grid card text. */
+    .teamgridcard p {
+        color: var(--mutedtextcolor);
+        line-height: 1.55;
         margin: 0 0 12px;
+        font-size: 14px;
     }
 
-    .grid-card a {
-        color: #2563eb;
-        font-weight: bold;
+    /* This styles grid card links. */
+    .teamgridcard a {
+        color: var(--mainbluecolor);
+        font-weight: 900;
         text-decoration: none;
     }
 
-    .dependency-panel {
-        margin-top: 24px;
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 22px;
+    /* This underlines grid card links when the mouse is on them. */
+    .teamgridcard a:hover {
+        text-decoration: underline;
     }
 
-    .dependency-panel h2 {
+    /* This styles the dependency list box. */
+    .dependencylistwhitebox {
+        margin-top: 24px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles the dependency title. */
+    .dependencylistwhitebox h2 {
         margin: 0 0 16px;
         font-size: 22px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
     }
 
-    .dependency-list {
+    /* This puts dependency cards in two columns. */
+    .dependencycardlist {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
     }
 
-    .dependency-card {
-        border: 1px solid #dce3ee;
-        border-radius: 10px;
-        padding: 14px;
-        background: #f8fafc;
-    }
-
-    .dependency-title {
-        font-weight: bold;
-        color: #111827;
-        margin-bottom: 6px;
-    }
-
-    .dependency-meta {
-        color: #667085;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .empty {
+    /* This styles one dependency card. */
+    .dependencycard {
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 15px;
         background: white;
-        border: 1px dashed #d0d5dd;
-        border-radius: 10px;
-        padding: 18px;
-        color: #667085;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
+    /* This styles dependency names. */
+    .dependencytitletext {
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 7px;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles dependency details. */
+    .dependencysmalltext {
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    /* This styles empty messages. */
+    .emptymessagebox {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 18px;
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* This changes the page on medium screens. */
     @media (max-width: 1000px) {
-        .top-tools {
+        .viewbuttonsandsearcharea {
             flex-direction: column;
             align-items: stretch;
         }
 
-        .org-search {
+        .organisationmapsearchbox {
             width: 100%;
         }
 
-        .network-panel {
+        .networkmapbox {
             height: 900px;
         }
 
-        .legend {
+        .departmentcolorguidebox {
             position: absolute;
             left: 20px;
             right: auto;
@@ -371,62 +570,115 @@
             bottom: 20px;
         }
 
-        .grid-list,
-        .dependency-list {
+        .teamgridcardlist,
+        .dependencycardlist {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .organisationmapwholepagearea {
+            padding: 0;
+        }
+
+        .organisationmapbigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .organisationmappagetitle {
+            font-size: 29px;
+        }
+
+        .viewbuttonrow {
+            flex-direction: column;
+        }
+
+        .networkmapbox {
+            border-radius: 22px;
+        }
+
+        .departmentcolorguidebox {
+            width: calc(100% - 40px);
+        }
+
+        .departmentcolorguidegrid {
             grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="org-page">
+<!-- This starts the organisation map page. -->
+<div class="organisationmapwholepagearea">
 
-    <div class="top-tools">
-        <div class="view-buttons">
-            <button class="tool-btn" onclick="showGrid()">▦ Grid View</button>
-            <button class="tool-btn active" onclick="showNetwork()">⛓ Network View</button>
-            <button class="tool-btn export" onclick="window.print()">⬇ Export</button>
+    <!-- This shows the page title. -->
+    <div class="organisationmapbigtoptitlebox">
+        <h1 class="organisationmappagetitle">Organisation Map</h1>
+        <div class="organisationmaptextundertitle">
+            Explore teams, departments and dependencies in a visual network map or structured grid view.
+        </div>
+    </div>
+
+    <!-- This shows view buttons and search. -->
+    <div class="viewbuttonsandsearcharea">
+        <div class="viewbuttonrow">
+
+            <!-- This button shows the grid view. -->
+            <button class="viewtypebutton" onclick="showgridview()">▦ Grid View</button>
+
+            <!-- This button shows the network view. -->
+            <button class="viewtypebutton active" onclick="shownetworkview()">⛓ Network View</button>
         </div>
 
-        <div class="org-search">
-            <input id="orgSearch" type="text" placeholder="Search teams or dependencies...">
+        <!-- This searches teams and dependencies. -->
+        <div class="organisationmapsearchbox">
+            <input id="organisationmapsearchinput" type="text" placeholder="Search teams or dependencies...">
             <span>⌕</span>
         </div>
     </div>
 
-    <div class="count-row">
+    <!-- This shows total team and dependency counts. -->
+    <div class="teamdependencycountrow">
         <div>Teams: {{ total_teams }}</div>
         <div>Dependencies: {{ total_dependencies }}</div>
     </div>
 
-    <div class="network-panel" id="networkPanel">
+    <!-- This shows the network map. -->
+    <div class="networkmapbox" id="networkmapbox">
 
-        <div class="zoom-tools">
-            <button type="button" class="zoom-btn" onclick="zoomIn()">+</button>
-            <button type="button" class="zoom-btn" onclick="zoomOut()">−</button>
-            <button type="button" class="zoom-btn" onclick="resetZoom()">↻</button>
-            <button type="button" class="zoom-btn" onclick="toggleFullscreen()">⛶</button>
+        <!-- This shows zoom buttons. -->
+        <div class="zoombuttonarea">
+            <button type="button" class="zoombutton" onclick="zoominmap()">+</button>
+            <button type="button" class="zoombutton" onclick="zoomoutmap()">−</button>
+            <button type="button" class="zoombutton" onclick="resetmapzoom()">↻</button>
+            <button type="button" class="zoombutton" onclick="openorclosefullscreenmap()">⛶</button>
         </div>
 
-        <div class="legend">
-            <div class="legend-title">Legend</div>
+        <!-- This shows department color guide. -->
+        <div class="departmentcolorguidebox">
+            <div class="departmentcolorguidetitle">Legend</div>
 
-            <div class="legend-grid">
+            <div class="departmentcolorguidegrid">
                 {% for department in departments %}
-                    <div class="legend-item">
-                        <span class="dot legend-dot" data-index="{{ forloop.counter0 }}"></span>
+                    <div class="departmentcolorguideitem">
+                        <span class="departmentcolordot departmentlegenddot" data-index="{{ forloop.counter0 }}"></span>
                         {{ department.name }}
                     </div>
                 {% empty %}
-                    <div class="legend-item">
-                        <span class="dot" style="background:#ef4444;"></span>
+                    <div class="departmentcolorguideitem">
+                        <span class="departmentcolordot" style="background:#ef4444;"></span>
                         Teams
                     </div>
                 {% endfor %}
             </div>
         </div>
 
-        <div class="network-inner" id="networkInner">
-            <svg class="network-svg" id="networkSvg">
+        <!-- This holds team nodes and dependency lines. -->
+        <div class="networkmapinnerarea" id="networkmapinnerarea">
+
+            <!-- This draws dependency lines. -->
+            <svg class="dependencylinessvg" id="dependencylinessvg">
                 <defs>
                     <marker
                         id="arrowHead"
@@ -437,24 +689,25 @@
                         orient="auto"
                         markerUnits="strokeWidth"
                     >
-                        <path d="M0,0 L0,8 L11,4 z" fill="rgba(96,190,255,0.9)"></path>
+                        <path d="M0,0 L0,8 L11,4 z" fill="rgba(125,211,252,0.95)"></path>
                     </marker>
                 </defs>
             </svg>
 
+            <!-- This shows team nodes. -->
             {% for team in teams %}
                 <a
                     href="{% url 'team_detail' team.id %}"
-                    class="node {% if forloop.first %}core{% else %}{% cycle 'circle' 'rect' 'circle' 'rect' %}{% endif %}"
+                    class="teamnode {% if forloop.first %}corenode{% else %}{% cycle 'circlenode' 'rectanglenode' 'circlenode' 'rectanglenode' %}{% endif %}"
                     data-team-id="{{ team.id }}"
                     data-team-name="{{ team.name|lower }}"
                     data-department="{% if team.department %}{{ team.department.name|lower }}{% endif %}"
                     data-department-id="{% if team.department %}{{ team.department.id }}{% else %}0{% endif %}"
                     data-index="{{ forloop.counter0 }}"
                 >
-                    <div class="node-title">{{ team.name }}</div>
+                    <div class="teamnodetitle">{{ team.name }}</div>
 
-                    <div class="node-sub">
+                    <div class="teamnodedepartmenttext">
                         {% if team.department %}
                             {{ team.department.name }}
                         {% else %}
@@ -462,21 +715,26 @@
                         {% endif %}
                     </div>
 
-                    <div class="node-members">
+                    <div class="teamnodemembertext">
                         {{ team.total_members }} Members
                     </div>
                 </a>
             {% empty %}
-                <div class="empty">No teams found in the database.</div>
+
+                <!-- This message appears when there are no teams. -->
+                <div class="emptymessagebox">No teams found in the database.</div>
             {% endfor %}
         </div>
 
     </div>
 
-    <div class="grid-panel" id="gridPanel">
-        <div class="grid-list">
+    <!-- This shows the grid view. -->
+    <div class="gridviewbox" id="gridviewbox">
+        <div class="teamgridcardlist">
             {% for team in teams %}
-                <div class="grid-card">
+
+                <!-- This shows one team in grid view. -->
+                <div class="teamgridcard">
                     <h3>{{ team.name }}</h3>
 
                     <p>
@@ -495,22 +753,27 @@
                     <a href="{% url 'team_detail' team.id %}">View Team</a>
                 </div>
             {% empty %}
-                <div class="empty">No teams found in the database.</div>
+
+                <!-- This message appears when there are no teams. -->
+                <div class="emptymessagebox">No teams found in the database.</div>
             {% endfor %}
         </div>
     </div>
 
-    <div class="dependency-panel">
+    <!-- This shows dependency records. -->
+    <div class="dependencylistwhitebox">
         <h2>Database Dependencies</h2>
 
-        <div class="dependency-list">
+        <div class="dependencycardlist">
             {% for dependency in dependencies %}
-                <div class="dependency-card">
-                    <div class="dependency-title">
+
+                <!-- This shows one dependency. -->
+                <div class="dependencycard">
+                    <div class="dependencytitletext">
                         {{ dependency.source_team.name }} → {{ dependency.target_team.name }}
                     </div>
 
-                    <div class="dependency-meta">
+                    <div class="dependencysmalltext">
                         {% if dependency.dependency_type %}
                             Type: {{ dependency.dependency_type }}<br>
                         {% endif %}
@@ -523,7 +786,9 @@
                     </div>
                 </div>
             {% empty %}
-                <div class="empty">
+
+                <!-- This message appears when there are no dependencies. -->
+                <div class="emptymessagebox">
                     No dependencies exist yet. Add them from Django Admin → Team Dependencies.
                 </div>
             {% endfor %}
@@ -533,21 +798,34 @@
 </div>
 
 <script>
-    let currentScale = 1;
+    let currentmapscale = 1;
 
-    const colors = [
+    // This stores the colors used for departments.
+    const departmentcolors = [
         "#ef4444", "#3b82f6", "#10b981", "#8b5cf6", "#f97316",
         "#6366f1", "#ec4899", "#f59e0b", "#14b8a6", "#06b6d4"
     ];
 
-    const nodes = document.querySelectorAll(".node");
-    const svg = document.getElementById("networkSvg");
-    const networkPanel = document.getElementById("networkPanel");
-    const networkInner = document.getElementById("networkInner");
-    const gridPanel = document.getElementById("gridPanel");
-    const searchInput = document.getElementById("orgSearch");
+    // This finds all team nodes.
+    const allteamnodes = document.querySelectorAll(".teamnode");
 
-    const dependencies = [
+    // This finds the SVG area where dependency lines are drawn.
+    const dependencylinessvg = document.getElementById("dependencylinessvg");
+
+    // This finds the network panel.
+    const networkmapbox = document.getElementById("networkmapbox");
+
+    // This finds the inside part of the network panel.
+    const networkmapinnerarea = document.getElementById("networkmapinnerarea");
+
+    // This finds the grid panel.
+    const gridviewbox = document.getElementById("gridviewbox");
+
+    // This finds the search input.
+    const organisationmapsearchinput = document.getElementById("organisationmapsearchinput");
+
+    // This brings dependency data from Django into JavaScript.
+    const dependencydata = [
         {% for dependency in dependencies %}
             {
                 source: "{{ dependency.source_team.id }}",
@@ -557,79 +835,83 @@
         {% endfor %}
     ];
 
-    function getDepartmentColor(node) {
-        const departmentId = node.dataset.departmentId || "0";
-        let number = parseInt(departmentId);
+    // This chooses a color for a team by its department.
+    function getdepartmentcolorforteamnode(teamnode) {
+        const departmentid = teamnode.dataset.departmentId || "0";
+        let departmentnumber = parseInt(departmentid);
 
-        if (isNaN(number)) {
-            number = 0;
+        if (isNaN(departmentnumber)) {
+            departmentnumber = 0;
         }
 
-        return colors[number % colors.length];
+        return departmentcolors[departmentnumber % departmentcolors.length];
     }
 
-    function setNodeColor() {
-        nodes.forEach(node => {
-            if (!node.classList.contains("core")) {
-                node.style.background = getDepartmentColor(node);
+    // This gives colors to team nodes.
+    function giveteamnodesdepartmentcolors() {
+        allteamnodes.forEach(teamnode => {
+            if (!teamnode.classList.contains("corenode")) {
+                teamnode.style.background = getdepartmentcolorforteamnode(teamnode);
             }
         });
     }
 
-    function placeNodes() {
-        const panelWidth = networkPanel.clientWidth;
-        const panelHeight = networkPanel.clientHeight;
+    // This places all team nodes on the network map.
+    function placeteamnodesonnetworkmap() {
+        const networkpanelwidth = networkmapbox.clientWidth;
+        const networkpanelheight = networkmapbox.clientHeight;
 
-        const centerX = panelWidth / 2;
-        const centerY = panelHeight / 2;
+        const centerx = networkpanelwidth / 2;
+        const centery = networkpanelheight / 2;
 
-        const usableWidth = panelWidth - 360;
-        const usableHeight = panelHeight - 180;
+        const usablewidth = networkpanelwidth - 360;
+        const usableheight = networkpanelheight - 180;
 
-        const radiusX = usableWidth / 2.45;
-        const radiusY = usableHeight / 2.55;
+        const radiusx = usablewidth / 2.45;
+        const radiusy = usableheight / 2.55;
 
-        nodes.forEach((node, index) => {
-            let x;
-            let y;
+        allteamnodes.forEach((teamnode, index) => {
+            let xposition;
+            let yposition;
 
             if (index === 0) {
-                x = centerX;
-                y = centerY;
+                xposition = centerx;
+                yposition = centery;
             } else {
-                const angle = ((index - 1) / Math.max(nodes.length - 1, 1)) * Math.PI * 2;
-
+                const angle = ((index - 1) / Math.max(allteamnodes.length - 1, 1)) * Math.PI * 2;
                 const wave = index % 2 === 0 ? 0.86 : 1.08;
 
-                x = centerX + Math.cos(angle) * radiusX * wave;
-                y = centerY + Math.sin(angle) * radiusY * wave;
+                xposition = centerx + Math.cos(angle) * radiusx * wave;
+                yposition = centery + Math.sin(angle) * radiusy * wave;
 
-                x += Math.sin(index * 1.7) * 28;
-                y += Math.cos(index * 1.3) * 22;
+                xposition += Math.sin(index * 1.7) * 28;
+                yposition += Math.cos(index * 1.3) * 22;
             }
 
-            node.style.left = x + "px";
-            node.style.top = y + "px";
+            teamnode.style.left = xposition + "px";
+            teamnode.style.top = yposition + "px";
         });
 
-        setNodeColor();
-        drawEdges();
+        giveteamnodesdepartmentcolors();
+        drawdependencylines();
     }
 
-    function getNodeRadius(node) {
-        if (node.classList.contains("core")) {
+    // This gets the size of a node for line drawing.
+    function getteamnoderadius(teamnode) {
+        if (teamnode.classList.contains("corenode")) {
             return 70;
         }
 
-        if (node.classList.contains("circle")) {
+        if (teamnode.classList.contains("circlenode")) {
             return 60;
         }
 
         return 86;
     }
 
-    function drawEdges() {
-        svg.innerHTML = `
+    // This draws dependency lines between teams.
+    function drawdependencylines() {
+        dependencylinessvg.innerHTML = `
             <defs>
                 <marker
                     id="arrowHead"
@@ -640,144 +922,158 @@
                     orient="auto"
                     markerUnits="strokeWidth"
                 >
-                    <path d="M0,0 L0,8 L11,4 z" fill="rgba(96,190,255,0.9)"></path>
+                    <path d="M0,0 L0,8 L11,4 z" fill="rgba(125,211,252,0.95)"></path>
                 </marker>
             </defs>
         `;
 
-        dependencies.forEach(dep => {
-            const source = document.querySelector(`[data-team-id="${dep.source}"]`);
-            const target = document.querySelector(`[data-team-id="${dep.target}"]`);
+        dependencydata.forEach(dependencyitem => {
+            const sourceteamnode = document.querySelector(`[data-team-id="${dependencyitem.source}"]`);
+            const targetteamnode = document.querySelector(`[data-team-id="${dependencyitem.target}"]`);
 
-            if (!source || !target) {
+            if (!sourceteamnode || !targetteamnode) {
                 return;
             }
 
-            if (source.classList.contains("hidden") || target.classList.contains("hidden")) {
+            if (sourceteamnode.classList.contains("hideitem") || targetteamnode.classList.contains("hideitem")) {
                 return;
             }
 
-            let sourceX = parseFloat(source.style.left);
-            let sourceY = parseFloat(source.style.top);
-            let targetX = parseFloat(target.style.left);
-            let targetY = parseFloat(target.style.top);
+            let sourcex = parseFloat(sourceteamnode.style.left);
+            let sourcey = parseFloat(sourceteamnode.style.top);
+            let targetx = parseFloat(targetteamnode.style.left);
+            let targety = parseFloat(targetteamnode.style.top);
 
-            const dx = targetX - sourceX;
-            const dy = targetY - sourceY;
-            const length = Math.sqrt(dx * dx + dy * dy);
+            const distancex = targetx - sourcex;
+            const distancey = targety - sourcey;
+            const linelength = Math.sqrt(distancex * distancex + distancey * distancey);
 
-            if (length === 0) {
+            if (linelength === 0) {
                 return;
             }
 
-            const sourceRadius = getNodeRadius(source);
-            const targetRadius = getNodeRadius(target);
+            const sourceradius = getteamnoderadius(sourceteamnode);
+            const targetradius = getteamnoderadius(targetteamnode);
 
-            const startX = sourceX + (dx / length) * sourceRadius;
-            const startY = sourceY + (dy / length) * sourceRadius;
-            const endX = targetX - (dx / length) * targetRadius;
-            const endY = targetY - (dy / length) * targetRadius;
+            const startx = sourcex + (distancex / linelength) * sourceradius;
+            const starty = sourcey + (distancey / linelength) * sourceradius;
+            const endx = targetx - (distancex / linelength) * targetradius;
+            const endy = targety - (distancey / linelength) * targetradius;
 
-            const midX = (startX + endX) / 2;
-            const midY = (startY + endY) / 2;
+            const middlex = (startx + endx) / 2;
+            const middley = (starty + endy) / 2;
 
-            const curveOffset = 55;
-            const controlX = midX - dy / length * curveOffset;
-            const controlY = midY + dx / length * curveOffset;
+            const curveoffset = 55;
+            const controlx = middlex - distancey / linelength * curveoffset;
+            const controly = middley + distancex / linelength * curveoffset;
 
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            const d = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`;
+            const linepath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const linedirection = `M ${startx} ${starty} Q ${controlx} ${controly} ${endx} ${endy}`;
 
-            path.setAttribute("d", d);
-            path.setAttribute("class", "edge-line");
+            linepath.setAttribute("d", linedirection);
+            linepath.setAttribute("class", "dependencyline");
 
-            svg.appendChild(path);
+            dependencylinessvg.appendChild(linepath);
 
-            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            label.setAttribute("x", controlX);
-            label.setAttribute("y", controlY - 7);
-            label.setAttribute("class", "edge-label");
-            label.setAttribute("text-anchor", "middle");
-            label.textContent = dep.label;
+            const linelabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            linelabel.setAttribute("x", controlx);
+            linelabel.setAttribute("y", controly - 7);
+            linelabel.setAttribute("class", "dependencylinelabel");
+            linelabel.setAttribute("text-anchor", "middle");
+            linelabel.textContent = dependencyitem.label;
 
-            svg.appendChild(label);
+            dependencylinessvg.appendChild(linelabel);
         });
     }
 
-    function applyZoom() {
-        networkInner.style.transform = "scale(" + currentScale + ")";
+    // This applies zoom to the network map.
+    function applymapzoom() {
+        networkmapinnerarea.style.transform = "scale(" + currentmapscale + ")";
     }
 
-    function zoomIn() {
-        currentScale = Math.min(currentScale + 0.1, 1.6);
-        applyZoom();
+    // This zooms in.
+    function zoominmap() {
+        currentmapscale = Math.min(currentmapscale + 0.1, 1.6);
+        applymapzoom();
     }
 
-    function zoomOut() {
-        currentScale = Math.max(currentScale - 0.1, 0.6);
-        applyZoom();
+    // This zooms out.
+    function zoomoutmap() {
+        currentmapscale = Math.max(currentmapscale - 0.1, 0.6);
+        applymapzoom();
     }
 
-    function resetZoom() {
-        currentScale = 1;
-        applyZoom();
-        placeNodes();
+    // This resets the zoom and places nodes again.
+    function resetmapzoom() {
+        currentmapscale = 1;
+        applymapzoom();
+        placeteamnodesonnetworkmap();
     }
 
-    function toggleFullscreen() {
+    // This opens or closes fullscreen mode.
+    function openorclosefullscreenmap() {
         if (!document.fullscreenElement) {
-            networkPanel.requestFullscreen();
+            networkmapbox.requestFullscreen();
         } else {
             document.exitFullscreen();
         }
     }
 
-    function showGrid() {
-        networkPanel.classList.add("hidden");
-        gridPanel.classList.add("active");
+    // This shows the grid view.
+    function showgridview() {
+        networkmapbox.classList.add("hideitem");
+        gridviewbox.classList.add("active");
 
-        document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active"));
-        document.querySelectorAll(".tool-btn")[0].classList.add("active");
+        document.querySelectorAll(".viewtypebutton").forEach(viewbutton => viewbutton.classList.remove("active"));
+        document.querySelectorAll(".viewtypebutton")[0].classList.add("active");
     }
 
-    function showNetwork() {
-        gridPanel.classList.remove("active");
-        networkPanel.classList.remove("hidden");
+    // This shows the network view.
+    function shownetworkview() {
+        gridviewbox.classList.remove("active");
+        networkmapbox.classList.remove("hideitem");
 
-        document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active"));
-        document.querySelectorAll(".tool-btn")[1].classList.add("active");
+        document.querySelectorAll(".viewtypebutton").forEach(viewbutton => viewbutton.classList.remove("active"));
+        document.querySelectorAll(".viewtypebutton")[1].classList.add("active");
 
-        setTimeout(placeNodes, 50);
+        setTimeout(placeteamnodesonnetworkmap, 50);
     }
 
-    searchInput.addEventListener("input", function() {
-        const value = searchInput.value.toLowerCase().trim();
+    // This searches teams on the network map.
+    if (organisationmapsearchinput) {
+        organisationmapsearchinput.addEventListener("input", function() {
+            const searchvalue = organisationmapsearchinput.value.toLowerCase().trim();
 
-        nodes.forEach(node => {
-            const teamName = node.dataset.teamName || "";
-            const department = node.dataset.department || "";
+            allteamnodes.forEach(teamnode => {
+                const teamname = teamnode.dataset.teamName || "";
+                const departmentname = teamnode.dataset.department || "";
 
-            if (teamName.includes(value) || department.includes(value)) {
-                node.classList.remove("hidden");
-            } else {
-                node.classList.add("hidden");
-            }
+                if (teamname.includes(searchvalue) || departmentname.includes(searchvalue)) {
+                    teamnode.classList.remove("hideitem");
+                } else {
+                    teamnode.classList.add("hideitem");
+                }
+            });
+
+            drawdependencylines();
         });
+    }
 
-        drawEdges();
+    // This gives colors to legend dots.
+    document.querySelectorAll(".departmentlegenddot").forEach((legenddot, index) => {
+        legenddot.style.background = departmentcolors[index % departmentcolors.length];
     });
 
-    document.querySelectorAll(".legend-dot").forEach((dot, index) => {
-        dot.style.background = colors[index % colors.length];
-    });
+    // This places nodes again when the screen size changes.
+    window.addEventListener("resize", placeteamnodesonnetworkmap);
 
-    window.addEventListener("resize", placeNodes);
-
+    // This places nodes again after fullscreen changes.
     document.addEventListener("fullscreenchange", function() {
-        setTimeout(placeNodes, 200);
+        setTimeout(placeteamnodesonnetworkmap, 200);
     });
 
-    placeNodes();
+    // This starts the network map.
+    placeteamnodesonnetworkmap();
 </script>
 
 {% endblock %}

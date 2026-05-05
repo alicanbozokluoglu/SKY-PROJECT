@@ -3,266 +3,434 @@
 {% block content %}
 
 <style>
-    .messages-wrap {
-        max-width: 1180px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all messages page content. */
+    .messageswholepagearea {
+        max-width: 1220px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .messages-title {
-        font-size: 28px;
-        margin: 0 0 24px;
-        color: #1f2937;
+    /* This makes the big top title box. */
+    .messagesbigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
     }
 
-    .messages-layout {
+    /* This adds a circle decoration. */
+    .messagesbigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .messagespagetitle {
+        position: relative;
+        z-index: 1;
+        font-size: 36px;
+        margin: 0;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .messagestextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 680px;
+    }
+
+    /* This makes the messages page two columns. */
+    .messagespagecolumnsgrid {
         display: grid;
-        grid-template-columns: 190px 1fr;
+        grid-template-columns: 220px 1fr;
         gap: 28px;
+        align-items: start;
     }
 
-    .messages-sidebar {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* This styles the left menu. */
+    .messagesleftsidebarmenu {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
         padding: 18px;
         height: fit-content;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: var(--smallboxshadow);
     }
 
-    .new-btn {
+    /* This styles the new message button. */
+    .newmessagebutton {
         display: block;
         width: 100%;
-        background: #2563eb;
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
         text-decoration: none;
         text-align: center;
         padding: 12px;
-        border-radius: 8px;
-        font-weight: bold;
+        border-radius: 14px;
+        font-weight: 900;
         margin-bottom: 18px;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
+        transition: 0.2s ease;
     }
 
-    .new-btn:hover {
-        background: #1d4ed8;
+    /* This moves the new message button when the mouse is on it. */
+    .newmessagebutton:hover {
+        transform: translateY(-1px);
     }
 
-    .mail-tab {
+    /* This styles inbox and sent tabs. */
+    .messagetablink {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 8px;
-        border-radius: 8px;
+        padding: 12px 10px;
+        border-radius: 14px;
         color: #334155;
-        font-size: 15px;
+        font-size: 14px;
         text-decoration: none;
-        margin-bottom: 6px;
+        margin-bottom: 7px;
+        font-weight: 900;
+        transition: 0.2s ease;
     }
 
-    .mail-tab.active,
-    .mail-tab:hover {
-        background: #eef6ff;
-        color: #0757b8;
+    /* This shows the selected tab or hovered tab. */
+    .messagetablink.active,
+    .messagetablink:hover {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
     }
 
-    .badge {
-        background: #ef4444;
+    /* This styles small red count labels. */
+    .redcountlabel {
+        background: var(--redcolor);
         color: white;
         border-radius: 999px;
         font-size: 12px;
-        padding: 3px 8px;
-        font-weight: bold;
+        padding: 4px 8px;
+        font-weight: 900;
     }
 
-    .badge-blue {
-        background: #2563eb;
+    /* This styles blue count labels. */
+    .bluecountlabel {
+        background: var(--mainbluecolor);
     }
 
-    .content-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* This styles the main message box. */
+    .messagelistwhitebox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
         padding: 24px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .section-head {
+    /* This moves the message box when the mouse is on it. */
+    .messagelistwhitebox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This puts section title and count side by side. */
+    .messagelisttoparea {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 14px;
         margin-bottom: 18px;
     }
 
-    .section-head h2 {
+    /* This styles section titles. */
+    .messagelisttoparea h2 {
         margin: 0;
         font-size: 22px;
-        color: #1f2937;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
     }
 
-    .success-box {
-        background: #dcfce7;
+    /* This styles the message count text. */
+    .messagelisttoparea span {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    /* This styles success messages. */
+    .successmessagebox {
+        background: var(--softgreencolor);
         color: #166534;
         border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 12px 14px;
+        border-radius: 16px;
+        padding: 14px 16px;
         margin-bottom: 18px;
         font-size: 14px;
+        font-weight: 800;
     }
 
-    .message-list {
+    /* This stacks message rows. */
+    .messagerowlist {
         display: flex;
         flex-direction: column;
+        gap: 12px;
     }
 
-    .message-row {
+    /* This styles one message row. */
+    .messagerowlink {
         display: grid;
-        grid-template-columns: 46px 1fr auto;
+        grid-template-columns: 50px 1fr auto;
         gap: 14px;
         align-items: center;
-        padding: 18px 0;
-        border-bottom: 1px solid #eef2f7;
+        padding: 15px;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
         text-decoration: none;
         color: inherit;
+        background: white;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .message-row:last-child {
-        border-bottom: none;
+    /* This moves a message row when the mouse is on it. */
+    .messagerowlink:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+        background: #ffffff;
     }
 
-    .message-row:hover {
-        background: #f8fafc;
-    }
-
-    .avatar {
-        width: 42px;
-        height: 42px;
+    /* This styles sender or receiver avatar. */
+    .senderorreceiveravatar {
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+        box-shadow: 0 6px 16px rgba(15,23,42,0.12);
     }
 
-    .message-subject {
+    /* This styles the message subject. */
+    .messagesubjecttext {
         font-size: 16px;
-        color: #111827;
-        font-weight: bold;
-        margin-bottom: 5px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
     }
 
-    .message-preview {
-        color: #667085;
+    /* This styles the short message preview. */
+    .messagepreviewtext {
+        color: var(--mutedtextcolor);
         font-size: 14px;
-        line-height: 1.4;
+        line-height: 1.5;
     }
 
-    .message-meta {
+    /* This styles the date and status on the right. */
+    .messagedateandstatustext {
         text-align: right;
-        color: #667085;
+        color: var(--mutedtextcolor);
         font-size: 13px;
         white-space: nowrap;
+        line-height: 1.5;
     }
 
-    .status-pill {
+    /* This styles status labels. */
+    .messagestatuspilllabel {
         display: inline-block;
         margin-top: 6px;
         border-radius: 999px;
-        padding: 4px 8px;
+        padding: 5px 9px;
         font-size: 12px;
-        font-weight: bold;
+        font-weight: 900;
     }
 
-    .unread {
-        background: #e0f2fe;
-        color: #0369a1;
+    /* This styles unread labels. */
+    .unreadmessagelabel {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
     }
 
-    .read {
-        background: #dcfce7;
+    /* This styles read labels. */
+    .readmessagelabel {
+        background: var(--softgreencolor);
         color: #166534;
     }
 
-    .sent-pill {
+    /* This styles sent labels. */
+    .sentmessagelabel {
         background: #e0e7ff;
         color: #3730a3;
     }
 
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 700;
     }
 
+    /* This changes the page on medium screens. */
     @media (max-width: 900px) {
-        .messages-layout {
+        .messagespagecolumnsgrid {
             grid-template-columns: 1fr;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .messageswholepagearea {
+            padding: 0;
+        }
+
+        .messagesbigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .messagespagetitle {
+            font-size: 29px;
+        }
+
+        .messagerowlink {
+            grid-template-columns: 44px 1fr;
+        }
+
+        .messagedateandstatustext {
+            grid-column: 1 / -1;
+            text-align: left;
         }
     }
 </style>
 
-<div class="messages-wrap">
+<!-- This starts the messages page. -->
+<div class="messageswholepagearea">
 
-    <h1 class="messages-title">Contact Teams</h1>
+    <!-- This shows the page title. -->
+    <div class="messagesbigtoptitlebox">
+        <h1 class="messagespagetitle">Contact Teams</h1>
+        <div class="messagestextundertitle">
+            Read incoming messages, review sent communication and quickly contact teams.
+        </div>
+    </div>
 
-    <div class="messages-layout">
+    <!-- This starts the messages layout. -->
+    <div class="messagespagecolumnsgrid">
 
-        <aside class="messages-sidebar">
-            <a href="{% url 'new_message' %}" class="new-btn">✉ New Message</a>
+        <!-- This shows the left message menu. -->
+        <aside class="messagesleftsidebarmenu">
 
-            <a href="{% url 'messages' %}?tab=inbox" class="mail-tab {% if active_tab == 'inbox' %}active{% endif %}">
+            <!-- This opens the new message page. -->
+            <a href="{% url 'new_message' %}" class="newmessagebutton">✉ New Message</a>
+
+            <!-- This opens the inbox tab. -->
+            <a href="{% url 'messages' %}?tab=inbox" class="messagetablink {% if active_tab == 'inbox' %}active{% endif %}">
                 <span>Inbox</span>
-                <span class="badge">{{ unread_count }}</span>
+                <span class="redcountlabel">{{ unread_count }}</span>
             </a>
 
-            <a href="{% url 'messages' %}?tab=sent" class="mail-tab {% if active_tab == 'sent' %}active{% endif %}">
+            <!-- This opens the sent tab. -->
+            <a href="{% url 'messages' %}?tab=sent" class="messagetablink {% if active_tab == 'sent' %}active{% endif %}">
                 <span>Sent</span>
-                <span class="badge badge-blue">{{ sent_count }}</span>
+                <span class="redcountlabel bluecountlabel">{{ sent_count }}</span>
             </a>
         </aside>
 
+        <!-- This shows the selected message list. -->
         <main>
 
+            <!-- This shows success messages. -->
             {% if messages %}
                 {% for message in messages %}
-                    <div class="success-box">{{ message }}</div>
+                    <div class="successmessagebox">{{ message }}</div>
                 {% endfor %}
             {% endif %}
 
+            <!-- This shows inbox messages. -->
             {% if active_tab == "inbox" %}
 
-                <div class="content-card">
-                    <div class="section-head">
+                <div class="messagelistwhitebox">
+                    <div class="messagelisttoparea">
                         <h2>Inbox</h2>
                         <span>{{ inbox_count }} messages</span>
                     </div>
 
-                    <div class="message-list">
+                    <div class="messagerowlist">
                         {% for m in inbox %}
-                            <a href="{% url 'message_detail' m.id %}" class="message-row">
+
+                            <!-- This opens one inbox message. -->
+                            <a href="{% url 'message_detail' m.id %}" class="messagerowlink">
                                 <img
-                                    class="avatar"
+                                    class="senderorreceiveravatar"
                                     src="https://ui-avatars.com/api/?name={{ m.sender.name|urlencode }}&background=0072ce&color=fff"
                                     alt="{{ m.sender.name }}"
                                 >
 
                                 <div>
-                                    <div class="message-subject">{{ m.subject }}</div>
-                                    <div class="message-preview">
+                                    <div class="messagesubjecttext">{{ m.subject }}</div>
+                                    <div class="messagepreviewtext">
                                         From {{ m.sender.name }} to {{ m.receiver.name }} —
                                         {{ m.body|truncatechars:85 }}
                                     </div>
                                 </div>
 
-                                <div class="message-meta">
+                                <div class="messagedateandstatustext">
                                     {{ m.created_at|date:"M d, H:i" }}
-
-                                    {% if not m.is_read %}
-                                        <br><span class="status-pill unread">New</span>
-                                    {% else %}
-                                        <br><span class="status-pill read">Read</span>
-                                    {% endif %}
                                 </div>
                             </a>
                         {% empty %}
-                            <div class="empty">
+
+                            <!-- This message appears when inbox is empty. -->
+                            <div class="emptymessagebox">
                                 No inbox messages found in the database.
                             </div>
                         {% endfor %}
@@ -271,38 +439,43 @@
 
             {% endif %}
 
+            <!-- This shows sent messages. -->
             {% if active_tab == "sent" %}
 
-                <div class="content-card">
-                    <div class="section-head">
+                <div class="messagelistwhitebox">
+                    <div class="messagelisttoparea">
                         <h2>Sent</h2>
                         <span>{{ sent_count }} messages</span>
                     </div>
 
-                    <div class="message-list">
+                    <div class="messagerowlist">
                         {% for m in sent %}
-                            <a href="{% url 'message_detail' m.id %}" class="message-row">
+
+                            <!-- This opens one sent message. -->
+                            <a href="{% url 'message_detail' m.id %}" class="messagerowlink">
                                 <img
-                                    class="avatar"
+                                    class="senderorreceiveravatar"
                                     src="https://ui-avatars.com/api/?name={{ m.receiver.name|urlencode }}&background=0757b8&color=fff"
                                     alt="{{ m.receiver.name }}"
                                 >
 
                                 <div>
-                                    <div class="message-subject">{{ m.subject }}</div>
-                                    <div class="message-preview">
+                                    <div class="messagesubjecttext">{{ m.subject }}</div>
+                                    <div class="messagepreviewtext">
                                         To {{ m.receiver.name }} —
                                         {{ m.body|truncatechars:85 }}
                                     </div>
                                 </div>
 
-                                <div class="message-meta">
+                                <div class="messagedateandstatustext">
                                     {{ m.created_at|date:"M d, H:i" }}
-                                    <br><span class="status-pill sent-pill">Sent</span>
+                                    <br><span class="messagestatuspilllabel sentmessagelabel">Sent</span>
                                 </div>
                             </a>
                         {% empty %}
-                            <div class="empty">
+
+                            <!-- This message appears when sent messages are empty. -->
+                            <div class="emptymessagebox">
                                 No sent messages found in the database.
                             </div>
                         {% endfor %}

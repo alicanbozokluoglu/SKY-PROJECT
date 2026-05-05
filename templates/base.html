@@ -3,316 +3,829 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- This sets the page title. -->
     <title>Open Sky</title>
 
     <style>
+        /* This makes width and height easier to control. */
         * {
             box-sizing: border-box;
         }
 
+        /* This sets the main colors. */
+        :root {
+            --mainbluecolor: #2563eb;
+            --darkbluecolor: #1e40af;
+            --lightbluecolor: #38bdf8;
+            --softbluecolor: rgba(37,99,235,0.10);
+
+            --pagebackgroundcolor: #eef4fb;
+            --whitecolor: #ffffff;
+            --maintextcolor: #101828;
+            --mutedtextcolor: #667085;
+            --borderlinecolor: #e4e7ec;
+
+            --sidebartextcolor: #ffffff;
+            --smallboxshadow: 0 8px 20px rgba(16,24,40,0.06);
+            --mediumboxshadow: 0 18px 45px rgba(16,24,40,0.10);
+        }
+
+        /* This makes the page take full height. */
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        /* This sets the page font and background. */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
+            background: var(--pagebackgroundcolor);
+            color: var(--maintextcolor);
         }
 
-        .layout {
-            display: flex;
+        /* This holds the sidebar and main page together. */
+        .sidebarandmainpagelayout {
             min-height: 100vh;
+            display: flex;
+            background:
+                radial-gradient(circle at top right, rgba(0,127,255,0.10), transparent 35%),
+                var(--pagebackgroundcolor);
         }
 
-        .sidebar {
-            width: 250px;
-            background: #0757b8;
-            color: white;
-            padding: 24px 22px;
+        /* This makes the page black in black theme. */
+        body.blackthemebody {
+            background: #000000;
+        }
+
+        /* This makes the layout black in black theme. */
+        body.blackthemebody .sidebarandmainpagelayout {
+            background: #000000;
+        }
+
+        /* This styles the left sidebar. */
+        .leftsidebar {
+            width: 270px;
+            height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
             bottom: 0;
-            overflow-y: auto;
+            padding: 20px 16px;
+            color: var(--sidebartextcolor);
+            overflow: hidden;
+
+            background:
+                radial-gradient(circle at 15% 18%, rgba(56, 189, 248, 0.55), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.50), transparent 30%),
+                radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.45), transparent 32%),
+                linear-gradient(135deg, #020617 0%, #0f2f6f 45%, #0284c7 100%);
+
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-right: 1px solid rgba(255,255,255,0.24);
+            box-shadow: 16px 0 42px rgba(2, 6, 23, 0.28);
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 42px;
+        /* This adds a glass effect on the sidebar. */
+        .leftsidebar::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(255,255,255,0.13), transparent 35%, rgba(255,255,255,0.08)),
+                repeating-linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.04) 0px,
+                    rgba(255,255,255,0.04) 1px,
+                    transparent 1px,
+                    transparent 18px
+                );
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            pointer-events: none;
         }
 
-        .brand img {
-            width: 72px;
+        /* This adds a moving shine on the sidebar. */
+        .leftsidebar::after {
+            content: "";
+            position: absolute;
+            top: -35%;
+            left: -75%;
+            width: 80%;
+            height: 170%;
+            background: linear-gradient(
+                115deg,
+                transparent 0%,
+                rgba(255,255,255,0.04) 35%,
+                rgba(255,255,255,0.32) 50%,
+                rgba(255,255,255,0.05) 65%,
+                transparent 100%
+            );
+            transform: rotate(8deg);
+            animation: leftsidebarshineanimation 7s ease-in-out infinite;
+            pointer-events: none;
         }
 
-        .brand span {
-            font-size: 24px;
-            font-weight: bold;
+        /* This moves the sidebar shine. */
+        @keyframes leftsidebarshineanimation {
+            0% {
+                left: -85%;
+                opacity: 0;
+            }
+
+            18% {
+                opacity: 0.75;
+            }
+
+            50% {
+                left: 125%;
+                opacity: 0;
+            }
+
+            100% {
+                left: 125%;
+                opacity: 0;
+            }
         }
 
-        .nav a {
+        /* This sets the sidebar font. */
+        .leftsidebar,
+        .leftsidebar *,
+        .topbarprofilename {
+            font-family: Arial, sans-serif;
+        }
+
+        /* This keeps sidebar content above the decoration. */
+        .sidebarlogoarea,
+        .sidebarnavigationmenu {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* This styles the logo area. */
+        .sidebarlogoarea {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 15px 16px;
-            border-radius: 9px;
-            color: white;
+            padding: 10px 8px 22px;
+            margin-bottom: 18px;
+            color: #ffffff;
             text-decoration: none;
-            font-size: 18px;
-            margin-bottom: 16px;
+            background: transparent;
+            border-bottom: 1px solid rgba(255,255,255,0.22);
         }
 
-        .nav a:hover,
-        .nav a.active {
-            background: rgba(255,255,255,0.28);
+        /* This slightly changes the logo area on hover. */
+        .sidebarlogoarea:hover {
+            opacity: 0.92;
         }
 
-        .nav-section {
-            margin: 24px 0 12px;
-            font-size: 12px;
+        /* This styles the logo image. */
+        .sidebarlogoarea img {
+            width: 64px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.14));
+        }
+
+        /* This holds the brand text. */
+        .sidebarlogotextarea {
+            line-height: 1.05;
+        }
+
+        /* This styles the brand title. */
+        .sidebarlogotitle {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            color: #ffffff;
+        }
+
+        /* This styles the brand subtitle. */
+        .sidebarlogosubtitle {
+            font-size: 11px;
+            font-weight: 800;
+            opacity: 0.86;
+            margin-top: 5px;
+            line-height: 1.2;
+            color: rgba(255,255,255,0.86);
+        }
+
+        /* This stacks navigation links. */
+        .sidebarnavigationmenu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* This styles the admin section title. */
+        .sidebaradminsectiontitle {
+            margin: 20px 10px 8px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.75;
-            font-weight: bold;
+            letter-spacing: 1.7px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.66);
         }
 
-        .main {
-            margin-left: 250px;
-            width: calc(100% - 250px);
+        /* This styles sidebar links. */
+        .sidebarnavigationmenu a {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 11px;
+            border-radius: 15px;
+            color: rgba(255,255,255,0.86);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 800;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition:
+                background 0.22s ease,
+                color 0.22s ease,
+                border 0.22s ease,
+                transform 0.22s ease,
+                box-shadow 0.22s ease;
         }
 
-        .topbar {
-            height: 112px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 14px 28px;
+        /* This moves a sidebar link when the mouse is on it. */
+        .sidebarnavigationmenu a:hover {
+            background: rgba(255,255,255,0.16);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.22);
+            transform: translateX(4px);
+        }
+
+        /* This shows the selected sidebar link. */
+        .sidebarnavigationmenu a.active {
+            background: rgba(255,255,255,0.24);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.32);
+            box-shadow:
+                inset 4px 0 0 #ffffff,
+                0 14px 28px rgba(0,0,0,0.12);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        /* This styles the icon box in sidebar links. */
+        .sidebarlinkiconbox {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.16);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition:
+                background 0.22s ease,
+                color 0.22s ease,
+                transform 0.22s ease;
+        }
+
+        /* This changes the sidebar icon when the mouse is on the link. */
+        .sidebarnavigationmenu a:hover .sidebarlinkiconbox {
+            background: rgba(255,255,255,0.26);
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        /* This styles the selected sidebar icon. */
+        .sidebarnavigationmenu a.active .sidebarlinkiconbox {
+            background: #ffffff;
+            color: var(--mainbluecolor);
+        }
+
+        /* This styles the sidebar link text. */
+        .sidebarlinktext {
+            line-height: 1.15;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        /* This styles the main page area. */
+        .maincontentrightsidearea {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+        }
+
+        /* This makes the main area black in black theme. */
+        body.blackthemebody .maincontentrightsidearea {
+            background: #000000;
+        }
+
+        /* This styles the top bar. */
+        .pagetopbar {
+            min-height: 112px;
+            margin: 18px 24px 0;
+            background: #ffffff;
+            border: 1px solid var(--borderlinecolor);
+            border-radius: 24px;
+            padding: 18px 24px;
             display: grid;
             grid-template-columns: 1fr auto;
-            align-items: start;
+            align-items: center;
             column-gap: 24px;
+            box-shadow: var(--mediumboxshadow);
         }
 
-        .top-left h1 {
-            margin: 0 0 16px;
-            font-size: 28px;
-            color: #1f2937;
+        /* This styles the top bar in black theme. */
+        body.blackthemebody .pagetopbar {
+            background: #000000;
+            border: 1px solid #1f2937;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.35);
         }
 
-        .top-search {
+        /* This styles the welcome text. */
+        .topbarleftside h1 {
+            margin: 0 0 12px;
+            font-size: 27px;
+            color: var(--maintextcolor);
+            letter-spacing: -0.7px;
+            font-weight: 800;
+        }
+
+        /* This makes the welcome text white in black theme. */
+        body.blackthemebody .topbarleftside h1 {
+            color: #ffffff;
+        }
+
+        /* This holds the search bar. */
+        .topbarsearchform {
             position: relative;
-            width: 560px;
+            width: min(560px, 100%);
         }
 
-        .top-search input {
+        /* This styles the search input. */
+        .topbarsearchform input {
             width: 100%;
-            padding: 13px 46px 13px 18px;
-            border: 1px solid #d9dee8;
-            border-radius: 10px;
-            font-size: 18px;
-            color: #667085;
+            height: 46px;
+            padding: 0 48px 0 18px;
+            border: 1px solid #d0d5dd;
+            border-radius: 15px;
+            font-size: 15px;
+            color: var(--maintextcolor);
             outline: none;
+            background: #ffffff;
+            transition: 0.18s ease;
         }
 
-        .top-search input:focus {
-            border-color: #00a9df;
-            box-shadow: 0 0 0 4px rgba(0,169,223,0.12);
+        /* This styles the search input in black theme. */
+        body.blackthemebody .topbarsearchform input {
+            border: 1px solid #334155;
+            color: #ffffff;
+            background: #111827;
         }
 
-        .top-search button {
+        /* This styles the search placeholder. */
+        .topbarsearchform input::placeholder {
+            color: #98a2b3;
+        }
+
+        /* This styles the search placeholder in black theme. */
+        body.blackthemebody .topbarsearchform input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* This highlights the search input when clicked. */
+        .topbarsearchform input:focus {
+            border-color: var(--mainbluecolor);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.13);
+        }
+
+        /* This highlights the search input in black theme. */
+        body.blackthemebody .topbarsearchform input:focus {
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.25);
+        }
+
+        /* This styles the search button. */
+        .topbarsearchform button {
             position: absolute;
-            right: 12px;
+            right: 13px;
             top: 50%;
             transform: translateY(-50%);
             border: none;
-            background: transparent;
-            font-size: 22px;
+            background: var(--softbluecolor);
+            color: var(--mainbluecolor);
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
-            color: #667085;
-            width: 26px;
-            height: 26px;
-            line-height: 26px;
             padding: 0;
+            border-radius: 10px;
+            transition: 0.18s ease;
         }
 
-        .top-profile {
+        /* This styles the search button in black theme. */
+        body.blackthemebody .topbarsearchform button {
+            background: rgba(37,99,235,0.20);
+            color: #60a5fa;
+        }
+
+        /* This changes the search button on hover. */
+        .topbarsearchform button:hover {
+            background: var(--mainbluecolor);
+            color: #ffffff;
+        }
+
+        /* This holds the profile area. */
+        .topbarprofilearea {
             display: flex;
             align-items: center;
-            gap: 14px;
-            height: 48px;
-            margin-top: 18px;
         }
 
-        .header-icon {
+        /* This styles the profile button. */
+        .topbarprofilebutton {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 54px;
+            cursor: pointer;
+            position: relative;
+            padding: 7px 9px 7px 7px;
+            border-radius: 18px;
+            border: 1px solid transparent;
+            transition: 0.18s ease;
+        }
+
+        /* This changes the profile button on hover. */
+        .topbarprofilebutton:hover {
+            background: #f9fafb;
+            border-color: var(--borderlinecolor);
+        }
+
+        /* This changes the profile button on hover in black theme. */
+        body.blackthemebody .topbarprofilebutton:hover {
+            background: #111827;
+            border-color: #334155;
+        }
+
+        /* This styles the profile image. */
+        .topbarprofilebutton img {
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: #f3f6fb;
-            border: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #334155;
-            text-decoration: none;
-            font-size: 20px;
-        }
-
-        .header-icon:hover {
-            background: #e6f7fc;
-            color: #0072ce;
-        }
-
-        .profile-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            cursor: pointer;
-            height: 48px;
-        }
-
-        .profile-box img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
             object-fit: cover;
+            border: 2px solid #ffffff;
+            box-shadow: 0 8px 18px rgba(16,24,40,0.14);
         }
 
-        .profile-name {
-            font-size: 18px;
-            color: #334155;
-            line-height: 48px;
+        /* This styles the profile image in black theme. */
+        body.blackthemebody .topbarprofilebutton img {
+            border: 2px solid #1f2937;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.35);
         }
 
-        .dropdown-arrow {
-            color: #334155;
+        /* This styles the profile name. */
+        .topbarprofilename {
+            font-size: 15px;
+            color: #1d2939;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* This makes the profile name white in black theme. */
+        body.blackthemebody .topbarprofilename {
+            color: #ffffff;
+        }
+
+        /* This styles the dropdown arrow box. */
+        .profiledropdownarrowbox {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 18px;
-            height: 48px;
+            color: #475467;
+            height: 30px;
+            width: 20px;
         }
 
-        .dropdown-arrow svg {
+        /* This styles the dropdown arrow in black theme. */
+        body.blackthemebody .profiledropdownarrowbox {
+            color: #cbd5e1;
+        }
+
+        /* This sets the dropdown arrow size. */
+        .profiledropdownarrowbox svg {
             width: 18px;
             height: 18px;
-            display: block;
         }
 
-        .dropdown {
+        /* This hides the profile dropdown first. */
+        .profiledropdownmenu {
             display: none;
             position: absolute;
             right: 0;
-            top: 58px;
-            width: 180px;
+            top: 62px;
+            width: 210px;
             background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+            border: 1px solid var(--borderlinecolor);
+            border-radius: 18px;
             overflow: hidden;
-            z-index: 20;
+            box-shadow: 0 24px 48px rgba(16,24,40,0.16);
+            z-index: 50;
+            padding: 6px;
         }
 
-        .dropdown a {
+        /* This styles the dropdown in black theme. */
+        body.blackthemebody .profiledropdownmenu {
+            background: #111827;
+            border: 1px solid #334155;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.45);
+        }
+
+        /* This shows the profile dropdown. */
+        .profiledropdownmenu.show {
             display: block;
-            padding: 13px 15px;
-            text-decoration: none;
+        }
+
+        /* This styles dropdown links. */
+        .profiledropdownmenu a {
+            display: block;
+            padding: 13px 14px;
             color: #1f2937;
+            text-decoration: none;
             font-size: 14px;
+            font-weight: 700;
+            border-radius: 12px;
         }
 
-        .dropdown a:hover {
-            background: #f3f7fc;
+        /* This styles dropdown links in black theme. */
+        body.blackthemebody .profiledropdownmenu a {
+            color: #e5e7eb;
         }
 
-        .dropdown.show {
-            display: block;
+        /* This changes dropdown links on hover. */
+        .profiledropdownmenu a:hover {
+            background: var(--softbluecolor);
+            color: var(--darkbluecolor);
         }
 
-        .content {
-            padding: 32px;
+        /* This changes dropdown links on hover in black theme. */
+        body.blackthemebody .profiledropdownmenu a:hover {
+            background: rgba(37,99,235,0.22);
+            color: #ffffff;
         }
 
-        .footer {
-            padding: 18px 32px;
-            color: #667085;
+        /* This holds the page content. */
+        .otherpagescontentarea {
+            flex: 1;
+            padding: 28px 24px 32px;
+            background: transparent;
+        }
+
+        /* This makes the content area black in black theme. */
+        body.blackthemebody .otherpagescontentarea {
+            background: #000000;
+        }
+
+        /* This keeps content inside the page width. */
+        .otherpagescontentarea > * {
+            max-width: 100%;
+        }
+
+        /* This styles the footer. */
+        .pagefooter {
+            margin: auto 24px 18px;
+            padding: 18px 22px;
+            background: #ffffff;
+            border: 1px solid var(--borderlinecolor);
+            border-radius: 20px;
+            color: var(--mutedtextcolor);
             font-size: 12px;
             display: flex;
             justify-content: space-between;
+            gap: 20px;
+            box-shadow: var(--smallboxshadow);
         }
 
+        /* This styles the footer in black theme. */
+        body.blackthemebody .pagefooter {
+            background: #000000;
+            border: 1px solid #1f2937;
+            color: #94a3b8;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+        }
+
+        /* This changes the layout on short screens. */
+        @media (max-height: 820px) {
+            .sidebarlogoarea img {
+                width: 50px;
+            }
+
+            .sidebarlogotitle {
+                font-size: 20px;
+            }
+
+            .sidebarlogosubtitle {
+                font-size: 10px;
+            }
+
+            .sidebarnavigationmenu a {
+                min-height: 42px;
+            }
+
+            .sidebarlinkiconbox {
+                width: 30px;
+                height: 30px;
+                min-width: 30px;
+                font-size: 14px;
+            }
+        }
+
+        /* This changes the layout on medium screens. */
         @media (max-width: 1100px) {
-            .sidebar {
-                width: 220px;
+            .leftsidebar {
+                width: 238px;
+                padding: 18px 13px;
             }
 
-            .main {
-                margin-left: 220px;
-                width: calc(100% - 220px);
+            .maincontentrightsidearea {
+                margin-left: 238px;
+                width: calc(100% - 238px);
             }
 
-            .top-search {
-                width: 380px;
+            .sidebarlogoarea img {
+                width: 50px;
+            }
+
+            .sidebarlogotitle {
+                font-size: 19px;
+            }
+
+            .sidebarlogosubtitle {
+                font-size: 10px;
+            }
+
+            .pagetopbar {
+                height: auto;
+                grid-template-columns: 1fr;
+                row-gap: 16px;
+            }
+
+            .topbarsearchform {
+                width: 100%;
+            }
+
+            .topbarprofilearea {
+                justify-content: flex-end;
+            }
+        }
+
+        /* This changes the layout on small screens. */
+        @media (max-width: 760px) {
+            .leftsidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                overflow: hidden;
+            }
+
+            .sidebarandmainpagelayout {
+                display: block;
+            }
+
+            .maincontentrightsidearea {
+                margin-left: 0;
+                width: 100%;
+                min-height: 100vh;
+            }
+
+            .pagetopbar {
+                margin: 16px;
+                border-radius: 20px;
+            }
+
+            .otherpagescontentarea {
+                flex: 1;
+                padding: 20px 16px;
+            }
+
+            .pagefooter {
+                margin: auto 16px 16px;
+                flex-direction: column;
             }
         }
     </style>
 </head>
 
-<body>
+<!-- This sets black theme or normal theme. -->
+<body class="{% if request.user.is_authenticated and request.user.settings_profile and request.user.settings_profile.background == 'black' %}blackthemebody{% else %}standardthemebody{% endif %}">
 
-<div class="layout">
+<!-- This starts the main layout. -->
+<div class="sidebarandmainpagelayout">
 
-    <aside class="sidebar">
-        <div class="brand">
+    <!-- This starts the sidebar. -->
+    <aside class="leftsidebar">
+
+        <!-- This logo opens the dashboard. -->
+        <a href="{% url 'dashboard' %}" class="sidebarlogoarea">
             <img src="{% static 'images/sky.png' %}" alt="Open Sky">
-            <span>Open Sky</span>
-        </div>
 
-        <nav class="nav">
+            <div class="sidebarlogotextarea">
+                <div class="sidebarlogotitle">Open Sky</div>
+                <div class="sidebarlogosubtitle">Engineering<br>Directory</div>
+            </div>
+        </a>
+
+        <!-- This shows the sidebar menu. -->
+        <nav class="sidebarnavigationmenu">
+
+            <!-- This opens the dashboard page. -->
             <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                🏠 Dashboard
+                <span class="sidebarlinkiconbox">🏠</span>
+                <span class="sidebarlinktext">Dashboard</span>
             </a>
 
+            <!-- This opens the teams page. -->
             <a href="{% url 'teams' %}" class="{% if request.resolver_match.url_name == 'teams' or request.resolver_match.url_name == 'team_detail' %}active{% endif %}">
-                👥 Teams
+                <span class="sidebarlinkiconbox">👥</span>
+                <span class="sidebarlinktext">Teams</span>
             </a>
 
+            <!-- This opens the organisation page. -->
             <a href="{% url 'organisation_map' %}" class="{% if request.resolver_match.url_name == 'organisation_map' %}active{% endif %}">
-                🔗 Organisation
-            </a>
-            <a href="{% url 'departments' %}"  class="{% if request.resolver_match.url_name == 'departments' %}active{% endif %}">
-                🏢 Departments
+                <span class="sidebarlinkiconbox">🔗</span>
+                <span class="sidebarlinktext">Organisation</span>
             </a>
 
+            <!-- This opens the departments page. -->
+            <a href="{% url 'departments' %}" class="{% if request.resolver_match.url_name == 'departments' %}active{% endif %}">
+                <span class="sidebarlinkiconbox">🏢</span>
+                <span class="sidebarlinktext">Departments</span>
+            </a>
+
+            <!-- This opens the messages page. -->
             <a href="{% url 'messages' %}" class="{% if request.resolver_match.url_name == 'messages' or request.resolver_match.url_name == 'new_message' or request.resolver_match.url_name == 'message_detail' or request.resolver_match.url_name == 'reply_message' %}active{% endif %}">
-                💬 Messages
+                <span class="sidebarlinkiconbox">💬</span>
+                <span class="sidebarlinktext">Messages</span>
             </a>
 
+            <!-- This opens the schedule page. -->
             <a href="{% url 'schedule' %}" class="{% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
-                📅 Schedule
+                <span class="sidebarlinkiconbox">📅</span>
+                <span class="sidebarlinktext">Schedule</span>
             </a>
 
+            <!-- This shows admin links only for admins. -->
             {% if request.user.is_staff %}
-                <div class="nav-section">Admin</div>
+                <div class="sidebaradminsectiontitle">Admin</div>
 
+                <!-- This opens the admin dashboard. -->
                 <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
-                    🛠 Admin Dashboard
+                    <span class="sidebarlinkiconbox">🛠</span>
+                    <span class="sidebarlinktext">Admin Dashboard</span>
                 </a>
 
+                <!-- This opens team management. -->
                 <a href="{% url 'admin_team_management' %}" class="{% if request.resolver_match.url_name == 'admin_team_management' %}active{% endif %}">
-                    👥 Team Management
+                    <span class="sidebarlinkiconbox">👥</span>
+                    <span class="sidebarlinktext">Team Management</span>
                 </a>
 
+                <!-- This opens department management. -->
+                <a href="{% url 'admin_department_management' %}" class="{% if request.resolver_match.url_name == 'admin_department_management' %}active{% endif %}">
+                    <span class="sidebarlinkiconbox">🏢</span>
+                    <span class="sidebarlinktext">Department Management</span>
+                </a>
+
+                <!-- This opens person management. -->
+                <a href="{% url 'admin_person_management' %}" class="{% if request.resolver_match.url_name == 'admin_person_management' %}active{% endif %}">
+                    <span class="sidebarlinkiconbox">🧑‍💼</span>
+                    <span class="sidebarlinktext">Person Management</span>
+                </a>
+
+                <!-- This opens user access. -->
                 <a href="{% url 'admin_user_access' %}" class="{% if request.resolver_match.url_name == 'admin_user_access' %}active{% endif %}">
-                    🔐 User Access
+                    <span class="sidebarlinkiconbox">🔐</span>
+                    <span class="sidebarlinktext">User Access</span>
                 </a>
             {% endif %}
+
         </nav>
+
     </aside>
 
-    <main class="main">
+    <!-- This starts the main content area. -->
+    <main class="maincontentrightsidearea">
 
-        <header class="topbar">
-            <div class="top-left">
+        <!-- This starts the top bar. -->
+        <header class="pagetopbar">
+
+            <!-- This shows welcome text and search. -->
+            <div class="topbarleftside">
+
+                <!-- This shows the logged in user's name. -->
                 {% if request.user.is_authenticated and request.user.person %}
                     <h1>Welcome, {{ request.user.person.name }}!</h1>
                 {% elif request.user.is_authenticated %}
@@ -321,55 +834,71 @@
                     <h1>Welcome!</h1>
                 {% endif %}
 
-                <form class="top-search" method="get" action="{% url 'teams' %}">
-                    <input type="text" name="search" placeholder="Search teams, departments, or managers...">
+                <!-- This searches the whole website. -->
+                <form class="topbarsearchform" method="get" action="{% url 'global_search' %}">
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ request.GET.q }}"
+                        placeholder="Search teams, departments or people..."
+                        autocomplete="off"
+                    >
                     <button type="submit">⌕</button>
                 </form>
             </div>
 
-            <div class="top-profile">
-                <a href="{% url 'messages' %}" class="header-icon" title="Messages">💬</a>
+            <!-- This shows the user profile menu. -->
+            <div class="topbarprofilearea">
+                <div class="topbarprofilebutton" onclick="openorcloseprofiledropdown(event)">
 
-                <div class="profile-box" onclick="toggleDropdown(event)">
+                    <!-- This shows the user's photo or avatar. -->
                     {% if request.user.is_authenticated and request.user.person and request.user.person.photo %}
                         <img src="{{ request.user.person.photo.url }}" alt="{{ request.user.person.name }}">
-                        <span class="profile-name">{{ request.user.person.name }}</span>
+                        <span class="topbarprofilename">{{ request.user.person.name }}</span>
                     {% elif request.user.is_authenticated and request.user.person %}
-                        <img src="https://ui-avatars.com/api/?name={{ request.user.person.name|urlencode }}&background=0072ce&color=fff">
-                        <span class="profile-name">{{ request.user.person.name }}</span>
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.person.name|urlencode }}&background=007fff&color=fff" alt="{{ request.user.person.name }}">
+                        <span class="topbarprofilename">{{ request.user.person.name }}</span>
                     {% elif request.user.is_authenticated %}
-                        <img src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=0072ce&color=fff">
-                        <span class="profile-name">{{ request.user.username }}</span>
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=007fff&color=fff" alt="{{ request.user.username }}">
+                        <span class="topbarprofilename">{{ request.user.username }}</span>
                     {% else %}
-                        <img src="https://ui-avatars.com/api/?name=User&background=0072ce&color=fff">
-                        <span class="profile-name">User</span>
+                        <img src="https://ui-avatars.com/api/?name=User&background=007fff&color=fff" alt="User">
+                        <span class="topbarprofilename">User</span>
                     {% endif %}
 
-                    <span class="dropdown-arrow">
+                    <!-- This shows the dropdown arrow. -->
+                    <span class="profiledropdownarrowbox">
                         <svg viewBox="0 0 20 20" fill="none">
-                            <path d="M5.5 7.5L10 12L14.5 7.5"
-                                  stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"/>
+                            <path
+                                d="M5.5 7.5L10 12L14.5 7.5"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
                         </svg>
                     </span>
 
-                    <div class="dropdown">
+                    <!-- This shows profile menu links. -->
+                    <div class="profiledropdownmenu">
                         <a href="{% url 'profile' %}">View Profile</a>
                         <a href="{% url 'settings' %}">Settings</a>
                         <a href="{% url 'logout' %}">Sign Out</a>
                     </div>
+
                 </div>
             </div>
+
         </header>
 
-        <section class="content">
+        <!-- This is where other pages put their content. -->
+        <section class="otherpagescontentarea">
             {% block content %}
             {% endblock %}
         </section>
 
-        <footer class="footer">
+        <!-- This shows the footer. -->
+        <footer class="pagefooter">
             <div>© 2025 Sky Engineering Directory. All rights reserved.</div>
             <div>Privacy Policy &nbsp; Terms of Service &nbsp; Help Center</div>
         </footer>
@@ -379,20 +908,25 @@
 </div>
 
 <script>
-function toggleDropdown(event) {
-    event.stopPropagation();
-    const menu = document.querySelector(".dropdown");
-    if (menu) {
-        menu.classList.toggle("show");
-    }
-}
+    // This opens or closes the profile dropdown.
+    function openorcloseprofiledropdown(event) {
+        event.stopPropagation();
 
-document.addEventListener("click", function() {
-    const menu = document.querySelector(".dropdown");
-    if (menu) {
-        menu.classList.remove("show");
+        const profiledropdownmenu = document.querySelector(".profiledropdownmenu");
+
+        if (profiledropdownmenu) {
+            profiledropdownmenu.classList.toggle("show");
+        }
     }
-});
+
+    // This closes the dropdown when the user clicks outside.
+    document.addEventListener("click", function () {
+        const profiledropdownmenu = document.querySelector(".profiledropdownmenu");
+
+        if (profiledropdownmenu) {
+            profiledropdownmenu.classList.remove("show");
+        }
+    });
 </script>
 
 </body>

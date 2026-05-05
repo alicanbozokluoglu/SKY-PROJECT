@@ -3,137 +3,291 @@
 {% block content %}
 
 <style>
-    .reply-wrap {
-        max-width: 900px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softredcolor: #fee2e2;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all reply page content. */
+    .replymessagewholepagearea {
+        max-width: 960px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .reply-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* This makes the big top title box. */
+    .replymessagebigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This adds a circle decoration. */
+    .replymessagebigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .replymessagepagetitle {
+        position: relative;
+        z-index: 1;
+        font-size: 36px;
+        margin: 0;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .replymessagetextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
+    /* This styles the reply form box. */
+    .replymessageformcardbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
         padding: 28px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .page-title {
-        font-size: 28px;
-        margin: 0 0 20px;
-        color: #1f2937;
+    /* This moves the reply box when the mouse is on it. */
+    .replymessageformcardbox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
     }
 
-    .original-box {
-        background: #f8fafc;
-        border: 1px solid #eef2f7;
-        border-radius: 10px;
-        padding: 16px;
+    /* This styles the original message box. */
+    .originalmessageinfobox {
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        padding: 18px;
         margin-bottom: 22px;
+        box-shadow: var(--smallboxshadow);
     }
 
-    .original-title {
-        font-weight: bold;
-        color: #111827;
+    /* This styles the original message subject. */
+    .originalmessagesubjecttitle {
+        font-weight: 900;
+        color: var(--maintextcolor);
         margin-bottom: 8px;
+        font-size: 18px;
+        letter-spacing: -0.03em;
     }
 
-    .original-meta {
-        color: #667085;
+    /* This styles original message details. */
+    .originalmessagedetailtext {
+        color: var(--mutedtextcolor);
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 1.55;
+        font-weight: 700;
     }
 
+    /* This styles form labels. */
     label {
         display: block;
-        font-weight: bold;
+        font-weight: 900;
         color: #334155;
         margin-bottom: 8px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
+    /* This styles the reply text box. */
     textarea {
         width: 100%;
-        min-height: 180px;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
-        padding: 13px 14px;
-        font-size: 15px;
+        min-height: 190px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 14px;
         outline: none;
         resize: vertical;
         font-family: Arial, sans-serif;
+        background: white;
+        color: var(--maintextcolor);
+        line-height: 1.6;
+        transition: 0.18s ease;
     }
 
+    /* This highlights the reply text box when clicked. */
     textarea:focus {
-        border-color: #2563eb;
+        border-color: var(--mainbluecolor);
         box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
     }
 
-    .button-row {
+    /* This puts cancel and send buttons on the right. */
+    .replymessagebuttonrow {
         display: flex;
         justify-content: flex-end;
         gap: 12px;
         margin-top: 20px;
+        flex-wrap: wrap;
     }
 
-    .cancel-btn {
+    /* This styles cancel and send buttons. */
+    .cancelreplybutton,
+    .sendreplybutton {
         padding: 12px 18px;
-        border: 1px solid #d0d5dd;
-        border-radius: 8px;
+        border-radius: 14px;
+        font-weight: 900;
+        transition: 0.2s ease;
+    }
+
+    /* This styles the cancel button. */
+    .cancelreplybutton {
+        border: 1px solid var(--borderlinecolor);
         color: #334155;
         background: white;
         text-decoration: none;
-        font-weight: bold;
     }
 
-    .send-btn {
-        padding: 12px 20px;
+    /* This styles the send reply button. */
+    .sendreplybutton {
         border: none;
-        border-radius: 8px;
-        background: #2563eb;
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
-        font-weight: bold;
         cursor: pointer;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
     }
 
-    .error-box {
-        background: #fee2e2;
+    /* This moves buttons when the mouse is on them. */
+    .cancelreplybutton:hover,
+    .sendreplybutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles error messages. */
+    .errormessagebox {
+        background: var(--softredcolor);
         color: #991b1b;
         border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 12px 14px;
+        border-radius: 16px;
+        padding: 14px 16px;
         margin-bottom: 18px;
         font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .replymessagewholepagearea {
+            padding: 0;
+        }
+
+        .replymessagebigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .replymessagepagetitle {
+            font-size: 29px;
+        }
+
+        .replymessageformcardbox {
+            padding: 22px;
+            border-radius: 22px;
+        }
+
+        .replymessagebuttonrow {
+            justify-content: stretch;
+        }
+
+        .cancelreplybutton,
+        .sendreplybutton {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
-<div class="reply-wrap">
+<!-- This starts the reply message page. -->
+<div class="replymessagewholepagearea">
 
-    <h1 class="page-title">Reply Message</h1>
+    <!-- This shows the page title. -->
+    <div class="replymessagebigtoptitlebox">
+        <h1 class="replymessagepagetitle">Reply Message</h1>
+        <div class="replymessagetextundertitle">
+            Write and send a response to the selected team message.
+        </div>
+    </div>
 
-    <div class="reply-card">
+    <!-- This shows the reply form card. -->
+    <div class="replymessageformcardbox">
 
+        <!-- This shows error messages. -->
         {% if messages %}
             {% for message in messages %}
-                <div class="error-box">{{ message }}</div>
+                <div class="errormessagebox">{{ message }}</div>
             {% endfor %}
         {% endif %}
 
-        <div class="original-box">
-            <div class="original-title">{{ original.subject }}</div>
+        <!-- This shows the original message information. -->
+        <div class="originalmessageinfobox">
+            <div class="originalmessagesubjecttitle">{{ original.subject }}</div>
 
-            <div class="original-meta">
+            <div class="originalmessagedetailtext">
                 From {{ original.sender.name }} to {{ original.receiver.name }}<br>
                 {{ original.created_at|date:"M d, Y H:i" }}
             </div>
         </div>
 
+        <!-- This form sends the reply. -->
         <form method="post">
             {% csrf_token %}
 
+            <!-- This gets the reply text. -->
             <label>Your Reply</label>
             <textarea name="body" required></textarea>
 
-            <div class="button-row">
-                <a href="{% url 'message_detail' original.id %}" class="cancel-btn">Cancel</a>
-                <button type="submit" class="send-btn">Send Reply</button>
+            <!-- This shows cancel and send buttons. -->
+            <div class="replymessagebuttonrow">
+
+                <!-- This goes back to the original message. -->
+                <a href="{% url 'message_detail' original.id %}" class="cancelreplybutton">Cancel</a>
+
+                <!-- This sends the reply. -->
+                <button type="submit" class="sendreplybutton">Send Reply</button>
             </div>
         </form>
 

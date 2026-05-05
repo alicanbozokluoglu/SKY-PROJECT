@@ -3,189 +3,482 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- This sets the page title. -->
     <title>OpenSky Register</title>
 
     <style>
+        /* This sets the page colors. */
+        :root {
+            --transparentwhitecardcolor: rgba(255, 255, 255, 0.92);
+            --maintextcolor: #0f172a;
+            --mutedtextcolor: #64748b;
+            --borderlinecolor: #e2e8f0;
+            --mainbluecolor: #2563eb;
+            --darkbluecolor: #1e40af;
+            --softgreencolor: #dcfce7;
+            --softredcolor: #fee2e2;
+            --bigboxshadow: 0 30px 80px rgba(2, 6, 23, 0.28);
+            --boxroundcorner: 24px;
+        }
+
+        /* This makes width and height easier to control. */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* This sets the page font and background. */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #064fb0, #10b7df);
-            min-height: 100vh;
+            background: #ffffff;
+            color: var(--maintextcolor);
         }
 
-        .top-bar, .bottom-bar {
-            height: 42px;
-            background: white;
+        /* This styles the top and bottom bars. */
+        .toplogolinksbar,
+        .bottomfooterbar {
+            height: 58px;
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 18px;
-            box-sizing: border-box;
+            padding: 0 24px;
         }
 
-        .sky-logo { width: 55px; }
+        /* This adds a line under the top bar. */
+        .toplogolinksbar {
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-        .top-links a, .bottom-bar a {
-            color: #555;
+        /* This styles the bottom bar. */
+        .bottomfooterbar {
+            border-top: 1px solid #e5e7eb;
             font-size: 12px;
-            text-decoration: none;
-            margin-left: 12px;
+            color: #64748b;
+            font-weight: 700;
         }
 
-        .register-area {
-            min-height: calc(100vh - 84px);
+        /* This styles the Sky logo. */
+        .smallskylogo {
+            width: 58px;
+            display: block;
+        }
+
+        /* This holds top and bottom links. */
+        .tophelpcontactlinks,
+        .bottomprivacylinks {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* This styles top and bottom links. */
+        .tophelpcontactlinks a,
+        .bottomfooterbar a {
+            color: #64748b;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        /* This changes links when the mouse is on them. */
+        .tophelpcontactlinks a:hover,
+        .bottomfooterbar a:hover {
+            color: var(--mainbluecolor);
+        }
+
+        /* This styles the blue register area. */
+        .registerbluebackgroundarea {
+            position: relative;
+            overflow: hidden;
+            min-height: calc(100vh - 116px);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 34px 18px;
+            background:
+                radial-gradient(circle at 15% 18%, rgba(56, 189, 248, 0.55), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.50), transparent 30%),
+                radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.45), transparent 32%),
+                linear-gradient(135deg, #020617 0%, #0f2f6f 45%, #0284c7 100%);
         }
 
-        .register-card {
-            width: 380px;
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+        /* This adds a glass effect on the background. */
+        .registerbluebackgroundarea::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(255,255,255,0.13), transparent 35%, rgba(255,255,255,0.08)),
+                repeating-linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.04) 0px,
+                    rgba(255,255,255,0.04) 1px,
+                    transparent 1px,
+                    transparent 18px
+                );
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            pointer-events: none;
+        }
+
+        /* This adds a moving shine on the background. */
+        .registerbluebackgroundarea::after {
+            content: "";
+            position: absolute;
+            top: -35%;
+            left: -55%;
+            width: 70%;
+            height: 170%;
+            background: linear-gradient(
+                115deg,
+                transparent 0%,
+                rgba(255,255,255,0.04) 35%,
+                rgba(255,255,255,0.32) 50%,
+                rgba(255,255,255,0.05) 65%,
+                transparent 100%
+            );
+            transform: rotate(8deg);
+            animation: registerbackgroundshineanimation 7s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* This moves the page shine. */
+        @keyframes registerbackgroundshineanimation {
+            0% {
+                left: -65%;
+                opacity: 0;
+            }
+            18% {
+                opacity: 0.75;
+            }
+            50% {
+                left: 120%;
+                opacity: 0;
+            }
+            100% {
+                left: 120%;
+                opacity: 0;
+            }
+        }
+
+        /* This styles the register card. */
+        .registercardbox {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            width: 420px;
+            background: var(--transparentwhitecardcolor);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255,255,255,0.65);
+            border-radius: var(--boxroundcorner);
+            padding: 34px;
+            box-shadow: var(--bigboxshadow);
             text-align: center;
         }
 
-        .app-logo {
-            width: 130px;
+        /* This adds a soft shine inside the register card. */
+        .registercardbox::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,0.45), transparent 36%),
+                linear-gradient(315deg, rgba(37,99,235,0.08), transparent 46%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* This adds a moving shine on the register card. */
+        .registercardbox::after {
+            content: "";
+            position: absolute;
+            top: -80%;
+            left: -75%;
+            width: 65%;
+            height: 240%;
+            background: linear-gradient(
+                115deg,
+                transparent,
+                rgba(255,255,255,0.12),
+                rgba(255,255,255,0.68),
+                rgba(255,255,255,0.12),
+                transparent
+            );
+            transform: rotate(18deg);
+            animation: registercardshineanimation 4.8s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* This moves the register card shine. */
+        @keyframes registercardshineanimation {
+            0% {
+                left: -80%;
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.9;
+            }
+            48% {
+                left: 125%;
+                opacity: 0;
+            }
+            100% {
+                left: 125%;
+                opacity: 0;
+            }
+        }
+
+        /* This keeps card content above the shine. */
+        .openskyregisterlogo,
+        h2,
+        .textundertitle,
+        form,
+        .signinlinkarea,
+        .errormessagebox,
+        .successmessagebox {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* This styles the OpenSky logo. */
+        .openskyregisterlogo {
+            width: 132px;
             margin-bottom: 10px;
         }
 
-        .subtitle {
-            font-size: 13px;
-            color: #555;
-            margin-bottom: 22px;
+        /* This styles the main title. */
+        h2 {
+            margin: 0;
+            color: var(--maintextcolor);
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
         }
 
+        /* This styles the small text under the title. */
+        .textundertitle {
+            font-size: 14px;
+            color: var(--mutedtextcolor);
+            margin-top: 7px;
+            margin-bottom: 24px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        /* This styles form labels. */
         label {
             display: block;
             text-align: left;
-            font-size: 13px;
-            font-weight: bold;
-            margin-top: 12px;
-            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 900;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
+        /* This styles form inputs. */
         input {
             width: 100%;
-            padding: 11px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            height: 48px;
+            padding: 0 14px;
+            border: 1px solid #dbe3ef;
+            border-radius: 14px;
             font-size: 14px;
-            box-sizing: border-box;
+            color: var(--maintextcolor);
+            background: rgba(255,255,255,0.86);
+            outline: none;
+            transition: 0.18s ease;
         }
 
-        .register-btn {
+        /* This highlights inputs when clicked. */
+        input:focus {
+            border-color: var(--mainbluecolor);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+            background: #ffffff;
+        }
+
+        /* This styles the register button. */
+        .registeraccountbutton {
             width: 100%;
-            padding: 12px;
-            margin-top: 18px;
-            background: #00a9df;
+            padding: 13px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
             color: white;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .register-btn:hover {
-            background: #008fc0;
-        }
-
-        .error {
-            background: #ffe5e5;
-            color: #b00020;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-
-        .success {
-            background: #e7f7ec;
-            color: #166534;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-
-        .login-link {
-            margin-top: 15px;
+            border-radius: 14px;
+            font-weight: 900;
             font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 14px 30px rgba(37,99,235,0.35);
+            transition: 0.2s ease;
         }
 
-        .login-link a {
-            color: #009edb;
+        /* This moves the register button when the mouse is on it. */
+        .registeraccountbutton:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 38px rgba(37,99,235,0.46);
+        }
+
+        /* This styles error and success messages. */
+        .errormessagebox,
+        .successmessagebox {
+            padding: 12px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        /* This styles error messages. */
+        .errormessagebox {
+            background: var(--softredcolor);
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* This styles success messages. */
+        .successmessagebox {
+            background: var(--softgreencolor);
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* This styles the sign in text. */
+        .signinlinkarea {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--mutedtextcolor);
+            font-weight: 700;
+        }
+
+        /* This styles the sign in link. */
+        .signinlinkarea a {
+            color: var(--mainbluecolor);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 900;
         }
 
-        .bottom-bar {
-            font-size: 12px;
-            color: #777;
+        /* This underlines the sign in link when the mouse is on it. */
+        .signinlinkarea a:hover {
+            text-decoration: underline;
+        }
+
+        /* This changes the page on small screens. */
+        @media (max-width: 520px) {
+            .toplogolinksbar,
+            .bottomfooterbar {
+                padding: 0 16px;
+            }
+
+            .registerbluebackgroundarea {
+                padding: 24px 16px;
+            }
+
+            .registercardbox {
+                width: 100%;
+                padding: 28px 22px;
+                border-radius: 22px;
+            }
+
+            h2 {
+                font-size: 27px;
+            }
+
+            .bottomfooterbar {
+                height: auto;
+                min-height: 58px;
+                gap: 10px;
+                flex-direction: column;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="top-bar">
-    <img src="{% static 'images/sky.png' %}" class="sky-logo" alt="Sky">
-    <div class="top-links">
+<!-- This shows the top logo and links. -->
+<div class="toplogolinksbar">
+    <img src="{% static 'images/sky.png' %}" class="smallskylogo" alt="Sky">
+
+    <div class="tophelpcontactlinks">
         <a href="#">Help</a>
         <a href="#">Contact</a>
     </div>
 </div>
 
-<div class="register-area">
-    <div class="register-card">
+<!-- This shows the register area. -->
+<div class="registerbluebackgroundarea">
 
-        <img src="{% static 'images/sky.png' %}" class="app-logo" alt="OpenSky">
+    <!-- This shows the register card. -->
+    <div class="registercardbox">
 
+        <!-- This shows the OpenSky logo. -->
+        <img src="{% static 'images/sky.png' %}" class="openskyregisterlogo" alt="OpenSky">
+
+        <!-- This shows the page title. -->
         <h2>Create Account</h2>
-        <div class="subtitle">Join OpenSky Engineering Team Directory</div>
 
+        <!-- This explains the page. -->
+        <div class="textundertitle">Join OpenSky Engineering Team Directory</div>
+
+        <!-- This shows success or error messages. -->
         {% if messages %}
             {% for message in messages %}
-                <div class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                <div class="{% if message.tags == 'success' %}successmessagebox{% else %}errormessagebox{% endif %}">
                     {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
 
+        <!-- This form creates a new account. -->
         <form method="post">
             {% csrf_token %}
 
+            <!-- This gets the full name. -->
             <label>Full Name</label>
             <input type="text" name="fullname" required>
 
+            <!-- This gets the username. -->
             <label>Username</label>
             <input type="text" name="username" required>
 
+            <!-- This gets the email address. -->
             <label>Email</label>
             <input type="email" name="email" required>
 
+            <!-- This gets the password. -->
             <label>Password</label>
             <input type="password" name="password" required>
 
+            <!-- This checks the password again. -->
             <label>Confirm Password</label>
             <input type="password" name="confirm_password" required>
 
-            <button type="submit" class="register-btn">Register</button>
+            <!-- This creates the account. -->
+            <button type="submit" class="registeraccountbutton">Register</button>
         </form>
 
-        <div class="login-link">
+        <!-- This opens the login page. -->
+        <div class="signinlinkarea">
             Already have an account? <a href="/">Sign in</a>
         </div>
 
     </div>
 </div>
 
-<div class="bottom-bar">
-    <div>© 2025 Sky</div>
-    <div>
+<!-- This shows the bottom footer bar. -->
+<div class="bottomfooterbar">
+    <div>© 2025 Sky. All rights reserved.</div>
+
+    <div class="bottomprivacylinks">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
     </div>

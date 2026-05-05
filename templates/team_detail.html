@@ -3,318 +3,474 @@
 {% block content %}
 
 <style>
-    .team-wrap {
-        max-width: 1260px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all team page content. */
+    .teamwholepagearea {
+        max-width: 1320px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .team-hero {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 28px;
-        margin-bottom: 24px;
-    }
-
-    .hero-top {
+    /* This styles the big team header. */
+    .teambigheaderbox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        border-radius: 28px;
+        padding: 34px;
+        color: white;
         display: flex;
         justify-content: space-between;
-        gap: 20px;
-        align-items: flex-start;
+        align-items: center;
+        gap: 24px;
+        box-shadow: var(--bigboxshadow);
+        margin-bottom: 28px;
     }
 
-    .team-title {
-        margin: 0 0 8px;
-        font-size: 30px;
-        color: #111827;
+    /* This adds a circle decoration to the team header. */
+    .teambigheaderbox::after {
+        content: "";
+        position: absolute;
+        width: 360px;
+        height: 360px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
     }
 
-    .team-subtitle {
-        color: #667085;
+    /* This styles the team name. */
+    .teampagetitle {
+        position: relative;
+        z-index: 1;
+        font-size: 36px;
+        font-weight: 900;
+        margin-bottom: 9px;
+        letter-spacing: -0.04em;
+        color: #ffffff;
+    }
+
+    /* This styles the department text under the team name. */
+    .teamdepartmenttextundertitle {
+        position: relative;
+        z-index: 1;
         font-size: 15px;
+        opacity: 0.88;
+        line-height: 1.6;
+        color: #ffffff;
     }
 
-    .hero-actions {
+    /* This holds the header buttons. */
+    .teamheaderbuttonrow {
+        position: relative;
+        z-index: 1;
         display: flex;
         gap: 12px;
+        flex-wrap: wrap;
     }
 
-    .btn {
-        padding: 11px 15px;
-        border-radius: 8px;
+    /* This styles header buttons. */
+    .teamheaderbutton {
+        background: rgba(255,255,255,0.94);
+        color: #1d4ed8;
         text-decoration: none;
-        font-weight: bold;
+        padding: 12px 17px;
+        border-radius: 14px;
+        font-weight: 900;
         font-size: 14px;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.14);
+        transition: 0.2s ease;
+        white-space: nowrap;
     }
 
-    .btn-primary {
-        background: #2563eb;
+    /* This styles the secondary header button. */
+    .teamheaderbutton.secondary {
+        background: rgba(15, 23, 42, 0.32);
         color: white;
+        border: 1px solid rgba(255,255,255,0.35);
+        backdrop-filter: blur(10px);
     }
 
-    .btn-outline {
-        border: 1px solid #d0d5dd;
-        color: #334155;
+    /* This moves header buttons when the mouse is on them. */
+    .teamheaderbutton:hover {
+        transform: translateY(-2px);
         background: white;
     }
 
-    .tabs {
+    /* This changes the secondary button when the mouse is on it. */
+    .teamheaderbutton.secondary:hover {
+        background: rgba(15, 23, 42, 0.46);
+    }
+
+    /* This styles the tab bar. */
+    .teampagetabbar {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 18px;
+        padding: 8px;
         display: flex;
-        gap: 24px;
-        margin-top: 28px;
-        border-bottom: 1px solid #e5e7eb;
+        gap: 8px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
     }
 
-    .tab {
-        padding-bottom: 12px;
-        color: #667085;
-        font-weight: bold;
+    /* This styles each tab link. */
+    .teampagetabbar a {
+        flex: 1;
+        text-align: center;
+        color: #475569;
         text-decoration: none;
+        font-weight: 900;
+        padding: 12px;
+        border-radius: 14px;
+        font-size: 14px;
+        transition: 0.2s ease;
     }
 
-    .tab.active {
-        color: #2563eb;
-        border-bottom: 3px solid #2563eb;
+    /* This changes a tab when the mouse is on it. */
+    .teampagetabbar a:hover {
+        background: #f8fafc;
+        color: var(--mainbluecolor);
     }
 
-    .grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 24px;
-    }
-
-    .panel {
+    /* This shows which tab is open. */
+    .teampagetabbar a.active {
         background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 26px;
-        margin-bottom: 24px;
+        color: var(--mainbluecolor);
+        box-shadow: 0 6px 18px rgba(15,23,42,0.08);
     }
 
-    .panel h2 {
+    /* This makes the overview page two columns. */
+    .teamcontenttwocolumnlayout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(330px, 0.75fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    /* This styles white content panels. */
+    .teamwhitepanelbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This moves panels and rows when the mouse is on them. */
+    .teamwhitepanelbox:hover,
+    .teamstatbox:hover,
+    .teamitemrow:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This styles panel titles. */
+    .teamwhitepanelbox h2 {
         margin: 0 0 18px;
-        color: #111827;
         font-size: 22px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
     }
 
-    .description {
+    /* This styles normal panel text. */
+    .teampanelnormaltext {
         color: #334155;
         line-height: 1.7;
-        font-size: 16px;
+        margin-bottom: 22px;
+        font-size: 14px;
     }
 
-    .info-grid {
+    /* This puts stat boxes in four columns. */
+    .teamstatboxgrid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-        margin-top: 24px;
-    }
-
-    .info-box {
-        border: 1px solid #eef2f7;
-        background: #f8fafc;
-        border-radius: 10px;
-        padding: 18px;
-    }
-
-    .info-label {
-        color: #667085;
-        font-size: 13px;
-        margin-bottom: 8px;
-    }
-
-    .info-value {
-        font-size: 24px;
-        font-weight: bold;
-        color: #111827;
-    }
-
-    .member-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-
-    .member-card,
-    .repo-card,
-    .dependency-card {
-        border: 1px solid #eef2f7;
-        background: #fbfcfe;
-        border-radius: 12px;
-        padding: 16px;
-    }
-
-    .member-card {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
-
-    .member-card img {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-    }
-
-    .member-name,
-    .repo-name,
-    .dependency-name {
-        font-weight: bold;
-        color: #111827;
-        margin-bottom: 5px;
-    }
-
-    .member-meta,
-    .repo-meta,
-    .dependency-meta {
-        color: #667085;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .leader-pill {
-        display: inline-block;
-        margin-top: 6px;
-        background: #dbeafe;
-        color: #1d4ed8;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .repo-list,
-    .dependency-list {
-        display: grid;
-        grid-template-columns: 1fr;
         gap: 14px;
     }
 
-    .repo-link {
-        display: inline-block;
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: bold;
-        margin-top: 8px;
-        font-size: 14px;
+    /* This styles one stat box. */
+    .teamstatbox {
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 17px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .contact-card {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 18px;
+    /* This styles stat labels. */
+    .statlabeltext {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
     }
 
-    .contact-card img {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
+    /* This styles stat numbers. */
+    .statnumbertext {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
     }
 
-    .contact-name {
-        font-weight: bold;
-        color: #111827;
-    }
-
-    .contact-role {
-        color: #667085;
-        font-size: 13px;
-    }
-
-    .link-list a {
-        display: block;
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: bold;
-        margin-bottom: 12px;
-    }
-
-    .item {
-        padding: 14px 0;
-        border-bottom: 1px solid #eef2f7;
-    }
-
-    .item:last-child {
-        border-bottom: none;
-    }
-
-    .item-title {
-        font-weight: bold;
-        color: #111827;
-        margin-bottom: 5px;
-    }
-
-    .item-meta {
-        color: #667085;
-        font-size: 14px;
-    }
-
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
+        font-size: 14px;
+        font-weight: 700;
     }
 
+    /* This styles the team lead contact row. */
+    .teamcontactrow {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: var(--smallboxshadow);
+    }
+
+    /* This styles text avatars and member photos. */
+    .letteravatarcircle,
+    .memberphotocircle {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
+    }
+
+    /* This styles letter avatars. */
+    .letteravatarcircle {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+    }
+
+    /* This styles member photos. */
+    .memberphotocircle {
+        object-fit: cover;
+        background: #e5e7eb;
+    }
+
+    /* This styles contact names. */
+    .contactnametext {
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 4px;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles contact role and item details. */
+    .contactroletext,
+    .itemdetailtext {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    /* This stacks item rows. */
+    .teamitemlist {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    /* This styles one item row. */
+    .teamitemrow {
+        background: white;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles item titles. */
+    .itemtitletext {
+        color: var(--maintextcolor);
+        font-weight: 900;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles links inside item details. */
+    .itemdetailtext a {
+        color: var(--mainbluecolor);
+        font-weight: 900;
+        text-decoration: none;
+    }
+
+    /* This underlines links when the mouse is on them. */
+    .itemdetailtext a:hover {
+        text-decoration: underline;
+    }
+
+    /* This puts member photo and member text side by side. */
+    .memberdatarow {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    /* This styles dependency status labels. */
+    .dependencystatuslabel {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    /* This styles active dependency labels. */
+    .activedependencylabel {
+        background: var(--softgreencolor);
+        color: #15803d;
+    }
+
+    /* This styles inactive dependency labels. */
+    .inactivedependencylabel {
+        background: var(--softredcolor);
+        color: #b91c1c;
+    }
+
+    /* This changes the page on medium screens. */
     @media (max-width: 1000px) {
-        .grid,
-        .info-grid,
-        .member-grid {
+        .teambigheaderbox {
+            display: block;
+        }
+
+        .teamcontenttwocolumnlayout {
             grid-template-columns: 1fr;
         }
 
-        .hero-top {
+        .teamheaderbuttonrow {
+            margin-top: 20px;
+            justify-content: flex-start;
+        }
+
+        .teamstatboxgrid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .teampagetabbar {
             flex-direction: column;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .teamwholepagearea {
+            padding: 0;
+        }
+
+        .teambigheaderbox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .teampagetitle {
+            font-size: 29px;
+        }
+
+        .teamstatboxgrid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="team-wrap">
+<!-- This starts the team page. -->
+<div class="teamwholepagearea">
 
-    <div class="team-hero">
-        <div class="hero-top">
-            <div>
-                <h1 class="team-title">{{ team.name }} Team</h1>
+    <!-- This shows the team header. -->
+    <div class="teambigheaderbox">
+        <div>
+            <!-- This shows the team name. -->
+            <div class="teampagetitle">{{ team.name }} Team</div>
 
-                <div class="team-subtitle">
-                    {% if team.department %}
-                        {{ team.department.name }}
-                    {% else %}
-                        No department assigned
-                    {% endif %}
-
-                    {% if team.location %}
-                        · {{ team.location }}
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="hero-actions">
-                <a href="{% url 'new_message' %}" class="btn btn-primary">Email Team</a>
-                <a href="{% url 'schedule' %}" class="btn btn-outline">Schedule Meeting</a>
+            <!-- This shows the team department. -->
+            <div class="teamdepartmenttextundertitle">
+                {% if team.department %}
+                    {{ team.department.name }}
+                {% else %}
+                    No department assigned
+                {% endif %}
             </div>
         </div>
 
-        <div class="tabs">
-            <a href="{% url 'team_detail' team.id %}?tab=overview" class="tab {% if active_tab == 'overview' %}active{% endif %}">Overview</a>
-            <a href="{% url 'team_detail' team.id %}?tab=members" class="tab {% if active_tab == 'members' %}active{% endif %}">Members</a>
-            <a href="{% url 'team_detail' team.id %}?tab=repositories" class="tab {% if active_tab == 'repositories' %}active{% endif %}">Repositories</a>
-            <a href="{% url 'team_detail' team.id %}?tab=dependencies" class="tab {% if active_tab == 'dependencies' %}active{% endif %}">Dependencies</a>
+        <!-- This shows quick action buttons. -->
+        <div class="teamheaderbuttonrow">
+            <a href="{% url 'new_message' %}" class="teamheaderbutton">Email Team</a>
+            <a href="{% url 'schedule' %}" class="teamheaderbutton secondary">Schedule Meeting</a>
         </div>
     </div>
 
+    <!-- This shows the team page tabs. -->
+    <div class="teampagetabbar">
+        <a href="?tab=overview" class="{% if active_tab == 'overview' %}active{% endif %}">Overview</a>
+        <a href="?tab=members" class="{% if active_tab == 'members' %}active{% endif %}">Members</a>
+        <a href="?tab=repositories" class="{% if active_tab == 'repositories' %}active{% endif %}">Repositories</a>
+        <a href="?tab=dependencies" class="{% if active_tab == 'dependencies' %}active{% endif %}">Dependencies</a>
+    </div>
+
+    <!-- This shows the overview tab. -->
     {% if active_tab == "overview" %}
 
-        <div class="grid">
+        <div class="teamcontenttwocolumnlayout">
 
             <main>
 
-                <div class="panel">
+                <!-- This shows basic team information. -->
+                <div class="teamwhitepanelbox">
                     <h2>About the Team</h2>
 
-                    <div class="description">
+                    <div class="teampanelnormaltext">
                         {% if team.description %}
                             {{ team.description }}
                         {% else %}
@@ -322,291 +478,251 @@
                         {% endif %}
                     </div>
 
-                    <div class="info-grid">
-                        <div class="info-box">
-                            <div class="info-label">Active Projects</div>
-                            <div class="info-value">{{ team.active_projects_count }}</div>
+                    <!-- This shows team numbers. -->
+                    <div class="teamstatboxgrid">
+                        <div class="teamstatbox">
+                            <div class="statlabeltext">Active Projects</div>
+                            <div class="statnumbertext">{{ team.active_projects_count }}</div>
                         </div>
 
-                        <div class="info-box">
-                            <div class="info-label">Team Members</div>
-                            <div class="info-value">{{ team.total_members }}</div>
+                        <div class="teamstatbox">
+                            <div class="statlabeltext">Team Members</div>
+                            <div class="statnumbertext">{{ team.total_members }}</div>
                         </div>
 
-                        <div class="info-box">
-                            <div class="info-label">Repositories</div>
-                            <div class="info-value">{{ team.total_repositories }}</div>
+                        <div class="teamstatbox">
+                            <div class="statlabeltext">Repositories</div>
+                            <div class="statnumbertext">{{ team.total_repositories }}</div>
                         </div>
 
-                        <div class="info-box">
-                            <div class="info-label">Dependencies</div>
-                            <div class="info-value">{{ team.total_dependencies }}</div>
+                        <div class="teamstatbox">
+                            <div class="statlabeltext">Dependencies</div>
+                            <div class="statnumbertext">{{ dependencies.count }}</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel">
+                <!-- This shows recent team messages. -->
+                <div class="teamwhitepanelbox">
                     <h2>Recent Team Messages</h2>
 
-                    {% for message in team_messages %}
-                        <div class="item">
-                            <div class="item-title">{{ message.subject }}</div>
-                            <div class="item-meta">
-                                From {{ message.sender.name }} · {{ message.created_at|date:"M d, H:i" }}
+                    <div class="teamitemlist">
+                        {% for message in team_messages %}
+                            <div class="teamitemrow">
+                                <div class="itemtitletext">{{ message.subject }}</div>
+                                <div class="itemdetailtext">
+                                    From {{ message.sender.name }} · {{ message.created_at|date:"M d, Y H:i" }}
+                                </div>
                             </div>
-                        </div>
-                    {% empty %}
-                        <div class="empty">No messages exist for this team.</div>
-                    {% endfor %}
+                        {% empty %}
+                            <div class="emptymessagebox">No messages exist for this team.</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
-                <div class="panel">
+                <!-- This shows team events. -->
+                <div class="teamwhitepanelbox">
                     <h2>Team Schedule</h2>
 
-                    {% for event in team_events %}
-                        <div class="item">
-                            <div class="item-title">{{ event.title }}</div>
-                            <div class="item-meta">
-                                {{ event.date }} · {{ event.start_time }} - {{ event.end_time }}
-                                {% if event.platform %}
-                                    · {{ event.platform }}
-                                {% endif %}
+                    <div class="teamitemlist">
+                        {% for event in team_events %}
+                            <div class="teamitemrow">
+                                <div class="itemtitletext">{{ event.title }}</div>
+                                <div class="itemdetailtext">
+                                    {{ event.date|date:"F d, Y" }}
+                                    {% if event.start_time %} · {{ event.start_time|time:"H:i" }}{% endif %}
+                                    {% if event.end_time %} - {{ event.end_time|time:"H:i" }}{% endif %}
+                                    {% if event.platform %} · {{ event.platform }}{% endif %}
+                                </div>
                             </div>
-                        </div>
-                    {% empty %}
-                        <div class="empty">No schedule events exist for this team.</div>
-                    {% endfor %}
+                        {% empty %}
+                            <div class="emptymessagebox">No scheduled events exist for this team.</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
             </main>
 
             <aside>
 
-                <div class="panel">
+                <!-- This shows the team lead. -->
+                <div class="teamwhitepanelbox">
                     <h2>Key Contacts</h2>
 
                     {% if team.team_leader %}
-                        <div class="contact-card">
-                            <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
+                        <div class="teamcontactrow">
+                            {% if team.team_leader.photo %}
+                                <img class="memberphotocircle" src="{{ team.team_leader.photo.url }}" alt="{{ team.team_leader.name }}">
+                            {% else %}
+                                <div class="letteravatarcircle">
+                                    {{ team.team_leader.name|slice:":1"|upper }}
+                                </div>
+                            {% endif %}
 
                             <div>
-                                <div class="contact-name">{{ team.team_leader.name }}</div>
-                                <div class="contact-role">
-                                    {% if team.team_leader.role %}
-                                        {{ team.team_leader.role }}
-                                    {% else %}
-                                        Team Lead
-                                    {% endif %}
-                                </div>
+                                <div class="contactnametext">{{ team.team_leader.name }}</div>
+                                <div class="contactroletext">Team Lead</div>
                             </div>
                         </div>
                     {% else %}
-                        <div class="empty">No team leader assigned.</div>
+                        <div class="emptymessagebox">No team lead assigned.</div>
                     {% endif %}
                 </div>
 
-                <div class="panel">
+                <!-- This shows quick repository links. -->
+                <div class="teamwhitepanelbox">
                     <h2>Quick Links</h2>
 
-                    <div class="link-list">
-                        {% if team.github_link %}
-                            <a href="{{ team.github_link }}" target="_blank">GitHub Organization</a>
-                        {% endif %}
-
-                        {% if team.documentation_link %}
-                            <a href="{{ team.documentation_link }}" target="_blank">Team Documentation</a>
-                        {% endif %}
-
-                        {% if team.calendar_link %}
-                            <a href="{{ team.calendar_link }}" target="_blank">Team Calendar</a>
-                        {% endif %}
-
-                        {% if not team.github_link and not team.documentation_link and not team.calendar_link %}
-                            <div class="empty">No quick links stored for this team.</div>
-                        {% endif %}
-                    </div>
+                    {% if repositories %}
+                        <div class="teamitemlist">
+                            {% for repo in repositories|slice:":3" %}
+                                <div class="teamitemrow">
+                                    <div class="itemtitletext">{{ repo.name }}</div>
+                                    <div class="itemdetailtext">
+                                        {% if repo.url %}
+                                            <a href="{{ repo.url }}" target="_blank">Open repository</a>
+                                        {% else %}
+                                            No URL stored.
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="emptymessagebox">No quick links stored for this team.</div>
+                    {% endif %}
                 </div>
 
-                <div class="panel">
+                <!-- This shows recent team activities. -->
+                <div class="teamwhitepanelbox">
                     <h2>Recent Activities</h2>
 
-                    {% for activity in team_activities %}
-                        <div class="item">
-                            <div class="item-title">{{ activity.title }}</div>
-
-                            {% if activity.description %}
-                                <div class="item-meta">{{ activity.description }}</div>
-                            {% endif %}
-                        </div>
-                    {% empty %}
-                        <div class="empty">No activities exist for this team.</div>
-                    {% endfor %}
+                    <div class="teamitemlist">
+                        {% for activity in team_activities %}
+                            <div class="teamitemrow">
+                                <div class="itemtitletext">{{ activity.title }}</div>
+                                <div class="itemdetailtext">{{ activity.description }}</div>
+                            </div>
+                        {% empty %}
+                            <div class="emptymessagebox">No recent activities found.</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
             </aside>
 
         </div>
 
-    {% endif %}
+    <!-- This shows the members tab. -->
+    {% elif active_tab == "members" %}
 
-    {% if active_tab == "members" %}
+        <div class="teamwhitepanelbox">
+            <h2>Members</h2>
 
-        <div class="panel">
-            <h2>Team Members</h2>
-
-            <div class="member-grid">
-
-                {% if team.team_leader and not leader_in_members %}
-                    <div class="member-card">
-                        <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
-
-                        <div>
-                            <div class="member-name">{{ team.team_leader.name }}</div>
-                            <div class="member-meta">
-                                {% if team.team_leader.role %}
-                                    {{ team.team_leader.role }}
-                                {% else %}
-                                    Team Lead
-                                {% endif %}
-
-                                {% if team.team_leader.email %}
-                                    <br>{{ team.team_leader.email }}
-                                {% endif %}
-                            </div>
-                            <span class="leader-pill">Team Leader</span>
-                        </div>
-                    </div>
-                {% endif %}
-
+            <div class="teamitemlist">
                 {% for member in members %}
-                    <div class="member-card">
-                        <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&background=random&color=fff">
+                    <div class="teamitemrow memberdatarow">
+                        {% if member.photo %}
+                            <img class="memberphotocircle" src="{{ member.photo.url }}" alt="{{ member.name }}">
+                        {% else %}
+                            <div class="letteravatarcircle">{{ member.name|slice:":1"|upper }}</div>
+                        {% endif %}
 
                         <div>
-                            <div class="member-name">{{ member.name }}</div>
-                            <div class="member-meta">
-                                {% if member.role %}
-                                    {{ member.role }}
-                                {% else %}
-                                    Team Member
-                                {% endif %}
-
-                                {% if member.email %}
-                                    <br>{{ member.email }}
-                                {% endif %}
-
-                                {% if member.phone %}
-                                    <br>{{ member.phone }}
-                                {% endif %}
+                            <div class="itemtitletext">{{ member.name }}</div>
+                            <div class="itemdetailtext">
+                                {% if member.role %}{{ member.role }}{% else %}Team Member{% endif %}
+                                {% if member.email %}<br>{{ member.email }}{% endif %}
+                                {% if member.phone %}<br>{{ member.phone }}{% endif %}
                             </div>
-
-                            {% if team.team_leader and member.id == team.team_leader.id %}
-                                <span class="leader-pill">Team Leader</span>
-                            {% endif %}
                         </div>
                     </div>
                 {% empty %}
-                    {% if not team.team_leader %}
-                        <div class="empty">No members exist for this team.</div>
-                    {% endif %}
+                    <div class="emptymessagebox">No members found.</div>
                 {% endfor %}
-
             </div>
         </div>
 
-    {% endif %}
+    <!-- This shows the repositories tab. -->
+    {% elif active_tab == "repositories" %}
 
-    {% if active_tab == "repositories" %}
-
-        <div class="panel">
+        <div class="teamwhitepanelbox">
             <h2>Repositories</h2>
 
-            <div class="repo-list">
-                {% for repository in repositories %}
-                    <div class="repo-card">
-                        <div class="repo-name">{{ repository.name }}</div>
-
-                        <div class="repo-meta">
-                            {% if repository.description %}
-                                {{ repository.description }}<br>
-                            {% endif %}
-
-                            {% if repository.technology %}
-                                Technology: {{ repository.technology }}<br>
-                            {% endif %}
-
-                            {% if repository.last_updated %}
-                                Last updated: {{ repository.last_updated }}
-                            {% endif %}
+            <div class="teamitemlist">
+                {% for repo in repositories %}
+                    <div class="teamitemrow">
+                        <div class="itemtitletext">{{ repo.name }}</div>
+                        <div class="itemdetailtext">
+                            {% if repo.technology %}Technology: {{ repo.technology }}<br>{% endif %}
+                            {% if repo.url %}<a href="{{ repo.url }}" target="_blank">Open Repository</a>{% endif %}
                         </div>
-
-                        {% if repository.url %}
-                            <a href="{{ repository.url }}" target="_blank" class="repo-link">Open Repository</a>
-                        {% endif %}
                     </div>
                 {% empty %}
-                    <div class="empty">No repositories exist for this team.</div>
+                    <div class="emptymessagebox">No repositories found.</div>
                 {% endfor %}
             </div>
         </div>
 
-    {% endif %}
+    <!-- This shows the dependencies tab. -->
+    {% elif active_tab == "dependencies" %}
 
-    {% if active_tab == "dependencies" %}
+        <div class="teamcontenttwocolumnlayout">
 
-        <div class="panel">
-            <h2>Outgoing Dependencies</h2>
+            <!-- This shows outgoing dependencies. -->
+            <div class="teamwhitepanelbox">
+                <h2>Outgoing Dependencies</h2>
 
-            <div class="dependency-list">
-                {% for dependency in dependencies %}
-                    <div class="dependency-card">
-                        <div class="dependency-name">
-                            {{ team.name }} depends on {{ dependency.target_team.name }}
-                        </div>
+                <div class="teamitemlist">
+                    {% for dependency in dependencies %}
+                        <div class="teamitemrow">
+                            <div class="itemtitletext">
+                                {{ dependency.source_team.name }} depends on {{ dependency.target_team.name }}
+                            </div>
 
-                        <div class="dependency-meta">
-                            {% if dependency.dependency_type %}
-                                Type: {{ dependency.dependency_type }}<br>
+                            <div class="itemdetailtext">
+                                Type: {{ dependency.dependency_type }}
+                                {% if dependency.description %}<br>{{ dependency.description }}{% endif %}
+                            </div>
+
+                            {% if dependency.status == "Inactive" %}
+                                <span class="dependencystatuslabel inactivedependencylabel">Inactive</span>
+                            {% else %}
+                                <span class="dependencystatuslabel activedependencylabel">Active</span>
                             {% endif %}
-
-                            Status: {{ dependency.status }}
-
-                            {% if dependency.description %}
-                                <br>{{ dependency.description }}
-                            {% endif %}
                         </div>
-                    </div>
-                {% empty %}
-                    <div class="empty">No outgoing dependencies exist for this team.</div>
-                {% endfor %}
+                    {% empty %}
+                        <div class="emptymessagebox">No outgoing dependencies exist for this team.</div>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
 
-        <div class="panel">
-            <h2>Incoming Dependencies</h2>
+            <!-- This shows incoming dependencies. -->
+            <div class="teamwhitepanelbox">
+                <h2>Incoming Dependencies</h2>
 
-            <div class="dependency-list">
-                {% for dependency in incoming_dependencies %}
-                    <div class="dependency-card">
-                        <div class="dependency-name">
-                            {{ dependency.source_team.name }} depends on {{ team.name }}
-                        </div>
+                <div class="teamitemlist">
+                    {% for dependency in incoming_dependencies %}
+                        <div class="teamitemrow">
+                            <div class="itemtitletext">
+                                {{ dependency.source_team.name }} depends on {{ dependency.target_team.name }}
+                            </div>
 
-                        <div class="dependency-meta">
-                            {% if dependency.dependency_type %}
-                                Type: {{ dependency.dependency_type }}<br>
+                            <div class="itemdetailtext">
+                                Type: {{ dependency.dependency_type }}
+                                {% if dependency.description %}<br>{{ dependency.description }}{% endif %}
+                            </div>
+
+                            {% if dependency.status == "Inactive" %}
+                                <span class="dependencystatuslabel inactivedependencylabel">Inactive</span>
+                            {% else %}
+                                <span class="dependencystatuslabel activedependencylabel">Active</span>
                             {% endif %}
-
-                            Status: {{ dependency.status }}
-
-                            {% if dependency.description %}
-                                <br>{{ dependency.description }}
-                            {% endif %}
                         </div>
-                    </div>
-                {% empty %}
-                    <div class="empty">No incoming dependencies exist for this team.</div>
-                {% endfor %}
+                    {% empty %}
+                        <div class="emptymessagebox">No incoming dependencies exist for this team.</div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 

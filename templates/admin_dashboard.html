@@ -3,591 +3,1579 @@
 {% block content %}
 
 <style>
-    .admin-wrap {
-        max-width: 1280px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all admin page content. */
+    .admindashboardwholepagearea {
+        max-width: 1420px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .admin-title {
-        margin: 0 0 8px;
-        font-size: 30px;
-        color: #111827;
+    /* This makes the big top box. */
+    .admindashboardbigtopbox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+        display: flex;
+        justify-content: space-between;
+        gap: 26px;
+        align-items: center;
     }
 
-    .admin-subtitle {
-        color: #667085;
+    /* This adds a circle decoration. */
+    .admindashboardbigtopbox::after {
+        content: "";
+        position: absolute;
+        width: 360px;
+        height: 360px;
+        right: -110px;
+        top: -130px;
+        background: rgba(255,255,255,0.13);
+        border-radius: 50%;
+    }
+
+    /* This styles the main title. */
+    .admindashboardbigtopbox h1 {
+        position: relative;
+        margin: 0 0 10px;
+        font-size: 36px;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+    }
+
+    /* This styles the text under the title. */
+    .admindashboardbigtopbox p {
+        position: relative;
+        margin: 0;
+        opacity: 0.88;
         font-size: 15px;
-        margin-bottom: 24px;
+        line-height: 1.7;
+        max-width: 690px;
     }
 
-    .stats-grid {
+    /* This holds the top buttons. */
+    .admindashboardtopbuttonarea {
+        position: relative;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        z-index: 1;
+    }
+
+    /* This styles the top buttons. */
+    .admindashboardtopbutton {
+        background: rgba(255,255,255,0.94);
+        color: #1d4ed8;
+        text-decoration: none;
+        border-radius: 14px;
+        padding: 12px 17px;
+        font-weight: 900;
+        white-space: nowrap;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.14);
+        transition: 0.2s ease;
+    }
+
+    /* This moves the button a little when the mouse is on it. */
+    .admindashboardtopbutton:hover {
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    /* This styles message boxes. */
+    .successmessagebox,
+    .errormessagebox {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This shows a green success message. */
+    .successmessagebox {
+        background: var(--softgreencolor);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This shows a red error message. */
+    .errormessagebox {
+        background: var(--softredcolor);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This puts number cards in a grid. */
+    .dashboardnumbercardgrid {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 18px;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
         margin-bottom: 28px;
     }
 
-    .stat-card {
-        background: white;
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
-        padding: 22px;
+    /* This styles each number card. */
+    .dashboardnumbercard {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .stat-label {
-        color: #334e7d;
-        font-size: 14px;
-        margin-bottom: 8px;
+    /* This moves cards a little when the mouse is on them. */
+    .dashboardnumbercard:hover,
+    .whitecontentbox:hover,
+    .quicklinkcard:hover,
+    .smallsidecard:hover,
+    .activityinfocard:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
     }
 
-    .stat-number {
-        font-size: 32px;
-        font-weight: bold;
-        color: #000;
+    /* This styles the small title on number cards. */
+    .numbercardsmalltitle {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         margin-bottom: 10px;
     }
 
-    .stat-source {
-        color: green;
-        font-size: 13px;
+    /* This styles the big number on number cards. */
+    .numbercardbignumber {
+        font-size: 31px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
     }
 
-    .panel {
-        background: white;
-        border: 1px solid #edf0f5;
-        border-radius: 12px;
-        padding: 26px;
+    /* This styles the small text under the number. */
+    .numbercardbottomtext {
+        color: var(--greencolor);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    /* This makes the main page two columns. */
+    .mainpagecolumnsgrid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    /* This styles white boxes. */
+    .whitecontentbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
         margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .panel h2 {
-        margin: 0 0 20px;
-        font-size: 24px;
-        color: #1f2937;
-    }
-
-    .success-box {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
-    .error-box {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
-    .tabs {
+    /* This styles the top part of a white box. */
+    .whiteboxtoparea {
         display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
         margin-bottom: 20px;
     }
 
-    .tab-btn {
-        border: none;
+    /* This styles box titles. */
+    .whitecontentbox h2 {
+        margin: 0;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        letter-spacing: -0.03em;
+        font-weight: 900;
+    }
+
+    /* This styles small helper text. */
+    .whiteboxsmallnote {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        margin-top: 6px;
+        line-height: 1.5;
+    }
+
+    /* This holds the three tabs. */
+    .sectiontabbuttonarea {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 22px;
+        padding: 6px;
         background: #f1f5f9;
-        color: #334155;
-        border-radius: 999px;
-        padding: 9px 13px;
-        font-weight: bold;
+        border-radius: 18px;
+        width: fit-content;
+    }
+
+    /* This styles each tab button. */
+    .sectiontabbutton {
+        border: none;
+        background: transparent;
+        color: #475569;
+        border-radius: 14px;
+        padding: 11px 16px;
+        font-weight: 900;
         cursor: pointer;
+        transition: 0.2s ease;
     }
 
-    .tab-btn.active {
-        background: #2563eb;
-        color: white;
+    /* This shows which tab is selected. */
+    .sectiontabbutton.active {
+        background: white;
+        color: var(--mainbluecolor);
+        box-shadow: 0 6px 18px rgba(15,23,42,0.08);
     }
 
-    .admin-form {
+    /* This hides sections first. */
+    .adminmanagesection {
         display: none;
     }
 
-    .admin-form.active {
+    /* This shows the selected section. */
+    .adminmanagesection.active {
         display: block;
     }
 
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
+    /* This styles add and edit boxes. */
+    .createformbox,
+    .editformbox {
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 22px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
     }
 
-    .form-group {
+    /* This styles form titles. */
+    .createformtitle {
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 16px;
+        font-size: 17px;
+        letter-spacing: -0.02em;
+    }
+
+    /* This puts form inputs in two columns. */
+    .forminputtwocolumngrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    /* This adds space under each input group. */
+    .forminputgroup {
         margin-bottom: 14px;
     }
 
-    .form-group.full {
+    /* This makes one input take full width. */
+    .forminputgroup.fullwidthinput {
         grid-column: 1 / -1;
     }
 
+    /* This styles labels. */
     label {
         display: block;
-        font-weight: bold;
+        font-weight: 900;
         color: #334155;
-        font-size: 14px;
-        margin-bottom: 7px;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
+    /* This styles inputs, dropdowns and text boxes. */
     input,
     select,
     textarea {
         width: 100%;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         padding: 12px 14px;
-        font-size: 15px;
+        font-size: 14px;
         outline: none;
         font-family: Arial, sans-serif;
         background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
     }
 
-    input {
+    /* This sets input height. */
+    input,
+    select {
         height: 46px;
     }
 
+    /* This styles large text boxes. */
     textarea {
-        min-height: 110px;
+        min-height: 96px;
         resize: vertical;
     }
 
-    .save-btn {
-        background: #2563eb;
-        color: white;
+    /* This highlights input when clicked. */
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This styles all buttons. */
+    .saveformbutton,
+    .cancelformbutton,
+    .edititembutton,
+    .deleteitembutton {
         border: none;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
+        border-radius: 13px;
+        padding: 10px 14px;
+        font-weight: 900;
         cursor: pointer;
-        margin-top: 8px;
+        transition: 0.2s ease;
     }
 
-    .admin-layout {
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 28px;
+    /* This styles save buttons. */
+    .saveformbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
     }
 
-    .list-item {
-        border: 1px solid #eef2f7;
-        background: #fbfcfe;
-        border-radius: 10px;
-        padding: 14px;
-        margin-bottom: 12px;
+    /* This styles cancel buttons. */
+    .cancelformbutton {
+        background: white;
+        color: #334155;
+        border: 1px solid var(--borderlinecolor);
     }
 
-    .item-title {
-        font-weight: bold;
-        color: #111827;
+    /* This styles edit buttons. */
+    .edititembutton {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+    }
+
+    /* This styles delete buttons. */
+    .deleteitembutton {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This moves buttons a little when the mouse is on them. */
+    .saveformbutton:hover,
+    .cancelformbutton:hover,
+    .edititembutton:hover,
+    .deleteitembutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles tables. */
+    .admindatatable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        overflow: hidden;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        background: white;
+    }
+
+    /* This styles table titles. */
+    .admindatatable th {
+        text-align: left;
+        background: #f8fafc;
+        color: #475569;
+        border-bottom: 1px solid var(--borderlinecolor);
+        padding: 14px 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* This styles table cells. */
+    .admindatatable td {
+        border-bottom: 1px solid #eef2f7;
+        padding: 14px 12px;
+        color: #334155;
+        vertical-align: top;
+    }
+
+    /* This highlights a table row when the mouse is on it. */
+    .admindatatable tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* This styles item names. */
+    .itemnametitle {
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles small item text. */
+    .itemsmalltext,
+    .activitysmalltext,
+    .sidecardsmalltext {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    /* This styles small labels. */
+    .smallpilllabel {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 900;
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+        margin: 2px;
+    }
+
+    /* This makes a green label. */
+    .greenpilllabel {
+        background: var(--softgreencolor);
+        color: #166534;
+    }
+
+    /* This makes a red label. */
+    .redpilllabel {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This makes a gray label. */
+    .graypilllabel {
+        background: var(--softgraycolor);
+        color: #475569;
+    }
+
+    /* This puts action buttons next to each other. */
+    .tableactionbuttonrow {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* This hides edit forms. */
+    .hiddeneditformtablerow {
+        display: none;
+        background: #f8fafc;
+    }
+
+    /* This shows an edit form. */
+    .hiddeneditformtablerow.show {
+        display: table-row;
+    }
+
+    /* This stacks list cards. */
+    .activitycardlist,
+    .smallsidecardlist {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* This styles small side cards. */
+    .activityinfocard,
+    .smallsidecard,
+    .quicklinkcard {
+        border: 1px solid var(--borderlinecolor);
+        background: white;
+        border-radius: 18px;
+        padding: 15px;
+        transition: 0.2s ease;
+    }
+
+    /* This styles activity titles. */
+    .activitytitletext {
+        font-weight: 900;
+        color: var(--maintextcolor);
         margin-bottom: 6px;
     }
 
-    .item-meta {
-        color: #667085;
-        font-size: 13px;
-        line-height: 1.5;
+    /* This puts quick links in two columns. */
+    .quicklinktwocolumngrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
     }
 
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles quick link cards. */
+    .quicklinkcard {
+        text-decoration: none;
+        color: var(--maintextcolor);
+        font-weight: 900;
+    }
+
+    /* This styles text inside quick link cards. */
+    .quicklinkcard span {
+        display: block;
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 5px;
+        line-height: 1.45;
+    }
+
+    /* This shows an empty message. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 700;
     }
 
-    @media (max-width: 1100px) {
-        .stats-grid,
-        .admin-layout,
-        .form-grid {
+    /* This puts switch and text side by side. */
+    .activeswitchandtextrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* This makes the switch size. */
+    .activeswitchbox {
+        position: relative;
+        width: 48px;
+        height: 26px;
+    }
+
+    /* This hides the real checkbox. */
+    .activeswitchbox input {
+        opacity: 0;
+    }
+
+    /* This makes the switch background. */
+    .activeswitchbackground {
+        position: absolute;
+        background: #cbd5e1;
+        border-radius: 999px;
+        inset: 0;
+        transition: 0.2s ease;
+    }
+
+    /* This makes the small circle in the switch. */
+    .activeswitchbackground:before {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 3px;
+        top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.25s ease;
+        box-shadow: 0 2px 8px rgba(15,23,42,0.2);
+    }
+
+    /* This makes the switch blue when active. */
+    input:checked + .activeswitchbackground {
+        background: var(--mainbluecolor);
+    }
+
+    /* This moves the switch circle when active. */
+    input:checked + .activeswitchbackground:before {
+        transform: translateX(22px);
+    }
+
+    /* This changes the page on medium screens. */
+    @media (max-width: 1200px) {
+        .dashboardnumbercardgrid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .mainpagecolumnsgrid {
             grid-template-columns: 1fr;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 800px) {
+        .admindashboardwholepagearea {
+            padding: 0;
+        }
+
+        .admindashboardbigtopbox,
+        .whiteboxtoparea {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .admindashboardbigtopbox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .admindashboardbigtopbox h1 {
+            font-size: 29px;
+        }
+
+        .dashboardnumbercardgrid,
+        .forminputtwocolumngrid,
+        .quicklinktwocolumngrid {
+            grid-template-columns: 1fr;
+        }
+
+        .sectiontabbuttonarea {
+            width: 100%;
+        }
+
+        .sectiontabbutton {
+            flex: 1;
+        }
+
+        .admindatatable {
+            display: block;
+            overflow-x: auto;
         }
     }
 </style>
 
-<div class="admin-wrap">
+<!-- This starts the admin dashboard page. -->
+<div class="admindashboardwholepagearea">
 
-    <h1 class="admin-title">Admin Dashboard</h1>
-    <div class="admin-subtitle">
-        Create and manage real database records used across the website.
+    <!-- This shows the big title and top buttons. -->
+    <div class="admindashboardbigtopbox">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>
+                Manage repositories, team dependencies and schedule events from one place.
+                Track users, teams, departments, messages and recent platform activity.
+            </p>
+        </div>
+
+        <div class="admindashboardtopbuttonarea">
+            <a href="{% url 'admin_team_management' %}" class="admindashboardtopbutton">Team Management</a>
+            <a href="{% url 'admin_user_access' %}" class="admindashboardtopbutton">User Access</a>
+            <a href="{% url 'organisation_map' %}" class="admindashboardtopbutton">Organisation Map</a>
+        </div>
     </div>
 
+    <!-- This shows success or error messages. -->
     {% if messages %}
         {% for message in messages %}
             {% if message.tags == "error" %}
-                <div class="error-box">{{ message }}</div>
+                <div class="errormessagebox">{{ message }}</div>
             {% else %}
-                <div class="success-box">{{ message }}</div>
+                <div class="successmessagebox">{{ message }}</div>
             {% endif %}
         {% endfor %}
     {% endif %}
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Teams</div>
-            <div class="stat-number">{{ total_teams }}</div>
-            <div class="stat-source">Database</div>
+    <!-- This shows all dashboard number cards. -->
+    <div class="dashboardnumbercardgrid">
+
+        <!-- This card shows team count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Teams</div>
+            <div class="numbercardbignumber">{{ total_teams }}</div>
+            <div class="numbercardbottomtext">{{ assigned_teams }} assigned / {{ unassigned_teams }} unassigned</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Departments</div>
-            <div class="stat-number">{{ total_departments }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows department count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Departments</div>
+            <div class="numbercardbignumber">{{ total_departments }}</div>
+            <div class="numbercardbottomtext">Organisation Structure</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">People</div>
-            <div class="stat-number">{{ total_members }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows people count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">People</div>
+            <div class="numbercardbignumber">{{ total_members }}</div>
+            <div class="numbercardbottomtext">Directory Members</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Messages</div>
-            <div class="stat-number">{{ total_messages }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows user count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Users</div>
+            <div class="numbercardbignumber">{{ total_users }}</div>
+            <div class="numbercardbottomtext">{{ total_admins }} admins / {{ total_active_users }} active</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Meetings</div>
-            <div class="stat-number">{{ total_meetings }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows repository count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Repositories</div>
+            <div class="numbercardbignumber">{{ total_repositories }}</div>
+            <div class="numbercardbottomtext">Code Assets</div>
+        </div>
+
+        <!-- This card shows dependency count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Dependencies</div>
+            <div class="numbercardbignumber">{{ total_dependencies }}</div>
+            <div class="numbercardbottomtext">Team Links</div>
+        </div>
+
+        <!-- This card shows event count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Events</div>
+            <div class="numbercardbignumber">{{ total_meetings }}</div>
+            <div class="numbercardbottomtext">Schedule Items</div>
+        </div>
+
+        <!-- This card shows message count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Messages</div>
+            <div class="numbercardbignumber">{{ total_messages }}</div>
+            <div class="numbercardbottomtext">{{ unread_messages }} unread</div>
+        </div>
+
+        <!-- This card shows active user count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Active Users</div>
+            <div class="numbercardbignumber">{{ total_active_users }}</div>
+            <div class="numbercardbottomtext">{{ total_inactive_users }} inactive</div>
+        </div>
+
+        <!-- This card shows system status. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">System Status</div>
+            <div class="numbercardbignumber">Live</div>
+            <div class="numbercardbottomtext">Database Connected</div>
+        </div>
+
+        <!-- This card shows activity count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Latest Activities</div>
+            <div class="numbercardbignumber">{{ activities|length }}</div>
+            <div class="numbercardbottomtext">Recent Audit Trail</div>
+        </div>
+
+        <!-- This card shows latest event count. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">Latest Events</div>
+            <div class="numbercardbignumber">{{ latest_events|length }}</div>
+            <div class="numbercardbottomtext">Upcoming / Scheduled</div>
         </div>
     </div>
 
-    <div class="admin-layout">
+    <!-- This starts the main page layout. -->
+    <div class="mainpagecolumnsgrid">
 
         <main>
-            <div class="panel">
-                <h2>Create Database Records</h2>
-
-                <div class="tabs">
-                    <button type="button" class="tab-btn active" data-form="departmentForm">Department</button>
-                    <button type="button" class="tab-btn" data-form="teamForm">Team</button>
-                    <button type="button" class="tab-btn" data-form="personForm">Person</button>
-                    <button type="button" class="tab-btn" data-form="repositoryForm">Repository</button>
-                    <button type="button" class="tab-btn" data-form="dependencyForm">Dependency</button>
-                    <button type="button" class="tab-btn" data-form="eventForm">Event</button>
+            <div class="whitecontentbox">
+                <div class="whiteboxtoparea">
+                    <div>
+                        <h2>Operations Center</h2>
+                        <div class="whiteboxsmallnote">Create, update and delete repositories, dependencies and events.</div>
+                    </div>
                 </div>
 
-                <form method="post" class="admin-form active" id="departmentForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="create_department">
+                <!-- These buttons change the section. -->
+                <div class="sectiontabbuttonarea">
+                    <button type="button" class="sectiontabbutton active" data-section="repositorymanagesection">Repositories</button>
+                    <button type="button" class="sectiontabbutton" data-section="dependencymanagesection">Dependencies</button>
+                    <button type="button" class="sectiontabbutton" data-section="eventmanagesection">Events</button>
+                </div>
 
-                    <div class="form-group">
-                        <label>Department Name</label>
-                        <input type="text" name="department_name" required>
+                <!-- This section manages repositories. -->
+                <section class="adminmanagesection active" id="repositorymanagesection">
+
+                    <!-- This form adds a new repository. -->
+                    <div class="createformbox">
+                        <div class="createformtitle">Create Repository</div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="create_repository">
+
+                            <div class="forminputtwocolumngrid">
+                                <div class="forminputgroup">
+                                    <label>Repository Name</label>
+                                    <input type="text" name="repository_name" required>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Team</label>
+                                    <select name="team" required>
+                                        <option value="">Choose team</option>
+                                        {% for team in teams %}
+                                            <option value="{{ team.id }}">{{ team.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Technology</label>
+                                    <input type="text" name="technology" placeholder="Python, Django, React...">
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Last Updated</label>
+                                    <input type="date" name="last_updated">
+                                </div>
+
+                                <div class="forminputgroup fullwidthinput">
+                                    <label>Repository URL</label>
+                                    <input type="url" name="url" placeholder="https://github.com/...">
+                                </div>
+
+                                <div class="forminputgroup fullwidthinput">
+                                    <label>Description</label>
+                                    <textarea name="description"></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="saveformbutton">Create Repository</button>
+                        </form>
                     </div>
 
-                    <button type="submit" class="save-btn">Create Department</button>
-                </form>
+                    <!-- This table shows all repositories. -->
+                    {% if repositories %}
+                        <table class="admindatatable">
+                            <thead>
+                                <tr>
+                                    <th>Repository</th>
+                                    <th>Team</th>
+                                    <th>Technology</th>
+                                    <th>Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
 
-                <form method="post" class="admin-form" id="teamForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="create_team">
+                            <tbody>
+                                {% for repository in repositories %}
+                                    <tr>
+                                        <td>
+                                            <div class="itemnametitle">{{ repository.name }}</div>
+                                            <div class="itemsmalltext">
+                                                {% if repository.description %}
+                                                    {{ repository.description|truncatechars:90 }}
+                                                {% else %}
+                                                    No description
+                                                {% endif %}
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Team Name</label>
-                            <input type="text" name="team_name" required>
-                        </div>
+                                                {% if repository.url %}
+                                                    <br><a href="{{ repository.url }}" target="_blank">Open repository</a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
 
-                        <div class="form-group">
-                            <label>Department</label>
-                            <select name="department">
-                                <option value="">No department</option>
-                                {% for department in departments %}
-                                    <option value="{{ department.id }}">{{ department.name }}</option>
+                                        <td>
+                                            {% if repository.team %}
+                                                <span class="smallpilllabel">{{ repository.team.name }}</span>
+                                            {% else %}
+                                                <span class="smallpilllabel redpilllabel">No Team</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {% if repository.technology %}
+                                                <span class="smallpilllabel greenpilllabel">{{ repository.technology }}</span>
+                                            {% else %}
+                                                <span class="smallpilllabel graypilllabel">Not set</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {% if repository.last_updated %}
+                                                {{ repository.last_updated }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            <div class="tableactionbuttonrow">
+
+                                                <!-- This button opens the repository edit form. -->
+                                                <button type="button" class="edititembutton" onclick="openorcloseeditform('repositoryeditform-{{ repository.id }}')">Edit</button>
+
+                                                <!-- This form deletes the repository. -->
+                                                <form method="post" onsubmit="return confirm('Delete {{ repository.name }} repository?');">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="delete_repository">
+                                                    <input type="hidden" name="repository_id" value="{{ repository.id }}">
+                                                    <button type="submit" class="deleteitembutton">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- This form updates the repository. -->
+                                    <tr class="hiddeneditformtablerow" id="repositoryeditform-{{ repository.id }}">
+                                        <td colspan="5">
+                                            <div class="editformbox">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="update_repository">
+                                                    <input type="hidden" name="repository_id" value="{{ repository.id }}">
+
+                                                    <div class="forminputtwocolumngrid">
+                                                        <div class="forminputgroup">
+                                                            <label>Repository Name</label>
+                                                            <input type="text" name="repository_name" value="{{ repository.name }}" required>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Team</label>
+                                                            <select name="team" required>
+                                                                {% for team in teams %}
+                                                                    <option value="{{ team.id }}" {% if repository.team_id == team.id %}selected{% endif %}>
+                                                                        {{ team.name }}
+                                                                    </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Technology</label>
+                                                            <input type="text" name="technology" value="{{ repository.technology }}">
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Last Updated</label>
+                                                            <input type="date" name="last_updated" value="{{ repository.last_updated|date:'Y-m-d' }}">
+                                                        </div>
+
+                                                        <div class="forminputgroup fullwidthinput">
+                                                            <label>URL</label>
+                                                            <input type="url" name="url" value="{{ repository.url }}">
+                                                        </div>
+
+                                                        <div class="forminputgroup fullwidthinput">
+                                                            <label>Description</label>
+                                                            <textarea name="description">{{ repository.description }}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="saveformbutton">Save Repository</button>
+                                                    <button type="button" class="cancelformbutton" onclick="openorcloseeditform('repositoryeditform-{{ repository.id }}')">Cancel</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {% endfor %}
-                            </select>
-                        </div>
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="emptymessagebox">No repositories found.</div>
+                    {% endif %}
+                </section>
 
-                        <div class="form-group">
-                            <label>Team Leader</label>
-                            <select name="team_leader">
-                                <option value="">No leader</option>
-                                {% for person in people %}
-                                    <option value="{{ person.id }}">{{ person.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                <!-- This section manages dependencies. -->
+                <section class="adminmanagesection" id="dependencymanagesection">
 
-                        <div class="form-group">
-                            <label>Status</label>
-                            <input type="text" name="status" value="Active">
-                        </div>
+                    <!-- This form adds a new dependency. -->
+                    <div class="createformbox">
+                        <div class="createformtitle">Create Dependency</div>
 
-                        <div class="form-group">
-                            <label>Location</label>
-                            <input type="text" name="location">
-                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="create_dependency">
 
-                        <div class="form-group">
-                            <label>Active Projects Count</label>
-                            <input type="number" name="active_projects_count" value="0" min="0">
-                        </div>
+                            <div class="forminputtwocolumngrid">
+                                <div class="forminputgroup">
+                                    <label>Source Team</label>
+                                    <select name="source_team" required>
+                                        <option value="">Choose source team</option>
+                                        {% for team in teams %}
+                                            <option value="{{ team.id }}">{{ team.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
 
-                        <div class="form-group full">
-                            <label>Description</label>
-                            <textarea name="description"></textarea>
-                        </div>
+                                <div class="forminputgroup">
+                                    <label>Target Team</label>
+                                    <select name="target_team" required>
+                                        <option value="">Choose target team</option>
+                                        {% for team in teams %}
+                                            <option value="{{ team.id }}">{{ team.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Dependency Type</label>
+                                    <input type="text" name="dependency_type" placeholder="API, Database, Frontend...">
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Status</label>
+                                    <div class="activeswitchandtextrow">
+                                        <label class="activeswitchbox">
+                                            <input type="checkbox" name="is_active" checked>
+                                            <span class="activeswitchbackground"></span>
+                                        </label>
+                                        <span class="activeorinactivetext">Active</span>
+                                    </div>
+                                </div>
+
+                                <div class="forminputgroup fullwidthinput">
+                                    <label>Description</label>
+                                    <textarea name="description"></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="saveformbutton">Create Dependency</button>
+                        </form>
                     </div>
 
-                    <button type="submit" class="save-btn">Create Team</button>
-                </form>
+                    <!-- This table shows all dependencies. -->
+                    {% if dependencies %}
+                        <table class="admindatatable">
+                            <thead>
+                                <tr>
+                                    <th>Dependency</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
 
-                <form method="post" enctype="multipart/form-data" class="admin-form" id="personForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="create_person">
+                            <tbody>
+                                {% for dependency in dependencies %}
+                                    <tr>
+                                        <td>
+                                            <div class="itemnametitle">
+                                                {{ dependency.source_team.name }} → {{ dependency.target_team.name }}
+                                            </div>
+                                            <div class="itemsmalltext">Dependency ID: {{ dependency.id }}</div>
+                                        </td>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" name="person_name" required>
-                        </div>
+                                        <td>
+                                            {% if dependency.dependency_type %}
+                                                <span class="smallpilllabel">{{ dependency.dependency_type }}</span>
+                                            {% else %}
+                                                <span class="smallpilllabel graypilllabel">Not set</span>
+                                            {% endif %}
+                                        </td>
 
-                        <div class="form-group">
-                            <label>Role</label>
-                            <input type="text" name="role">
-                        </div>
+                                        <td>
+                                            {% if dependency.status == "Active" %}
+                                                <span class="smallpilllabel greenpilllabel">{{ dependency.status }}</span>
+                                            {% else %}
+                                                <span class="smallpilllabel">{{ dependency.status }}</span>
+                                            {% endif %}
+                                        </td>
 
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="email">
-                        </div>
+                                        <td>
+                                            {% if dependency.description %}
+                                                {{ dependency.description|truncatechars:80 }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </td>
 
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="text" name="phone">
-                        </div>
+                                        <td>
+                                            <div class="tableactionbuttonrow">
 
-                        <div class="form-group">
-                            <label>Team</label>
-                            <select name="team">
-                                <option value="">No team</option>
-                                {% for team in teams %}
-                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                                <!-- This button opens the dependency edit form. -->
+                                                <button type="button" class="edititembutton" onclick="openorcloseeditform('dependencyeditform-{{ dependency.id }}')">Edit</button>
+
+                                                <!-- This form deletes the dependency. -->
+                                                <form method="post" onsubmit="return confirm('Delete this dependency?');">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="delete_dependency">
+                                                    <input type="hidden" name="dependency_id" value="{{ dependency.id }}">
+                                                    <button type="submit" class="deleteitembutton">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- This form updates the dependency. -->
+                                    <tr class="hiddeneditformtablerow" id="dependencyeditform-{{ dependency.id }}">
+                                        <td colspan="5">
+                                            <div class="editformbox">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="update_dependency">
+                                                    <input type="hidden" name="dependency_id" value="{{ dependency.id }}">
+
+                                                    <div class="forminputtwocolumngrid">
+                                                        <div class="forminputgroup">
+                                                            <label>Source Team</label>
+                                                            <select name="source_team" required>
+                                                                {% for team in teams %}
+                                                                    <option value="{{ team.id }}" {% if dependency.source_team_id == team.id %}selected{% endif %}>
+                                                                        {{ team.name }}
+                                                                    </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Target Team</label>
+                                                            <select name="target_team" required>
+                                                                {% for team in teams %}
+                                                                    <option value="{{ team.id }}" {% if dependency.target_team_id == team.id %}selected{% endif %}>
+                                                                        {{ team.name }}
+                                                                    </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Dependency Type</label>
+                                                            <input type="text" name="dependency_type" value="{{ dependency.dependency_type }}">
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Status</label>
+                                                            <div class="activeswitchandtextrow">
+                                                                <label class="activeswitchbox">
+                                                                    <input type="checkbox" name="is_active" {% if dependency.status == "Active" %}checked{% endif %}>
+                                                                    <span class="activeswitchbackground"></span>
+                                                                </label>
+
+                                                                <span class="activeorinactivetext">
+                                                                    {% if dependency.status == "Active" %}
+                                                                        Active
+                                                                    {% else %}
+                                                                        Inactive
+                                                                    {% endif %}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="forminputgroup fullwidthinput">
+                                                            <label>Description</label>
+                                                            <textarea name="description">{{ dependency.description }}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="saveformbutton">Save Dependency</button>
+                                                    <button type="button" class="cancelformbutton" onclick="openorcloseeditform('dependencyeditform-{{ dependency.id }}')">Cancel</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {% endfor %}
-                            </select>
-                        </div>
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="emptymessagebox">No dependencies found.</div>
+                    {% endif %}
+                </section>
 
-                        <div class="form-group">
-                            <label>Photo</label>
-                            <input type="file" name="photo" accept="image/*">
-                        </div>
+                <!-- This section manages events. -->
+                <section class="adminmanagesection" id="eventmanagesection">
+
+                    <!-- This form adds a new event. -->
+                    <div class="createformbox">
+                        <div class="createformtitle">Create Event</div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="create_event">
+
+                            <div class="forminputtwocolumngrid">
+                                <div class="forminputgroup">
+                                    <label>Event Title</label>
+                                    <input type="text" name="event_title" required>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Team</label>
+                                    <select name="team">
+                                        <option value="">No team</option>
+                                        {% for team in teams %}
+                                            <option value="{{ team.id }}">{{ team.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Date</label>
+                                    <input type="date" name="date" required>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Platform</label>
+                                    <input type="text" name="platform" placeholder="Google Meet, Zoom, Office...">
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>Start Time</label>
+                                    <input type="time" name="start_time" required>
+                                </div>
+
+                                <div class="forminputgroup">
+                                    <label>End Time</label>
+                                    <input type="time" name="end_time" required>
+                                </div>
+
+                                <div class="forminputgroup fullwidthinput">
+                                    <label>Notes</label>
+                                    <textarea name="notes"></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="saveformbutton">Create Event</button>
+                        </form>
                     </div>
 
-                    <button type="submit" class="save-btn">Create Person</button>
-                </form>
+                    <!-- This table shows all events. -->
+                    {% if events %}
+                        <table class="admindatatable">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Team</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
 
-                <form method="post" class="admin-form" id="repositoryForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="create_repository">
+                            <tbody>
+                                {% for event in events %}
+                                    <tr>
+                                        <td>
+                                            <div class="itemnametitle">{{ event.title }}</div>
+                                            <div class="itemsmalltext">
+                                                {% if event.platform %}
+                                                    {{ event.platform }}
+                                                {% else %}
+                                                    No platform
+                                                {% endif %}
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Repository Name</label>
-                            <input type="text" name="repository_name" required>
-                        </div>
+                                                {% if event.notes %}
+                                                    <br>{{ event.notes|truncatechars:80 }}
+                                                {% endif %}
+                                            </div>
+                                        </td>
 
-                        <div class="form-group">
-                            <label>Team</label>
-                            <select name="team" required>
-                                <option value="">Choose team</option>
-                                {% for team in teams %}
-                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                        <td>
+                                            {% if event.team %}
+                                                <span class="smallpilllabel">{{ event.team.name }}</span>
+                                            {% else %}
+                                                <span class="smallpilllabel graypilllabel">No Team</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>{{ event.date }}</td>
+
+                                        <td>{{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}</td>
+
+                                        <td>
+                                            <div class="tableactionbuttonrow">
+
+                                                <!-- This button opens the event edit form. -->
+                                                <button type="button" class="edititembutton" onclick="openorcloseeditform('eventeditform-{{ event.id }}')">Edit</button>
+
+                                                <!-- This form deletes the event. -->
+                                                <form method="post" onsubmit="return confirm('Delete {{ event.title }} event?');">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="delete_event">
+                                                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                                                    <button type="submit" class="deleteitembutton">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- This form updates the event. -->
+                                    <tr class="hiddeneditformtablerow" id="eventeditform-{{ event.id }}">
+                                        <td colspan="5">
+                                            <div class="editformbox">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="update_event">
+                                                    <input type="hidden" name="event_id" value="{{ event.id }}">
+
+                                                    <div class="forminputtwocolumngrid">
+                                                        <div class="forminputgroup">
+                                                            <label>Event Title</label>
+                                                            <input type="text" name="event_title" value="{{ event.title }}" required>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Team</label>
+                                                            <select name="team">
+                                                                <option value="">No team</option>
+                                                                {% for team in teams %}
+                                                                    <option value="{{ team.id }}" {% if event.team_id == team.id %}selected{% endif %}>
+                                                                        {{ team.name }}
+                                                                    </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Date</label>
+                                                            <input type="date" name="date" value="{{ event.date|date:'Y-m-d' }}" required>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Platform</label>
+                                                            <input type="text" name="platform" value="{{ event.platform }}">
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>Start Time</label>
+                                                            <input type="time" name="start_time" value="{{ event.start_time|time:'H:i' }}" required>
+                                                        </div>
+
+                                                        <div class="forminputgroup">
+                                                            <label>End Time</label>
+                                                            <input type="time" name="end_time" value="{{ event.end_time|time:'H:i' }}" required>
+                                                        </div>
+
+                                                        <div class="forminputgroup fullwidthinput">
+                                                            <label>Notes</label>
+                                                            <textarea name="notes">{{ event.notes }}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="saveformbutton">Save Event</button>
+                                                    <button type="button" class="cancelformbutton" onclick="openorcloseeditform('eventeditform-{{ event.id }}')">Cancel</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Technology</label>
-                            <input type="text" name="technology">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Last Updated</label>
-                            <input type="date" name="last_updated">
-                        </div>
-
-                        <div class="form-group full">
-                            <label>URL</label>
-                            <input type="url" name="url">
-                        </div>
-
-                        <div class="form-group full">
-                            <label>Description</label>
-                            <textarea name="description"></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="save-btn">Create Repository</button>
-                </form>
-
-                <form method="post" class="admin-form" id="dependencyForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="create_dependency">
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Source Team</label>
-                            <select name="source_team" required>
-                                <option value="">Choose source team</option>
-                                {% for team in teams %}
-                                    <option value="{{ team.id }}">{{ team.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Target Team</label>
-                            <select name="target_team" required>
-                                <option value="">Choose target team</option>
-                                {% for team in teams %}
-                                    <option value="{{ team.id }}">{{ team.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Dependency Type</label>
-                            <input type="text" name="dependency_type" placeholder="API, Database, Service...">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Status</label>
-                            <input type="text" name="status" value="Active">
-                        </div>
-
-                        <div class="form-group full">
-                            <label>Description</label>
-                            <textarea name="description"></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="save-btn">Create Dependency</button>
-                </form>
-
-                <form method="post" class="admin-form" id="eventForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="create_event">
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Event Title</label>
-                            <input type="text" name="event_title" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Team</label>
-                            <select name="team">
-                                <option value="">No team</option>
-                                {% for team in teams %}
-                                    <option value="{{ team.id }}">{{ team.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="date" name="date" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Platform / Location</label>
-                            <input type="text" name="platform">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Start Time</label>
-                            <input type="time" name="start_time" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>End Time</label>
-                            <input type="time" name="end_time" required>
-                        </div>
-
-                        <div class="form-group full">
-                            <label>Notes</label>
-                            <textarea name="notes"></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="save-btn">Create Event</button>
-                </form>
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="emptymessagebox">No events found.</div>
+                    {% endif %}
+                </section>
             </div>
         </main>
 
+        <!-- This starts the right side of the page. -->
         <aside>
-            <div class="panel">
-                <h2>Latest Teams</h2>
 
-                {% for team in latest_teams %}
-                    <div class="list-item">
-                        <div class="item-title">{{ team.name }}</div>
-                        <div class="item-meta">
-                            {% if team.department %}{{ team.department.name }}{% else %}No department{% endif %}<br>
-                            {% if team.team_leader %}Leader: {{ team.team_leader.name }}{% else %}Leader: Not assigned{% endif %}<br>
-                            Members: {{ team.total_members }} · Repositories: {{ team.total_repositories }}
-                        </div>
-                    </div>
-                {% empty %}
-                    <div class="empty">No teams found.</div>
-                {% endfor %}
+            <!-- This shows quick page links. -->
+            <div class="whitecontentbox">
+                <h2>Quick Actions</h2>
+                <div class="whiteboxsmallnote">Jump to focused admin pages.</div>
+
+                <div class="quicklinktwocolumngrid" style="margin-top:16px;">
+                    <a href="{% url 'admin_team_management' %}" class="quicklinkcard">
+                        👥 Teams
+                        <span>Create, edit and delete teams</span>
+                    </a>
+
+                    <a href="{% url 'admin_user_access' %}" class="quicklinkcard">
+                        🔐 Users
+                        <span>Manage login access</span>
+                    </a>
+
+                    <a href="{% url 'organisation_map' %}" class="quicklinkcard">
+                        🔗 Organisation Map
+                        <span>Visual dependency map</span>
+                    </a>
+
+                    <a href="{% url 'schedule' %}" class="quicklinkcard">
+                        📅 Schedule
+                        <span>View event calendar</span>
+                    </a>
+                </div>
             </div>
 
-            <div class="panel">
+            <!-- This shows recent activities. -->
+            <div class="whitecontentbox">
                 <h2>Recent Activities</h2>
 
-                {% for activity in activities %}
-                    <div class="list-item">
-                        <div class="item-title">{{ activity.title }}</div>
-                        <div class="item-meta">
+                <div class="activitycardlist">
+                    {% for activity in activities %}
+                        <div class="activityinfocard">
+                            <div class="activitytitletext">{{ activity.title }}</div>
+
                             {% if activity.description %}
-                                {{ activity.description }}<br>
+                                <div class="activitysmalltext">{{ activity.description }}</div>
                             {% endif %}
-                            {{ activity.created_at }}
+
+                            <div class="activitysmalltext">
+                                {{ activity.created_at }}
+                                {% if activity.related_team %}
+                                    · {{ activity.related_team.name }}
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
-                {% empty %}
-                    <div class="empty">No activities found.</div>
-                {% endfor %}
+                    {% empty %}
+                        <div class="emptymessagebox">No activities yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- This shows latest users. -->
+            <div class="whitecontentbox">
+                <h2>Latest Users</h2>
+
+                <div class="smallsidecardlist">
+                    {% for user in latest_users %}
+                        <div class="smallsidecard">
+                            <div class="itemnametitle">
+                                {{ user.username }}
+                                {% if user.is_staff %}
+                                    <span class="smallpilllabel">Admin</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="sidecardsmalltext">
+                                {% if user.email %}
+                                    {{ user.email }}<br>
+                                {% endif %}
+
+                                Joined: {{ user.date_joined|date:"M d, Y" }}<br>
+
+                                {% if user.is_active %}
+                                    <span class="smallpilllabel greenpilllabel">Active</span>
+                                {% else %}
+                                    <span class="smallpilllabel redpilllabel">Inactive</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="emptymessagebox">No users found.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- This shows latest teams. -->
+            <div class="whitecontentbox">
+                <h2>Latest Teams</h2>
+
+                <div class="smallsidecardlist">
+                    {% for team in latest_teams %}
+                        <div class="smallsidecard">
+                            <div class="itemnametitle">{{ team.name }}</div>
+
+                            <div class="sidecardsmalltext">
+                                {% if team.department %}
+                                    {{ team.department.name }}<br>
+                                {% endif %}
+
+                                Members: {{ team.total_members }}<br>
+                                Repositories: {{ team.total_repositories }}<br>
+                                Dependencies: {{ team.total_dependencies }}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="emptymessagebox">No teams found.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- This shows latest messages. -->
+            <div class="whitecontentbox">
+                <h2>Latest Messages</h2>
+
+                <div class="smallsidecardlist">
+                    {% for message in latest_messages %}
+                        <div class="smallsidecard">
+                            <div class="itemnametitle">{{ message.subject }}</div>
+
+                            <div class="sidecardsmalltext">
+                                From: {{ message.sender.name }}<br>
+                                To: {{ message.receiver.name }}<br>
+                                {% if message.is_read %}
+                                    <span class="smallpilllabel greenpilllabel">Read</span>
+                                {% else %}
+                                    <span class="smallpilllabel redpilllabel">Unread</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="emptymessagebox">No messages found.</div>
+                    {% endfor %}
+                </div>
             </div>
         </aside>
 
     </div>
-
 </div>
 
 <script>
-    const buttons = document.querySelectorAll(".tab-btn");
-    const forms = document.querySelectorAll(".admin-form");
+    // This finds all tab buttons.
+    const allsectiontabbuttons = document.querySelectorAll(".sectiontabbutton");
 
-    buttons.forEach(function(button) {
-        button.addEventListener("click", function() {
-            const target = button.dataset.form;
+    // This finds all sections.
+    const alladminmanagesections = document.querySelectorAll(".adminmanagesection");
 
-            buttons.forEach(function(item) {
-                item.classList.remove("active");
-            });
+    // This changes the visible section when a tab is clicked.
+    allsectiontabbuttons.forEach(clickedtabbutton => {
+        clickedtabbutton.addEventListener("click", () => {
+            const sectionidtoshow = clickedtabbutton.dataset.section;
 
-            forms.forEach(function(form) {
-                form.classList.remove("active");
-            });
+            allsectiontabbuttons.forEach(onebutton => onebutton.classList.remove("active"));
+            alladminmanagesections.forEach(onesection => onesection.classList.remove("active"));
 
-            button.classList.add("active");
-            document.getElementById(target).classList.add("active");
+            clickedtabbutton.classList.add("active");
+
+            const sectionthatwillopen = document.getElementById(sectionidtoshow);
+            if (sectionthatwillopen) {
+                sectionthatwillopen.classList.add("active");
+            }
         });
+    });
+
+    // This opens or closes the edit form.
+    function openorcloseeditform(editformid) {
+        const editformrow = document.getElementById(editformid);
+
+        if (editformrow) {
+            editformrow.classList.toggle("show");
+        }
+    }
+
+    // This finds all active or inactive switches.
+    document.querySelectorAll('input[name="is_active"]').forEach(activecheckbox => {
+        const switchandtextwrapper = activecheckbox.closest(".activeswitchandtextrow");
+        const activeorinactivelabel = switchandtextwrapper ? switchandtextwrapper.querySelector(".activeorinactivetext") : null;
+
+        // This writes Active or Inactive next to the switch.
+        function updateactiveorinactivetext() {
+            if (activeorinactivelabel) {
+                activeorinactivelabel.innerText = activecheckbox.checked ? "Active" : "Inactive";
+            }
+        }
+
+        activecheckbox.addEventListener("change", updateactiveorinactivetext);
+        updateactiveorinactivetext();
     });
 </script>
 

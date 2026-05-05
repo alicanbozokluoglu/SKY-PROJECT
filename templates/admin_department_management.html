@@ -1,0 +1,780 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all page content. */
+    .departmentmanagementwholepagearea {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
+    .departmentmanagementbigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+    }
+
+    /* This adds a circle decoration. */
+    .departmentmanagementbigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .departmentmanagementpagetitle {
+        position: relative;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+        z-index: 1;
+    }
+
+    /* This styles the small text under the title. */
+    .departmentmanagementtextundertitle {
+        position: relative;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 680px;
+        z-index: 1;
+    }
+
+    /* This styles the add department button. */
+    .adddepartmenttopbutton {
+        position: relative;
+        z-index: 1;
+        background: rgba(255,255,255,0.94);
+        color: #1d4ed8;
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-weight: 900;
+        cursor: pointer;
+        white-space: nowrap;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.14);
+        transition: 0.2s ease;
+    }
+
+    /* This moves the top button when the mouse is on it. */
+    .adddepartmenttopbutton:hover {
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    /* This styles success and error boxes. */
+    .successmessagebox,
+    .errormessagebox {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This shows a green success message. */
+    .successmessagebox {
+        background: var(--softgreencolor);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This shows a red error message. */
+    .errormessagebox {
+        background: var(--softredcolor);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This puts number cards in a grid. */
+    .departmentnumbercardgrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    /* This styles each number card. */
+    .departmentnumbercard {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This moves cards a little when the mouse is on them. */
+    .departmentnumbercard:hover,
+    .departmentwhitecontentbox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This styles the small title on number cards. */
+    .numbercardsmalltitle {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+    }
+
+    /* This styles the big number on number cards. */
+    .numbercardbignumber {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
+    }
+
+    /* This styles the main white box. */
+    .departmentwhitecontentbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles the panel title. */
+    .departmentwhitecontentbox h2 {
+        margin: 0 0 20px;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        letter-spacing: -0.03em;
+        font-weight: 900;
+    }
+
+    /* This holds the search box. */
+    .departmentsearchboxarea {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    /* This styles input boxes. */
+    input {
+        width: 100%;
+        height: 46px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        padding: 0 14px;
+        font-size: 14px;
+        outline: none;
+        background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
+    }
+
+    /* This highlights the input when clicked. */
+    input:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This hides the create department form first. */
+    .createdepartmentform {
+        display: none;
+        margin-top: 20px;
+        margin-bottom: 22px;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        padding: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+
+    /* This shows the create department form. */
+    .createdepartmentform.show {
+        display: block;
+    }
+
+    /* This puts form fields in one column. */
+    .forminputonecolumngrid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    /* This adds space under form groups. */
+    .forminputgroup {
+        margin-bottom: 14px;
+    }
+
+    /* This styles labels. */
+    label {
+        display: block;
+        font-weight: 900;
+        color: #334155;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* This styles all buttons. */
+    .saveformbutton,
+    .cancelformbutton,
+    .deletedepartmentbutton,
+    .editdepartmentbutton {
+        border: none;
+        border-radius: 13px;
+        padding: 10px 14px;
+        font-weight: 900;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    /* This styles save buttons. */
+    .saveformbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
+        margin-top: 8px;
+    }
+
+    /* This styles cancel buttons. */
+    .cancelformbutton {
+        background: white;
+        color: #334155;
+        border: 1px solid var(--borderlinecolor);
+        margin-top: 8px;
+    }
+
+    /* This styles edit buttons. */
+    .editdepartmentbutton {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+    }
+
+    /* This styles delete buttons. */
+    .deletedepartmentbutton {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This moves buttons a little when the mouse is on them. */
+    .saveformbutton:hover,
+    .cancelformbutton:hover,
+    .deletedepartmentbutton:hover,
+    .editdepartmentbutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles the department table. */
+    .departmentdatatable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        overflow: hidden;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        background: white;
+    }
+
+    /* This styles table titles. */
+    .departmentdatatable th {
+        text-align: left;
+        background: #f8fafc;
+        color: #475569;
+        border-bottom: 1px solid var(--borderlinecolor);
+        padding: 14px 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* This styles table cells. */
+    .departmentdatatable td {
+        border-bottom: 1px solid #eef2f7;
+        padding: 14px 12px;
+        color: #334155;
+        vertical-align: top;
+    }
+
+    /* This highlights a table row when the mouse is on it. */
+    .departmentdatatable tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* This styles department names. */
+    .departmentnametext {
+        font-weight: 900;
+        color: var(--maintextcolor);
+        font-size: 16px;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles small department text. */
+    .departmentsmalltext {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    /* This styles team labels. */
+    .teampilllabel {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 900;
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+        margin: 2px;
+    }
+
+    /* This styles the no teams label. */
+    .noteamspilllabel {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This puts action buttons next to each other. */
+    .tableactionbuttonrow {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* This hides edit forms first. */
+    .departmenteditformtablerow {
+        display: none;
+        background: #f8fafc;
+    }
+
+    /* This shows an edit form. */
+    .departmenteditformtablerow.show {
+        display: table-row;
+    }
+
+    /* This styles the edit form box. */
+    .editdepartmentformbox {
+        padding: 20px;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+
+    /* This puts team checkboxes in a grid. */
+    .teamcheckboxgrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        max-height: 260px;
+        overflow-y: auto;
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 16px;
+    }
+
+    /* This styles each team checkbox item. */
+    .teamcheckboxitem {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: white;
+        border: 1px solid #eef2f7;
+        border-radius: 14px;
+        padding: 10px;
+        color: #334155;
+        font-size: 14px;
+        text-transform: none;
+        letter-spacing: 0;
+        margin: 0;
+        transition: 0.2s ease;
+    }
+
+    /* This highlights a checkbox item when the mouse is on it. */
+    .teamcheckboxitem:hover {
+        border-color: #bfdbfe;
+        background: var(--softbluecolor);
+    }
+
+    /* This styles the checkbox itself. */
+    .teamcheckboxitem input {
+        width: 16px;
+        height: 16px;
+        box-shadow: none;
+        padding: 0;
+        border-radius: 4px;
+    }
+
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 18px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 16px;
+    }
+
+    /* This hides an item. */
+    .hideitem {
+        display: none;
+    }
+
+    /* This changes the page on medium screens. */
+    @media (max-width: 1100px) {
+        .departmentnumbercardgrid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .teamcheckboxgrid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .departmentmanagementbigtoptitlebox {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .departmentmanagementwholepagearea {
+            padding: 0;
+        }
+
+        .departmentmanagementbigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .departmentmanagementpagetitle {
+            font-size: 29px;
+        }
+
+        .departmentnumbercardgrid,
+        .teamcheckboxgrid {
+            grid-template-columns: 1fr;
+        }
+
+        .departmentdatatable {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<!-- This starts the department management page. -->
+<div class="departmentmanagementwholepagearea">
+
+    <!-- This shows the page title and add button. -->
+    <div class="departmentmanagementbigtoptitlebox">
+        <div>
+            <h1 class="departmentmanagementpagetitle">Department Management</h1>
+            <div class="departmentmanagementtextundertitle">
+                Create, edit and delete departments. Assign selected teams to each department.
+            </div>
+        </div>
+
+        <!-- This button opens the add department form. -->
+        <button class="adddepartmenttopbutton" onclick="openorclosecreatedepartmentform()">+ Add Department</button>
+    </div>
+
+    <!-- This shows success or error messages. -->
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <div class="errormessagebox">{{ message }}</div>
+            {% else %}
+                <div class="successmessagebox">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <!-- This shows the number cards. -->
+    <div class="departmentnumbercardgrid">
+
+        <!-- This card shows department count. -->
+        <div class="departmentnumbercard">
+            <div class="numbercardsmalltitle">Departments</div>
+            <div class="numbercardbignumber">{{ total_departments }}</div>
+        </div>
+
+        <!-- This card shows team count. -->
+        <div class="departmentnumbercard">
+            <div class="numbercardsmalltitle">Teams</div>
+            <div class="numbercardbignumber">{{ total_teams }}</div>
+        </div>
+
+        <!-- This card shows assigned team count. -->
+        <div class="departmentnumbercard">
+            <div class="numbercardsmalltitle">Assigned Teams</div>
+            <div class="numbercardbignumber">{{ assigned_teams }}</div>
+        </div>
+
+        <!-- This card shows unassigned team count. -->
+        <div class="departmentnumbercard">
+            <div class="numbercardsmalltitle">Unassigned Teams</div>
+            <div class="numbercardbignumber">{{ unassigned_teams }}</div>
+        </div>
+    </div>
+
+    <!-- This white box holds department tools. -->
+    <div class="departmentwhitecontentbox">
+        <h2>Manage Departments</h2>
+
+        <!-- This search box filters departments. -->
+        <div class="departmentsearchboxarea">
+            <input
+                type="text"
+                id="departmentsearchinput"
+                placeholder="Search departments or teams..."
+                autocomplete="off"
+            >
+        </div>
+
+        <!-- This form adds a new department. -->
+        <form method="post" class="createdepartmentform" id="createdepartmentform">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_department">
+
+            <div class="forminputonecolumngrid">
+                <div class="forminputgroup">
+                    <label>Department Name</label>
+                    <input type="text" name="name" required>
+                </div>
+            </div>
+
+            <button type="submit" class="saveformbutton">Create Department</button>
+            <button type="button" class="cancelformbutton" onclick="openorclosecreatedepartmentform()">Cancel</button>
+        </form>
+
+        <!-- This table shows all departments. -->
+        {% if departments %}
+            <table class="departmentdatatable">
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Teams</th>
+                        <th>Team Count</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for department in departments %}
+                        <tr
+                            class="departmenttablerow"
+                            data-search="{{ department.name|lower }} {% for team in department.team_set.all %}{{ team.name|lower }} {% endfor %}"
+                        >
+                            <td>
+                                <div class="departmentnametext">{{ department.name }}</div>
+                                <div class="departmentsmalltext">Department ID: {{ department.id }}</div>
+                            </td>
+
+                            <td>
+                                {% for team in department.team_set.all %}
+                                    <span class="teampilllabel">{{ team.name }}</span>
+                                {% empty %}
+                                    <span class="teampilllabel noteamspilllabel">No teams</span>
+                                {% endfor %}
+                            </td>
+
+                            <td>
+                                <strong>{{ department.team_set.count }}</strong>
+                            </td>
+
+                            <td>
+                                <div class="tableactionbuttonrow">
+
+                                    <!-- This button opens the department edit form. -->
+                                    <button type="button" class="editdepartmentbutton" onclick="openorclosedepartmenteditform('{{ department.id }}')">
+                                        Edit
+                                    </button>
+
+                                    <!-- This form deletes the department. -->
+                                    <form method="post" onsubmit="return confirm('Delete {{ department.name }} department? Teams will not be deleted, only unassigned.');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_department">
+                                        <input type="hidden" name="department_id" value="{{ department.id }}">
+                                        <button type="submit" class="deletedepartmentbutton">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- This form updates the department. -->
+                        <tr class="departmenteditformtablerow" id="departmenteditformrow-{{ department.id }}">
+                            <td colspan="4">
+                                <div class="editdepartmentformbox">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="update_department">
+                                        <input type="hidden" name="department_id" value="{{ department.id }}">
+
+                                        <div class="forminputgroup">
+                                            <label>Department Name</label>
+                                            <input type="text" name="name" value="{{ department.name }}" required>
+                                        </div>
+
+                                        <div class="forminputgroup">
+                                            <label>Teams in this Department</label>
+
+                                            <!-- This lets the admin choose teams for this department. -->
+                                            <div class="teamcheckboxgrid">
+                                                {% for team in teams %}
+                                                    <label class="teamcheckboxitem">
+                                                        <input
+                                                            type="checkbox"
+                                                            name="team_ids"
+                                                            value="{{ team.id }}"
+                                                            {% if team.department_id == department.id %}checked{% endif %}
+                                                        >
+                                                        {{ team.name }}
+                                                    </label>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="saveformbutton">Save Department</button>
+                                        <button type="button" class="cancelformbutton" onclick="openorclosedepartmenteditform('{{ department.id }}')">Cancel</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- This message appears when search finds nothing. -->
+            <div class="emptymessagebox hideitem" id="nodepartmentsearchresultsmessage">
+                No departments match your search.
+            </div>
+        {% else %}
+
+            <!-- This message appears when there are no departments. -->
+            <div class="emptymessagebox">No departments found in the database.</div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    // This opens or closes the add department form.
+    function openorclosecreatedepartmentform() {
+        const createdepartmentform = document.getElementById("createdepartmentform");
+
+        if (createdepartmentform) {
+            createdepartmentform.classList.toggle("show");
+        }
+    }
+
+    // This opens or closes the edit form for one department.
+    function openorclosedepartmenteditform(departmentid) {
+        const departmenteditformrow = document.getElementById("departmenteditformrow-" + departmentid);
+
+        if (departmenteditformrow) {
+            departmenteditformrow.classList.toggle("show");
+        }
+    }
+
+    // This finds the department search box.
+    const departmentsearchinput = document.getElementById("departmentsearchinput");
+
+    // This finds the no result message.
+    const nodepartmentsearchresultsmessage = document.getElementById("nodepartmentsearchresultsmessage");
+
+    // This searches departments and teams.
+    function searchdepartmentsandteams() {
+        const typedsearchvalue = departmentsearchinput ? departmentsearchinput.value.toLowerCase().trim() : "";
+        const alldepartmenttablerows = document.querySelectorAll(".departmenttablerow");
+        let visibledepartmentcount = 0;
+
+        alldepartmenttablerows.forEach(function(departmenttablerow) {
+            const departmentsearchtext = departmenttablerow.dataset.search || "";
+            const departmenteditrowunderit = departmenttablerow.nextElementSibling;
+
+            if (departmentsearchtext.includes(typedsearchvalue)) {
+                departmenttablerow.classList.remove("hideitem");
+                visibledepartmentcount++;
+            } else {
+                departmenttablerow.classList.add("hideitem");
+
+                if (departmenteditrowunderit && departmenteditrowunderit.classList.contains("departmenteditformtablerow")) {
+                    departmenteditrowunderit.classList.remove("show");
+                }
+            }
+        });
+
+        if (nodepartmentsearchresultsmessage) {
+            if (visibledepartmentcount === 0 && alldepartmenttablerows.length > 0) {
+                nodepartmentsearchresultsmessage.classList.remove("hideitem");
+            } else {
+                nodepartmentsearchresultsmessage.classList.add("hideitem");
+            }
+        }
+    }
+
+    // This runs search when the user types.
+    if (departmentsearchinput) {
+        departmentsearchinput.addEventListener("input", searchdepartmentsandteams);
+    }
+
+    // This runs the search once when the page opens.
+    searchdepartmentsandteams();
+</script>
+
+{% endblock %}

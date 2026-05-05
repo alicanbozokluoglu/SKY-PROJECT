@@ -3,299 +3,558 @@
 {% block content %}
 
 <style>
-    .teams-wrap {
-        max-width: 1260px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --softgreencolor: #dcfce7;
+        --softredcolor: #fee2e2;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all team directory content. */
+    .teamdirectorywholepagearea {
+        max-width: 1360px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .teams-title {
-        font-size: 28px;
-        margin: 0 0 24px;
-        color: #1f2937;
+    /* This styles the big top title box. */
+    .teamdirectorybigtitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
     }
 
-    .filters {
+    /* This adds a circle decoration to the title box. */
+    .teamdirectorybigtitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .teamdirectorypagetitle {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+    }
+
+    /* This styles the small text under the title. */
+    .teamdirectorytextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 680px;
+    }
+
+    /* This styles the search, department filter and sort area. */
+    .searchfilterandsortarea {
         display: grid;
         grid-template-columns: 1fr 220px 180px;
         gap: 14px;
-        margin-bottom: 26px;
+        margin-bottom: 28px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 18px;
+        box-shadow: var(--smallboxshadow);
     }
 
-    .filters input,
-    .filters select {
-        height: 46px;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
-        padding: 0 14px;
-        font-size: 15px;
+    /* This styles the filter input and dropdowns. */
+    .searchfilterandsortarea input,
+    .searchfilterandsortarea select {
+        height: 48px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         background: white;
+        color: var(--maintextcolor);
+        padding: 0 14px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.18s ease;
     }
 
-    .team-grid {
+    /* This highlights filters when clicked. */
+    .searchfilterandsortarea input:focus,
+    .searchfilterandsortarea select:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This puts team cards in three columns. */
+    .teamcardgrid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 22px;
     }
 
-    .team-card {
-        background: white;
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
+    /* This styles one team card. */
+    .teamcardbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
         padding: 22px;
-        box-shadow: 0 2px 7px rgba(0,0,0,0.04);
+        min-height: 260px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .team-header {
+    /* This moves the team card when the mouse is on it. */
+    .teamcardbox:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This puts team name and status side by side. */
+    .teamcardtoprow {
         display: flex;
         justify-content: space-between;
-        gap: 12px;
+        align-items: flex-start;
+        gap: 14px;
         margin-bottom: 14px;
     }
 
-    .team-name {
-        font-size: 20px;
-        font-weight: bold;
-        color: #111827;
+    /* This styles the team name. */
+    .teamnametext {
+        margin: 0;
+        color: var(--maintextcolor);
+        font-size: 23px;
+        font-weight: 900;
+        line-height: 1.2;
+        letter-spacing: -0.04em;
     }
 
-    .status {
-        background: #dcfce7;
-        color: #166534;
-        padding: 5px 10px;
+    /* This styles the team status label. */
+    .teamstatuslabel {
         border-radius: 999px;
+        padding: 6px 12px;
         font-size: 12px;
-        font-weight: bold;
-        height: fit-content;
+        font-weight: 900;
+        white-space: nowrap;
     }
 
-    .manager {
-        color: #667085;
+    /* This styles active team status. */
+    .activeteamstatuslabel {
+        background: var(--softgreencolor);
+        color: #15803d;
+    }
+
+    /* This styles inactive team status. */
+    .inactiveteamstatuslabel {
+        background: var(--softredcolor);
+        color: #b91c1c;
+    }
+
+    /* This styles the team leader text. */
+    .teamleadertext {
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        line-height: 1.55;
         margin-bottom: 18px;
-        font-size: 15px;
     }
 
-    .stats {
-        display: flex;
-        gap: 16px;
+    /* This holds team member and repository numbers. */
+    .teammemberandrepositorystats {
         color: #334155;
         font-size: 14px;
         margin-bottom: 18px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .avatars {
+    /* This styles one team stat pill. */
+    .teammemberandrepositorystats span {
+        background: #f8fafc;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-weight: 800;
+    }
+
+    /* This holds small member avatars. */
+    .memberavatarrow {
         display: flex;
         align-items: center;
-        margin-bottom: 18px;
+        min-height: 42px;
+        margin-bottom: 26px;
+        padding-left: 2px;
     }
 
-    .avatars img {
-        width: 34px;
-        height: 34px;
+    /* This styles member avatar circles. */
+    .memberletteravatar,
+    .memberphotoavatar {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
         border-radius: 50%;
         border: 2px solid white;
         margin-right: -8px;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
     }
 
-    .more {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        background: #eef2ff;
-        color: #2563eb;
+    /* This styles letter avatars. */
+    .memberletteravatar {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 12px;
-        font-weight: bold;
-        border: 2px solid white;
+        font-weight: 900;
     }
 
-    .card-actions {
+    /* This styles photo avatars. */
+    .memberphotoavatar {
+        object-fit: cover;
+        background: #e5e7eb;
+    }
+
+    /* This styles the extra members number. */
+    .moremembersavatar {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid var(--borderlinecolor);
+        margin-left: 4px;
+        margin-right: 0;
+    }
+
+    /* This puts Contact and Details links side by side. */
+    .teamcardactionrow {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 12px;
     }
 
-    .contact {
-        color: #2563eb;
-        font-weight: bold;
+    /* This styles the Contact link. */
+    .contactteamlink {
+        color: var(--mainbluecolor);
         text-decoration: none;
+        font-weight: 900;
         font-size: 14px;
     }
 
-    .details {
-        background: #2563eb;
+    /* This underlines Contact when the mouse is on it. */
+    .contactteamlink:hover {
+        text-decoration: underline;
+    }
+
+    /* This styles the Details button. */
+    .teamdetailsbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
         text-decoration: none;
-        padding: 9px 13px;
-        border-radius: 8px;
+        border-radius: 13px;
+        padding: 10px 15px;
+        font-weight: 900;
         font-size: 14px;
-        font-weight: bold;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
+        transition: 0.2s ease;
     }
 
-    .empty {
-        background: white;
-        border: 1px dashed #d0d5dd;
-        border-radius: 12px;
-        padding: 22px;
-        color: #667085;
-        font-size: 15px;
+    /* This moves Details when the mouse is on it. */
+    .teamdetailsbutton:hover {
+        transform: translateY(-1px);
     }
 
-    .hidden {
+    /* This styles empty messages. */
+    .emptymessagebox {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 18px;
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 16px;
+    }
+
+    /* This hides filtered cards. */
+    .hideitem {
         display: none;
     }
 
-    @media (max-width: 1100px) {
-        .team-grid {
+    /* This changes cards to two columns on medium screens. */
+    @media (max-width: 1200px) {
+        .teamcardgrid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .teamdirectorywholepagearea {
+            padding: 0;
+        }
+
+        .teamdirectorybigtitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .teamdirectorypagetitle {
+            font-size: 29px;
+        }
+
+        .searchfilterandsortarea,
+        .teamcardgrid {
             grid-template-columns: 1fr;
         }
 
-        .filters {
-            grid-template-columns: 1fr;
+        .teamcardactionrow {
+            align-items: flex-start;
+            flex-direction: column;
         }
     }
 </style>
 
-<div class="teams-wrap">
+<!-- This starts the team directory page. -->
+<div class="teamdirectorywholepagearea">
 
-    <h1 class="teams-title">Team Directory</h1>
+    <!-- This shows the page title. -->
+    <div class="teamdirectorybigtitlebox">
+        <h1 class="teamdirectorypagetitle">Team Directory</h1>
+        <div class="teamdirectorytextundertitle">
+            Search, filter and explore all teams, departments, leaders and repositories from one place.
+        </div>
+    </div>
 
-    <form method="get" class="filters" id="teamFilterForm">
+    <!-- This shows search, department filter and sort dropdown. -->
+    <div class="searchfilterandsortarea">
         <input
             type="text"
-            name="search"
-            id="teamSearch"
+            id="teamSearchInput"
             placeholder="Search teams..."
             value="{{ search }}"
             autocomplete="off"
         >
 
-        <select name="department" id="departmentFilter">
+        <select id="departmentFilterDropdown">
             <option value="">All Departments</option>
-
             {% for department in departments %}
-                <option value="{{ department.id }}" {% if selected_department == department.id|stringformat:"s" %}selected{% endif %}>
+                <option value="{{ department.id }}" {% if selected_department and selected_department.id == department.id %}selected{% endif %}>
                     {{ department.name }}
                 </option>
             {% endfor %}
         </select>
 
-        <select name="sort" id="sortFilter">
+        <select id="teamSortDropdown">
             <option value="name" {% if sort == "name" %}selected{% endif %}>Sort by Name</option>
             <option value="members" {% if sort == "members" %}selected{% endif %}>Sort by Members</option>
             <option value="repositories" {% if sort == "repositories" %}selected{% endif %}>Sort by Repositories</option>
-            <option value="newest" {% if sort == "newest" %}selected{% endif %}>Sort by Newest</option>
         </select>
-    </form>
-
-    <div class="team-grid" id="teamGrid">
-        {% for team in teams %}
-            <div
-                class="team-card"
-                data-name="{{ team.name|lower }}"
-                data-manager="{% if team.team_leader %}{{ team.team_leader.name|lower }}{% endif %}"
-                data-department="{% if team.department %}{{ team.department.id }}{% endif %}"
-            >
-
-                <div class="team-header">
-                    <div class="team-name">{{ team.name }}</div>
-                    <div class="status">{{ team.status }}</div>
-                </div>
-
-                <div class="manager">
-                    {% if team.team_leader %}
-                        {{ team.team_leader.name }}
-                    {% else %}
-                        No manager assigned
-                    {% endif %}
-                </div>
-
-                <div class="stats">
-                    <span>{{ team.total_members }} Members</span>
-                    <span>{{ team.total_repositories }} Repositories</span>
-                </div>
-
-                <div class="avatars">
-                    {% if team.team_leader %}
-                        <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
-                    {% endif %}
-
-                    {% for member in team.members.all|slice:":3" %}
-                        <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&background=random&color=fff">
-                    {% endfor %}
-
-                    {% if team.total_members > 4 %}
-                        <div class="more">+{{ team.total_members|add:"-4" }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="card-actions">
-                    <a href="{% url 'new_message' %}" class="contact">Contact</a>
-                    <a href="{% url 'team_detail' team.id %}" class="details">Details</a>
-                </div>
-
-            </div>
-        {% empty %}
-            <div class="empty">No teams found in the database.</div>
-        {% endfor %}
     </div>
 
-    <div class="empty hidden" id="noResults">
-        No teams match your search.
-    </div>
+    <!-- This shows team cards if teams exist. -->
+    {% if teams %}
+        <div class="teamcardgrid" id="teamCardGrid">
+
+            {% for team in teams %}
+                <!-- This shows one team card. -->
+                <div
+                    class="teamcardbox"
+                    data-team-name="{{ team.name|lower }}"
+                    data-team-department="{% if team.department %}{{ team.department.id }}{% endif %}"
+                    data-team-members="{{ team.total_members }}"
+                    data-team-repositories="{{ team.total_repositories }}"
+                    data-team-search="{{ team.name|lower }} {% if team.team_leader %}{{ team.team_leader.name|lower }}{% endif %} {% if team.department %}{{ team.department.name|lower }}{% endif %}"
+                >
+                    <!-- This shows the team name and status. -->
+                    <div class="teamcardtoprow">
+                        <h2 class="teamnametext">{{ team.name }}</h2>
+
+                        {% if team.status == "Inactive" %}
+                            <span class="teamstatuslabel inactiveteamstatuslabel">Inactive</span>
+                        {% else %}
+                            <span class="teamstatuslabel activeteamstatuslabel">Active</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- This shows the team leader. -->
+                    <div class="teamleadertext">
+                        {% if team.team_leader %}
+                            {{ team.team_leader.name }}
+                        {% else %}
+                            No team leader
+                        {% endif %}
+                    </div>
+
+                    <!-- This shows team numbers. -->
+                    <div class="teammemberandrepositorystats">
+                        <span>{{ team.total_members }} Members</span>
+                        <span>{{ team.total_repositories }} Repositories</span>
+                    </div>
+
+                    <!-- This shows team member avatars. -->
+                    <div class="memberavatarrow">
+                        {% for member in team.card_members %}
+                            {% if member.photo %}
+                                <img class="memberphotoavatar" src="{{ member.photo.url }}" alt="{{ member.name }}">
+                            {% else %}
+                                <div class="memberletteravatar">{{ member.name|slice:":1"|upper }}</div>
+                            {% endif %}
+                        {% empty %}
+                            <div class="memberletteravatar">--</div>
+                        {% endfor %}
+
+                        {% if team.extra_members_count > 0 %}
+                            <div class="memberletteravatar moremembersavatar">+{{ team.extra_members_count }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- This shows contact and details actions. -->
+                    <div class="teamcardactionrow">
+                        <a class="contactteamlink" href="{% url 'new_message' %}">Contact</a>
+
+                        <a class="teamdetailsbutton" href="{% url 'team_detail' team.id %}">
+                            Details
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- This appears when no team matches the filter. -->
+        <div class="emptymessagebox hideitem" id="noTeamResultsMessage">
+            No teams found.
+        </div>
+    {% else %}
+        <div class="emptymessagebox">No teams found.</div>
+    {% endif %}
 
 </div>
 
 <script>
-    const searchInput = document.getElementById("teamSearch");
-    const departmentFilter = document.getElementById("departmentFilter");
-    const sortFilter = document.getElementById("sortFilter");
-    const noResults = document.getElementById("noResults");
+    // This finds the search input.
+    const teamSearchInput = document.getElementById("teamSearchInput");
 
-    function filterTeams() {
-        const searchValue = searchInput.value.toLowerCase().trim();
-        const selectedDepartment = departmentFilter.value;
-        const cards = document.querySelectorAll(".team-card");
+    // This finds the department filter.
+    const departmentFilterDropdown = document.getElementById("departmentFilterDropdown");
 
-        let visibleCount = 0;
+    // This finds the sort dropdown.
+    const teamSortDropdown = document.getElementById("teamSortDropdown");
 
-        cards.forEach(function(card) {
-            const name = card.dataset.name || "";
-            const manager = card.dataset.manager || "";
-            const department = card.dataset.department || "";
+    // This finds the team grid.
+    const teamCardGrid = document.getElementById("teamCardGrid");
 
-            const matchesSearch =
-                name.includes(searchValue) ||
-                manager.includes(searchValue);
+    // This finds the empty result message.
+    const noTeamResultsMessage = document.getElementById("noTeamResultsMessage");
 
-            const matchesDepartment =
-                selectedDepartment === "" ||
-                department === selectedDepartment;
+    // This filters teams by search text and department.
+    function filterTeamCards() {
+        if (!teamCardGrid) return;
 
-            if (matchesSearch && matchesDepartment) {
-                card.classList.remove("hidden");
-                visibleCount++;
-            } else {
-                card.classList.add("hidden");
+        const searchedText = teamSearchInput ? teamSearchInput.value.toLowerCase().trim() : "";
+        const selectedDepartment = departmentFilterDropdown ? departmentFilterDropdown.value : "";
+        const teamCards = teamCardGrid.querySelectorAll(".teamcardbox");
+        let visibleTeamCount = 0;
+
+        teamCards.forEach(function(teamCard) {
+            const cardSearchText = teamCard.dataset.teamSearch || "";
+            const cardDepartment = teamCard.dataset.teamDepartment || "";
+
+            const searchMatches = cardSearchText.includes(searchedText);
+            const departmentMatches = !selectedDepartment || cardDepartment === selectedDepartment;
+
+            const shouldShowCard = searchMatches && departmentMatches;
+
+            teamCard.classList.toggle("hideitem", !shouldShowCard);
+
+            if (shouldShowCard) {
+                visibleTeamCount++;
             }
         });
 
-        if (visibleCount === 0) {
-            noResults.classList.remove("hidden");
-        } else {
-            noResults.classList.add("hidden");
+        if (noTeamResultsMessage) {
+            noTeamResultsMessage.classList.toggle("hideitem", visibleTeamCount > 0);
         }
     }
 
-    searchInput.addEventListener("input", filterTeams);
-    departmentFilter.addEventListener("change", filterTeams);
+    // This sorts teams by name, members or repositories.
+    function sortTeamCards() {
+        if (!teamCardGrid || !teamSortDropdown) return;
 
-    sortFilter.addEventListener("change", function() {
-        document.getElementById("teamFilterForm").submit();
-    });
+        const teamCards = Array.from(teamCardGrid.querySelectorAll(".teamcardbox"));
+        const selectedSortType = teamSortDropdown.value;
 
-    filterTeams();
+        teamCards.sort(function(firstCard, secondCard) {
+            if (selectedSortType === "members") {
+                return Number(secondCard.dataset.teamMembers) - Number(firstCard.dataset.teamMembers);
+            }
+
+            if (selectedSortType === "repositories") {
+                return Number(secondCard.dataset.teamRepositories) - Number(firstCard.dataset.teamRepositories);
+            }
+
+            return firstCard.dataset.teamName.localeCompare(secondCard.dataset.teamName);
+        });
+
+        teamCards.forEach(function(teamCard) {
+            teamCardGrid.appendChild(teamCard);
+        });
+    }
+
+    // This filters teams when the user types.
+    if (teamSearchInput) {
+        teamSearchInput.addEventListener("input", filterTeamCards);
+    }
+
+    // This filters teams when department changes.
+    if (departmentFilterDropdown) {
+        departmentFilterDropdown.addEventListener("change", filterTeamCards);
+    }
+
+    // This sorts and filters teams when sort option changes.
+    if (teamSortDropdown) {
+        teamSortDropdown.addEventListener("change", function() {
+            sortTeamCards();
+            filterTeamCards();
+        });
+    }
+
+    // This sorts teams when the page opens.
+    sortTeamCards();
+
+    // This filters teams when the page opens.
+    filterTeamCards();
 </script>
 
 {% endblock %}

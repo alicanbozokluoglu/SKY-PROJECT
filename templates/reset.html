@@ -1,151 +1,335 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- This sets the page title. -->
     <title>Reset Password</title>
 
     <style>
+        /* This sets the page colors. */
+        :root {
+            --transparentwhitecardcolor: rgba(255, 255, 255, 0.92);
+            --maintextcolor: #0f172a;
+            --mutedtextcolor: #64748b;
+            --borderlinecolor: #e2e8f0;
+            --mainbluecolor: #2563eb;
+            --darkbluecolor: #1e40af;
+            --softredcolor: #fee2e2;
+            --bigboxshadow: 0 30px 80px rgba(2, 6, 23, 0.28);
+            --boxroundcorner: 24px;
+        }
+
+        /* This makes width and height easier to control. */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* This sets the page font and background. */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: white;
+            background: #ffffff;
+            color: var(--maintextcolor);
         }
 
-        .page-wrapper {
-            min-height: 100vh;
-            border: 18px solid #b5b5b5;
+        /* This styles the top white bar. */
+        .toplogolinksbar {
+            height: 58px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* This styles the Sky logo. */
+        .smallskylogo {
+            width: 58px;
+        }
+
+        /* This holds the Help and Contact links. */
+        .tophelpcontactlinks {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* This styles the Help and Contact links. */
+        .tophelpcontactlinks a {
+            color: #475569;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        /* This changes top links when the mouse is on them. */
+        .tophelpcontactlinks a:hover {
+            color: var(--mainbluecolor);
+        }
+
+        /* This styles the blue middle page area. */
+        .resetpasswordbluebackgroundarea {
+            position: relative;
+            overflow: hidden;
+            min-height: calc(100vh - 106px);
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 34px 18px;
+
+            background:
+                radial-gradient(circle at 15% 18%, rgba(56, 189, 248, 0.55), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.50), transparent 30%),
+                radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.45), transparent 32%),
+                linear-gradient(135deg, #020617 0%, #0f2f6f 45%, #0284c7 100%);
+        }
+
+        /* This adds a moving shine on the blue area. */
+        .resetpasswordbluebackgroundarea::after {
+            content: "";
+            position: absolute;
+            top: -35%;
+            left: -55%;
+            width: 70%;
+            height: 170%;
+            background: linear-gradient(
+                115deg,
+                transparent 0%,
+                rgba(255,255,255,0.04) 35%,
+                rgba(255,255,255,0.32) 50%,
+                rgba(255,255,255,0.05) 65%,
+                transparent 100%
+            );
+            transform: rotate(8deg);
+            animation: resetpasswordbackgroundshineanimation 7s ease-in-out infinite;
+        }
+
+        /* This moves the blue area shine. */
+        @keyframes resetpasswordbackgroundshineanimation {
+            0% { left: -65%; opacity: 0; }
+            20% { opacity: 0.7; }
+            50% { left: 120%; opacity: 0; }
+            100% { left: 120%; opacity: 0; }
+        }
+
+        /* This styles the reset password card. */
+        .resetpasswordcardbox {
             position: relative;
+            z-index: 1;
+            width: 430px;
+            background: var(--transparentwhitecardcolor);
+            backdrop-filter: blur(22px);
+            border-radius: var(--boxroundcorner);
+            padding: 34px;
+            box-shadow: var(--bigboxshadow);
+            text-align: center;
         }
 
-        .container {
-            width: 420px;
-            padding: 30px;
+        /* This adds a moving shine on the card. */
+        .resetpasswordcardbox::after {
+            content: "";
+            position: absolute;
+            top: -80%;
+            left: -75%;
+            width: 65%;
+            height: 240%;
+            background: linear-gradient(
+                115deg,
+                transparent,
+                rgba(255,255,255,0.6),
+                transparent
+            );
+            transform: rotate(18deg);
+            animation: resetpasswordcardshineanimation 5s infinite;
         }
 
-        .header img {
+        /* This moves the card shine. */
+        @keyframes resetpasswordcardshineanimation {
+            0% { left: -80%; opacity: 0; }
+            20% { opacity: 1; }
+            50% { left: 120%; opacity: 0; }
+            100% { left: 120%; opacity: 0; }
+        }
+
+        /* This styles the logo inside the card. */
+        .resetpasswordlogobox img {
             width: 120px;
-            display: block;
-            margin: 0 auto;
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        .subtitle {
-            text-align: center;
-            font-size: 14px;
             margin-bottom: 10px;
         }
 
-        .divider {
-            height: 1px;
-            background: #ccc;
-            margin: 15px 0;
+        /* This styles the main title. */
+        h2 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 900;
         }
 
+        /* This styles the small text under the title. */
+        .textundertitle {
+            font-size: 14px;
+            color: var(--mutedtextcolor);
+            margin: 8px 0 20px;
+            font-weight: 700;
+        }
+
+        /* This adds a line between title and form. */
+        .titleformdividerline {
+            height: 1px;
+            background: var(--borderlinecolor);
+            margin: 18px 0;
+        }
+
+        /* This styles the email input. */
         input {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            height: 48px;
+            padding: 0 14px;
+            margin-bottom: 14px;
+            border: 1px solid #dbe3ef;
+            border-radius: 14px;
         }
 
+        /* This highlights the email input when clicked. */
+        input:focus {
+            border-color: var(--mainbluecolor);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+        }
+
+        /* This styles the reset button. */
         button {
             width: 100%;
-            padding: 10px;
-            background: #0072ce;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
             color: white;
             border: none;
+            border-radius: 14px;
+            font-weight: 900;
+            cursor: pointer;
         }
 
-        .steps {
-            margin-top: 25px;
-        }
-
-        .step {
-            display: flex;
-            gap: 10px;
+        /* This styles message boxes. */
+        .resetmessagebox {
+            background: var(--softredcolor);
+            padding: 12px;
+            border-radius: 12px;
             margin-bottom: 10px;
+            font-weight: 800;
         }
 
-        .circle {
-            background: #0072ce;
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
+        /* This styles the steps box. */
+        .resetstepsbox {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        /* This styles one step. */
+        .resetstepline {
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        /* This styles the bottom footer bar. */
+        .bottomfooterbar {
+            height: 48px;
+            background: #ffffff;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
         }
 
-        .footer {
-            position: absolute;
-            bottom: 15px;
-            right: 25px;
-            font-size: 12px;
+        /* This styles bottom links. */
+        .bottomfooterbar a {
+            color: #64748b;
+            text-decoration: none;
+            margin-left: 16px;
+            font-weight: 800;
         }
+
+        /* This changes bottom links when the mouse is on them. */
+        .bottomfooterbar a:hover {
+            color: var(--mainbluecolor);
+        }
+
     </style>
 </head>
 
 <body>
 
-<div class="page-wrapper">
+<!-- This shows the top logo and links. -->
+<div class="toplogolinksbar">
+    <img src="{% static 'images/sky.png' %}" class="smallskylogo">
 
-    <div class="container">
+    <div class="tophelpcontactlinks">
+        <a href="#">Help</a>
+        <a href="#">Contact</a>
+    </div>
+</div>
 
-        <div class="header">
-            <img src="/static/images/sky.png">
+<!-- This shows the reset password page area. -->
+<div class="resetpasswordbluebackgroundarea">
+
+    <!-- This shows the reset password card. -->
+    <div class="resetpasswordcardbox">
+
+        <!-- This shows the OpenSky logo. -->
+        <div class="resetpasswordlogobox">
+            <img src="{% static 'images/sky.png' %}">
         </div>
 
+        <!-- This shows the page title. -->
         <h2>Reset Password</h2>
-        <p class="subtitle">Enter your email to reset password</p>
 
-        <div class="divider"></div>
+        <!-- This tells the user what to do. -->
+        <p class="textundertitle">Enter your email to receive a reset link.</p>
 
-        <!-- messages from Django -->
+        <!-- This separates the title from the form. -->
+        <div class="titleformdividerline"></div>
+
+        <!-- This shows messages. -->
         {% if messages %}
             {% for message in messages %}
-                <p style="color:red;">{{ message }}</p>
+                <div class="resetmessagebox">{{ message }}</div>
             {% endfor %}
         {% endif %}
 
+        <!-- This form sends the reset link. -->
         <form method="post">
             {% csrf_token %}
+
+            <!-- This gets the email address. -->
             <input type="email" name="email" placeholder="Email Address">
+
+            <!-- This sends the reset link. -->
             <button type="submit">Send Reset Link</button>
         </form>
 
-        <!-- WHAT HAPPENS NEXT -->
-        <div class="steps">
-
-            <h3>What happens next?</h3>
-
-            <div class="step">
-                <div class="circle">1</div>
-                <div>We’ll send you an email with a secure reset link</div>
-            </div>
-
-            <div class="step">
-                <div class="circle">2</div>
-                <div>Click the link in your email</div>
-            </div>
-
-            <div class="step">
-                <div class="circle">3</div>
-                <div>Log in with your new password</div>
-            </div>
-
+        <!-- This explains the reset steps. -->
+        <div class="resetstepsbox">
+            <div class="resetstepline">1. We send you an email</div>
+            <div class="resetstepline">2. Click the link</div>
+            <div class="resetstepline">3. Set new password</div>
         </div>
 
     </div>
 
-    <div class="footer">
-        Privacy Options | Terms | Contact | Help
-    </div>
+</div>
 
+<!-- This shows the bottom footer bar. -->
+<div class="bottomfooterbar">
+    <div>© 2025 Sky. All rights reserved.</div>
+
+    <div>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+    </div>
 </div>
 
 </body>

@@ -3,398 +3,613 @@
 {% block content %}
 
 <style>
-    .management-wrap {
-        max-width: 1280px;
-        margin: 0 auto;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
     }
 
-    .title-row {
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all page content. */
+    .teammanagementwholepagearea {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
+    .teammanagementbigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        gap: 18px;
-        margin-bottom: 24px;
+        align-items: center;
+        gap: 24px;
     }
 
-    .page-title {
+    /* This adds a circle decoration. */
+    .teammanagementbigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .teammanagementpagetitle {
+        position: relative;
         margin: 0;
-        font-size: 30px;
-        color: #111827;
-    }
-
-    .page-subtitle {
-        margin-top: 6px;
-        color: #667085;
-        font-size: 15px;
-    }
-
-    .top-button {
-        background: #2563eb;
+        font-size: 36px;
         color: white;
-        border: none;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
-        cursor: pointer;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+        z-index: 1;
     }
 
-    .stats-grid {
+    /* This styles the small text under the title. */
+    .teammanagementtextundertitle {
+        position: relative;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 690px;
+        z-index: 1;
+    }
+
+    /* This styles the add team button. */
+    .addteamtopbutton {
+        position: relative;
+        z-index: 1;
+        background: rgba(255,255,255,0.94);
+        color: #1d4ed8;
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-weight: 900;
+        cursor: pointer;
+        white-space: nowrap;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.14);
+        transition: 0.2s ease;
+    }
+
+    /* This moves the add team button when the mouse is on it. */
+    .addteamtopbutton:hover {
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    /* This styles success and error boxes. */
+    .successmessagebox,
+    .errormessagebox {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This shows a green success message. */
+    .successmessagebox {
+        background: var(--softgreencolor);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This shows a red error message. */
+    .errormessagebox {
+        background: var(--softredcolor);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This puts number cards in a grid. */
+    .teamnumbercardgrid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
+        gap: 16px;
         margin-bottom: 28px;
     }
 
-    .stat-card {
-        background: white;
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
-        padding: 22px;
+    /* This styles each number card. */
+    .teamnumbercard {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .stat-label {
-        color: #334e7d;
-        font-size: 14px;
-        margin-bottom: 8px;
+    /* This moves cards and panels a little when the mouse is on them. */
+    .teamnumbercard:hover,
+    .teamwhitecontentbox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
     }
 
-    .stat-number {
-        font-size: 32px;
-        font-weight: bold;
-        color: #000;
+    /* This styles the small title on number cards. */
+    .numbercardsmalltitle {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         margin-bottom: 10px;
     }
 
-    .stat-source {
-        color: green;
-        font-size: 13px;
+    /* This styles the big number on number cards. */
+    .numbercardbignumber {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
     }
 
-    .panel {
-        background: white;
-        border: 1px solid #edf0f5;
-        border-radius: 12px;
-        padding: 26px;
+    /* This styles the main white boxes. */
+    .teamwhitecontentbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
         margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .panel h2 {
+    /* This styles white box titles. */
+    .teamwhitecontentbox h2 {
         margin: 0 0 20px;
-        font-size: 24px;
-        color: #1f2937;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        letter-spacing: -0.03em;
+        font-weight: 900;
     }
 
-    .success-box {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
-    .error-box {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
-    .filters {
+    /* This puts search and filters in one row. */
+    .teamsearchandfilterarea {
         display: grid;
         grid-template-columns: 1fr 220px 180px;
         gap: 14px;
         margin-bottom: 22px;
     }
 
+    /* This styles inputs, dropdowns and text boxes. */
     input,
     select,
     textarea {
         width: 100%;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         padding: 12px 14px;
-        font-size: 15px;
+        font-size: 14px;
         outline: none;
         background: white;
+        color: var(--maintextcolor);
         font-family: Arial, sans-serif;
+        transition: 0.18s ease;
     }
 
+    /* This sets input and dropdown height. */
     input,
     select {
         height: 46px;
     }
 
+    /* This styles large text boxes. */
     textarea {
-        min-height: 95px;
+        min-height: 96px;
         resize: vertical;
     }
 
+    /* This highlights inputs when clicked. */
     input:focus,
     select:focus,
     textarea:focus {
-        border-color: #2563eb;
+        border-color: var(--mainbluecolor);
         box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
     }
 
-    .create-form {
+    /* This hides the create team form first. */
+    .createteamform {
         display: none;
         margin-top: 20px;
-        border-top: 1px solid #eef2f7;
-        padding-top: 22px;
+        margin-bottom: 4px;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        padding: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
     }
 
-    .create-form.show {
+    /* This shows the create team form. */
+    .createteamform.show {
         display: block;
     }
 
-    .form-grid {
+    /* This puts form fields in two columns. */
+    .forminputtwocolumngrid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        gap: 15px;
     }
 
-    .form-group {
+    /* This adds space under form groups. */
+    .forminputgroup {
         margin-bottom: 14px;
     }
 
-    .form-group.full {
+    /* This makes one form group full width. */
+    .forminputgroup.fullwidthinput {
         grid-column: 1 / -1;
     }
 
+    /* This styles labels. */
     label {
         display: block;
-        font-weight: bold;
+        font-weight: 900;
         color: #334155;
-        font-size: 14px;
-        margin-bottom: 7px;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
-    .save-btn {
-        background: #2563eb;
-        color: white;
+    /* This styles all action buttons. */
+    .saveformbutton,
+    .cancelformbutton,
+    .editteambutton,
+    .deleteteambutton,
+    .viewteamdetailbutton {
         border: none;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
+        border-radius: 13px;
+        padding: 10px 14px;
+        font-weight: 900;
         cursor: pointer;
+        transition: 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    /* This styles save buttons. */
+    .saveformbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
         margin-top: 8px;
     }
 
-    .secondary-btn {
+    /* This styles cancel buttons. */
+    .cancelformbutton {
         background: white;
         color: #334155;
-        border: 1px solid #d0d5dd;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
-        cursor: pointer;
+        border: 1px solid var(--borderlinecolor);
         margin-top: 8px;
     }
 
-    .team-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
+    /* This styles edit buttons. */
+    .editteambutton {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
     }
 
-    .team-table th {
+    /* This styles delete buttons. */
+    .deleteteambutton {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This styles view links. */
+    .viewteamdetailbutton {
+        background: var(--softgraycolor);
+        color: #334155;
+    }
+
+    /* This moves buttons a little when the mouse is on them. */
+    .saveformbutton:hover,
+    .cancelformbutton:hover,
+    .editteambutton:hover,
+    .deleteteambutton:hover,
+    .viewteamdetailbutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles the team table. */
+    .teamdatatable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        overflow: hidden;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        background: white;
+    }
+
+    /* This styles table titles. */
+    .teamdatatable th {
         text-align: left;
         background: #f8fafc;
-        color: #334155;
-        border-bottom: 1px solid #e5e7eb;
-        padding: 12px 10px;
+        color: #475569;
+        border-bottom: 1px solid var(--borderlinecolor);
+        padding: 14px 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .team-table td {
+    /* This styles table cells. */
+    .teamdatatable td {
         border-bottom: 1px solid #eef2f7;
-        padding: 12px 10px;
+        padding: 14px 12px;
         color: #334155;
         vertical-align: top;
     }
 
-    .badge {
+    /* This highlights a table row when the mouse is on it. */
+    .teamdatatable tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* This styles team names in the table. */
+    .teamdatatable strong {
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles small team text. */
+    .teamdatatable small {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* This styles status labels. */
+    .teamstatuslabel {
         display: inline-block;
         border-radius: 999px;
-        padding: 4px 9px;
+        padding: 5px 10px;
         font-size: 12px;
-        font-weight: bold;
-        background: #dcfce7;
+        font-weight: 900;
+        background: var(--softgreencolor);
         color: #166534;
     }
 
-    .action-row {
+    /* This styles inactive status. */
+    .inactivestatuslabel {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This styles archived status. */
+    .archivedstatuslabel {
+        background: var(--softgraycolor);
+        color: #475569;
+    }
+
+    /* This puts action buttons next to each other. */
+    .tableactionbuttonrow {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
     }
 
-    .edit-btn {
-        border: none;
-        background: #dbeafe;
-        color: #1d4ed8;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .delete-btn {
-        border: none;
-        background: #fee2e2;
-        color: #991b1b;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .detail-link {
-        display: inline-block;
-        background: #f1f5f9;
-        color: #334155;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .edit-form-row {
+    /* This hides edit forms first. */
+    .teameditformtablerow {
         display: none;
         background: #f8fafc;
     }
 
-    .edit-form-row.show {
+    /* This shows an edit form. */
+    .teameditformtablerow.show {
         display: table-row;
     }
 
-    .edit-box {
+    /* This styles the edit form box. */
+    .editteamformbox {
         padding: 20px;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        background: white;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
     }
 
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 16px;
     }
 
+    /* This hides an item. */
+    .hideitem {
+        display: none;
+    }
+
+    /* This changes the page on medium screens. */
     @media (max-width: 1100px) {
-        .stats-grid,
-        .filters,
-        .form-grid {
+        .teamnumbercardgrid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .teamsearchandfilterarea,
+        .forminputtwocolumngrid {
             grid-template-columns: 1fr;
         }
 
-        .title-row {
+        .teammanagementbigtoptitlebox {
             flex-direction: column;
+            align-items: flex-start;
         }
 
-        .team-table {
+        .teamdatatable {
             display: block;
             overflow-x: auto;
         }
     }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .teammanagementwholepagearea {
+            padding: 0;
+        }
+
+        .teammanagementbigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .teammanagementpagetitle {
+            font-size: 29px;
+        }
+
+        .teamnumbercardgrid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="management-wrap">
+<!-- This starts the team management page. -->
+<div class="teammanagementwholepagearea">
 
-    <div class="title-row">
+    <!-- This shows the page title and add button. -->
+    <div class="teammanagementbigtoptitlebox">
         <div>
-            <h1 class="page-title">Team Management</h1>
-            <div class="page-subtitle">
+            <h1 class="teammanagementpagetitle">Team Management</h1>
+            <div class="teammanagementtextundertitle">
                 Create, update, filter and delete real team records from the database.
             </div>
         </div>
 
-        <button class="top-button" onclick="toggleCreateForm()">+ Add Team</button>
+        <!-- This button opens the add team form. -->
+        <button class="addteamtopbutton" onclick="openorclosecreateteamform()">+ Add Team</button>
     </div>
 
+    <!-- This shows success or error messages. -->
     {% if messages %}
         {% for message in messages %}
             {% if message.tags == "error" %}
-                <div class="error-box">{{ message }}</div>
+                <div class="errormessagebox">{{ message }}</div>
             {% else %}
-                <div class="success-box">{{ message }}</div>
+                <div class="successmessagebox">{{ message }}</div>
             {% endif %}
         {% endfor %}
     {% endif %}
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Teams</div>
-            <div class="stat-number">{{ total_teams }}</div>
-            <div class="stat-source">Database</div>
+    <!-- This shows the number cards. -->
+    <div class="teamnumbercardgrid">
+
+        <!-- This card shows team count. -->
+        <div class="teamnumbercard">
+            <div class="numbercardsmalltitle">Teams</div>
+            <div class="numbercardbignumber">{{ total_teams }}</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Departments</div>
-            <div class="stat-number">{{ total_departments }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows department count. -->
+        <div class="teamnumbercard">
+            <div class="numbercardsmalltitle">Departments</div>
+            <div class="numbercardbignumber">{{ total_departments }}</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">People</div>
-            <div class="stat-number">{{ total_members }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows people count. -->
+        <div class="teamnumbercard">
+            <div class="numbercardsmalltitle">People</div>
+            <div class="numbercardbignumber">{{ total_members }}</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Repositories</div>
-            <div class="stat-number">{{ total_repositories }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows repository count. -->
+        <div class="teamnumbercard">
+            <div class="numbercardsmalltitle">Repositories</div>
+            <div class="numbercardbignumber">{{ total_repositories }}</div>
         </div>
     </div>
 
-    <div class="panel">
+    <!-- This white box holds the add team form. -->
+    <div class="teamwhitecontentbox">
         <h2>Manage Teams</h2>
 
-        <form method="get" class="filters">
+        <!-- This area searches and filters teams. -->
+        <div class="teamsearchandfilterarea">
+
+            <!-- This searches teams by name, leader or location. -->
             <input
                 type="text"
-                name="search"
-                placeholder="Search teams..."
-                value="{{ search }}"
+                id="teamsearchinput"
+                placeholder="Search team, leader, location..."
+                autocomplete="off"
             >
 
-            <select name="department" onchange="this.form.submit()">
+            <!-- This filters teams by department. -->
+            <select id="departmentfilterdropdown">
                 <option value="">All Departments</option>
 
                 {% for department in departments %}
-                    <option value="{{ department.id }}" {% if selected_department == department.id|stringformat:"s" %}selected{% endif %}>
+                    <option value="{{ department.id }}">
                         {{ department.name }}
                     </option>
                 {% endfor %}
             </select>
 
-            <select name="status" onchange="this.form.submit()">
+            <!-- This filters teams by status. -->
+            <select id="statusfilterdropdown">
                 <option value="">All Statuses</option>
-                <option value="Active" {% if selected_status == "Active" %}selected{% endif %}>Active</option>
-                <option value="Inactive" {% if selected_status == "Inactive" %}selected{% endif %}>Inactive</option>
-                <option value="Archived" {% if selected_status == "Archived" %}selected{% endif %}>Archived</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Archived">Archived</option>
             </select>
-        </form>
+        </div>
 
-        <form method="post" class="create-form" id="createForm">
+        <!-- This form adds a new team. -->
+        <form method="post" class="createteamform" id="createteamform">
             {% csrf_token %}
             <input type="hidden" name="action" value="create_team">
 
-            <div class="form-grid">
-                <div class="form-group">
+            <div class="forminputtwocolumngrid">
+                <div class="forminputgroup">
                     <label>Team Name</label>
                     <input type="text" name="name" required>
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Department</label>
                     <select name="department">
                         <option value="">No department</option>
@@ -404,7 +619,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Team Leader</label>
                     <select name="team_leader">
                         <option value="">No leader</option>
@@ -414,7 +629,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Status</label>
                     <select name="status">
                         <option value="Active">Active</option>
@@ -423,46 +638,48 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Location</label>
                     <input type="text" name="location">
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Active Projects Count</label>
                     <input type="number" name="active_projects_count" value="0" min="0">
                 </div>
 
-                <div class="form-group full">
+                <div class="forminputgroup fullwidthinput">
                     <label>Description</label>
                     <textarea name="description"></textarea>
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>GitHub Link</label>
                     <input type="url" name="github_link">
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Documentation Link</label>
                     <input type="url" name="documentation_link">
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Calendar Link</label>
                     <input type="url" name="calendar_link">
                 </div>
             </div>
 
-            <button type="submit" class="save-btn">Create Team</button>
-            <button type="button" class="secondary-btn" onclick="toggleCreateForm()">Cancel</button>
+            <button type="submit" class="saveformbutton">Create Team</button>
+            <button type="button" class="cancelformbutton" onclick="openorclosecreateteamform()">Cancel</button>
         </form>
     </div>
 
-    <div class="panel">
+    <!-- This white box holds the team table. -->
+    <div class="teamwhitecontentbox">
         <h2>Team Records</h2>
 
-        <table class="team-table">
+        <!-- This table shows all teams. -->
+        <table class="teamdatatable">
             <thead>
                 <tr>
                     <th>Team</th>
@@ -475,9 +692,14 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="teamtablebody">
                 {% for team in teams %}
-                    <tr>
+                    <tr
+                        class="teamtablerow"
+                        data-search="{{ team.name|lower }} {% if team.team_leader %}{{ team.team_leader.name|lower }}{% endif %} {% if team.location %}{{ team.location|lower }}{% endif %}"
+                        data-department="{% if team.department %}{{ team.department.id }}{% endif %}"
+                        data-status="{{ team.status }}"
+                    >
                         <td>
                             <strong>{{ team.name }}</strong><br>
                             <small>{{ team.location }}</small>
@@ -501,38 +723,49 @@
 
                         <td>{{ team.total_members }}</td>
                         <td>{{ team.total_repositories }}</td>
-                        <td><span class="badge">{{ team.status }}</span></td>
 
                         <td>
-                            <div class="action-row">
-                                <a href="{% url 'team_detail' team.id %}" class="detail-link">View</a>
-                                <button type="button" class="edit-btn" onclick="toggleEditForm('{{ team.id }}')">Edit</button>
+                            <span class="teamstatuslabel {% if team.status == 'Inactive' %}inactivestatuslabel{% elif team.status == 'Archived' %}archivedstatuslabel{% endif %}">
+                                {{ team.status }}
+                            </span>
+                        </td>
 
+                        <td>
+                            <div class="tableactionbuttonrow">
+
+                                <!-- This link opens the team detail page. -->
+                                <a href="{% url 'team_detail' team.id %}" class="viewteamdetailbutton">View</a>
+
+                                <!-- This button opens the team edit form. -->
+                                <button type="button" class="editteambutton" onclick="openorcloseteameditform('{{ team.id }}')">Edit</button>
+
+                                <!-- This form deletes the team. -->
                                 <form method="post" onsubmit="return confirm('Are you sure you want to delete this team?');">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="delete_team">
                                     <input type="hidden" name="team_id" value="{{ team.id }}">
-                                    <button type="submit" class="delete-btn">Delete</button>
+                                    <button type="submit" class="deleteteambutton">Delete</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
 
-                    <tr class="edit-form-row" id="edit-row-{{ team.id }}">
+                    <!-- This form updates the team. -->
+                    <tr class="teameditformtablerow" id="teameditformrow-{{ team.id }}">
                         <td colspan="7">
-                            <div class="edit-box">
+                            <div class="editteamformbox">
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="update_team">
                                     <input type="hidden" name="team_id" value="{{ team.id }}">
 
-                                    <div class="form-grid">
-                                        <div class="form-group">
+                                    <div class="forminputtwocolumngrid">
+                                        <div class="forminputgroup">
                                             <label>Team Name</label>
                                             <input type="text" name="name" value="{{ team.name }}" required>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Department</label>
                                             <select name="department">
                                                 <option value="">No department</option>
@@ -544,7 +777,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Team Leader</label>
                                             <select name="team_leader">
                                                 <option value="">No leader</option>
@@ -556,7 +789,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Status</label>
                                             <select name="status">
                                                 <option value="Active" {% if team.status == "Active" %}selected{% endif %}>Active</option>
@@ -565,39 +798,39 @@
                                             </select>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Location</label>
                                             <input type="text" name="location" value="{{ team.location }}">
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Active Projects Count</label>
                                             <input type="number" name="active_projects_count" value="{{ team.active_projects_count }}" min="0">
                                         </div>
 
-                                        <div class="form-group full">
+                                        <div class="forminputgroup fullwidthinput">
                                             <label>Description</label>
                                             <textarea name="description">{{ team.description }}</textarea>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>GitHub Link</label>
                                             <input type="url" name="github_link" value="{{ team.github_link }}">
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Documentation Link</label>
                                             <input type="url" name="documentation_link" value="{{ team.documentation_link }}">
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Calendar Link</label>
                                             <input type="url" name="calendar_link" value="{{ team.calendar_link }}">
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="save-btn">Save Changes</button>
-                                    <button type="button" class="secondary-btn" onclick="toggleEditForm('{{ team.id }}')">Cancel</button>
+                                    <button type="submit" class="saveformbutton">Save Changes</button>
+                                    <button type="button" class="cancelformbutton" onclick="openorcloseteameditform('{{ team.id }}')">Cancel</button>
                                 </form>
                             </div>
                         </td>
@@ -605,26 +838,110 @@
                 {% empty %}
                     <tr>
                         <td colspan="7">
-                            <div class="empty">No teams found in the database.</div>
+
+                            <!-- This message appears when there are no teams. -->
+                            <div class="emptymessagebox">No teams found in the database.</div>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- This message appears when search finds nothing. -->
+        <div class="emptymessagebox hideitem" id="noteammatchsearchmessage">
+            No teams match your search.
+        </div>
     </div>
 
 </div>
 
 <script>
-    function toggleCreateForm() {
-        const form = document.getElementById("createForm");
-        form.classList.toggle("show");
+    // This opens or closes the add team form.
+    function openorclosecreateteamform() {
+        const createteamform = document.getElementById("createteamform");
+        if (createteamform) {
+            createteamform.classList.toggle("show");
+        }
     }
 
-    function toggleEditForm(teamId) {
-        const row = document.getElementById("edit-row-" + teamId);
-        row.classList.toggle("show");
+    // This opens or closes the edit form for one team.
+    function openorcloseteameditform(teamid) {
+        const teameditformrow = document.getElementById("teameditformrow-" + teamid);
+        if (teameditformrow) {
+            teameditformrow.classList.toggle("show");
+        }
     }
+
+    // This finds the team search box.
+    const teamsearchinput = document.getElementById("teamsearchinput");
+
+    // This finds the department filter.
+    const departmentfilterdropdown = document.getElementById("departmentfilterdropdown");
+
+    // This finds the status filter.
+    const statusfilterdropdown = document.getElementById("statusfilterdropdown");
+
+    // This finds the no result message.
+    const noteammatchsearchmessage = document.getElementById("noteammatchsearchmessage");
+
+    // This searches and filters teams.
+    function searchandfilterteams() {
+        const typedteamsearchvalue = teamsearchinput ? teamsearchinput.value.toLowerCase().trim() : "";
+        const selecteddepartmentid = departmentfilterdropdown ? departmentfilterdropdown.value : "";
+        const selectedstatusvalue = statusfilterdropdown ? statusfilterdropdown.value : "";
+
+        const allteamtablerows = document.querySelectorAll(".teamtablerow");
+        let visibleteamcount = 0;
+
+        allteamtablerows.forEach(function(teamtablerow) {
+            const teamsearchtext = teamtablerow.dataset.search || "";
+            const teamdepartmentid = teamtablerow.dataset.department || "";
+            const teamstatusvalue = teamtablerow.dataset.status || "";
+
+            const teameditrowunderit = teamtablerow.nextElementSibling;
+
+            const matchestypedsearch = teamsearchtext.includes(typedteamsearchvalue);
+            const matchesdepartmentfilter = selecteddepartmentid === "" || teamdepartmentid === selecteddepartmentid;
+            const matchesstatusfilter = selectedstatusvalue === "" || teamstatusvalue === selectedstatusvalue;
+
+            if (matchestypedsearch && matchesdepartmentfilter && matchesstatusfilter) {
+                teamtablerow.classList.remove("hideitem");
+                visibleteamcount++;
+            } else {
+                teamtablerow.classList.add("hideitem");
+
+                if (teameditrowunderit && teameditrowunderit.classList.contains("teameditformtablerow")) {
+                    teameditrowunderit.classList.remove("show");
+                }
+            }
+        });
+
+        if (noteammatchsearchmessage) {
+            if (visibleteamcount === 0 && allteamtablerows.length > 0) {
+                noteammatchsearchmessage.classList.remove("hideitem");
+            } else {
+                noteammatchsearchmessage.classList.add("hideitem");
+            }
+        }
+    }
+
+    // This runs search when the user types.
+    if (teamsearchinput) {
+        teamsearchinput.addEventListener("input", searchandfilterteams);
+    }
+
+    // This runs filter when department changes.
+    if (departmentfilterdropdown) {
+        departmentfilterdropdown.addEventListener("change", searchandfilterteams);
+    }
+
+    // This runs filter when status changes.
+    if (statusfilterdropdown) {
+        statusfilterdropdown.addEventListener("change", searchandfilterteams);
+    }
+
+    // This runs the filter once when the page opens.
+    searchandfilterteams();
 </script>
 
 {% endblock %}

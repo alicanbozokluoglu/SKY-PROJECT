@@ -3,162 +3,268 @@
 {% block content %}
 
 <style>
-    .access-wrap {
-        max-width: 1280px;
-        margin: 0 auto;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
     }
 
-    .title-row {
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all page content. */
+    .useraccesswholepagearea {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
+    .useraccessbigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        gap: 18px;
-        margin-bottom: 24px;
+        align-items: center;
+        gap: 24px;
     }
 
-    .page-title {
+    /* This adds a circle decoration. */
+    .useraccessbigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .useraccesspagetitle {
+        position: relative;
         margin: 0;
-        font-size: 30px;
-        color: #111827;
-    }
-
-    .page-subtitle {
-        margin-top: 6px;
-        color: #667085;
-        font-size: 15px;
-    }
-
-    .top-button {
-        background: #2563eb;
+        font-size: 36px;
         color: white;
-        border: none;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
-        cursor: pointer;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+        z-index: 1;
     }
 
-    .stats-grid {
+    /* This styles the small text under the title. */
+    .useraccesstextundertitle {
+        position: relative;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 690px;
+        z-index: 1;
+    }
+
+    /* This styles the add user button. */
+    .addusertopbutton {
+        position: relative;
+        z-index: 1;
+        background: rgba(255,255,255,0.94);
+        color: #1d4ed8;
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-weight: 900;
+        cursor: pointer;
+        white-space: nowrap;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.14);
+        transition: 0.2s ease;
+    }
+
+    /* This moves the add user button when the mouse is on it. */
+    .addusertopbutton:hover {
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    /* This styles success and error boxes. */
+    .successmessagebox,
+    .errormessagebox {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This shows a green success message. */
+    .successmessagebox {
+        background: var(--softgreencolor);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This shows a red error message. */
+    .errormessagebox {
+        background: var(--softredcolor);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This puts number cards in a grid. */
+    .usernumbercardgrid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
+        gap: 16px;
         margin-bottom: 28px;
     }
 
-    .stat-card {
-        background: white;
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
-        padding: 22px;
+    /* This styles each number card. */
+    .usernumbercard {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .stat-label {
-        color: #334e7d;
-        font-size: 14px;
-        margin-bottom: 8px;
+    /* This moves cards and panels a little when the mouse is on them. */
+    .usernumbercard:hover,
+    .userwhitecontentbox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
     }
 
-    .stat-number {
-        font-size: 32px;
-        font-weight: bold;
-        color: #000;
+    /* This styles the small title on number cards. */
+    .numbercardsmalltitle {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         margin-bottom: 10px;
     }
 
-    .stat-source {
-        color: green;
-        font-size: 13px;
+    /* This styles the big number on number cards. */
+    .numbercardbignumber {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
+        margin-bottom: 0;
     }
 
-    .panel {
-        background: white;
-        border: 1px solid #edf0f5;
-        border-radius: 12px;
-        padding: 26px;
+    /* This styles the white boxes. */
+    .userwhitecontentbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
         margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .panel h2 {
+    /* This styles white box titles. */
+    .userwhitecontentbox h2 {
         margin: 0 0 20px;
-        font-size: 24px;
-        color: #1f2937;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        letter-spacing: -0.03em;
+        font-weight: 900;
     }
 
-    .success-box {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
+    /* This hides the create user box first. */
+    .createuserbox {
+        display: none;
     }
 
-    .error-box {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
+    /* This shows the create user box. */
+    .createuserbox.show {
+        display: block;
     }
 
-    .filters {
+    /* This puts search and filters in one row. */
+    .usersearchandfilterarea {
         display: grid;
         grid-template-columns: 1fr 180px 180px;
         gap: 14px;
         margin-bottom: 22px;
     }
 
+    /* This styles inputs and dropdowns. */
     input,
     select {
         width: 100%;
         height: 46px;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         padding: 0 14px;
-        font-size: 15px;
+        font-size: 14px;
         outline: none;
         background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
     }
 
+    /* This highlights inputs and dropdowns when clicked. */
     input:focus,
     select:focus {
-        border-color: #2563eb;
+        border-color: var(--mainbluecolor);
         box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
     }
 
-    .create-form {
-        display: none;
-        margin-top: 20px;
-        border-top: 1px solid #eef2f7;
-        padding-top: 22px;
-    }
-
-    .create-form.show {
-        display: block;
-    }
-
-    .form-grid {
+    /* This puts form fields in two columns. */
+    .forminputtwocolumngrid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        gap: 15px;
     }
 
-    .form-group {
+    /* This adds space under form groups. */
+    .forminputgroup {
         margin-bottom: 14px;
     }
 
+    /* This styles labels. */
     label {
         display: block;
-        font-weight: bold;
+        font-weight: 900;
         color: #334155;
-        font-size: 14px;
-        margin-bottom: 7px;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
-    .check-row {
+    /* This puts checkbox options next to each other. */
+    .checkboxoptionrow {
         display: flex;
         gap: 18px;
         align-items: center;
@@ -166,266 +272,375 @@
         flex-wrap: wrap;
     }
 
-    .check-row label {
+    /* This styles checkbox labels. */
+    .checkboxoptionrow label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 9px;
         margin: 0;
-        font-weight: bold;
+        font-weight: 900;
+        color: #334155;
+        font-size: 13px;
+        text-transform: none;
+        letter-spacing: 0;
     }
 
-    .check-row input {
+    /* This styles the checkbox itself. */
+    .checkboxoptionrow input {
         width: 18px;
         height: 18px;
+        padding: 0;
+        box-shadow: none;
     }
 
-    .save-btn {
-        background: #2563eb;
-        color: white;
+    /* This styles all action buttons. */
+    .saveformbutton,
+    .cancelformbutton,
+    .edituserbutton,
+    .deleteuserbutton {
         border: none;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
+        border-radius: 13px;
+        padding: 10px 14px;
+        font-weight: 900;
         cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    /* This styles save buttons. */
+    .saveformbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
         margin-top: 8px;
     }
 
-    .secondary-btn {
+    /* This styles cancel buttons. */
+    .cancelformbutton {
         background: white;
         color: #334155;
-        border: 1px solid #d0d5dd;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
-        cursor: pointer;
+        border: 1px solid var(--borderlinecolor);
         margin-top: 8px;
     }
 
-    .user-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
+    /* This styles edit buttons. */
+    .edituserbutton {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
     }
 
-    .user-table th {
+    /* This styles delete buttons. */
+    .deleteuserbutton {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This moves buttons a little when the mouse is on them. */
+    .saveformbutton:hover,
+    .cancelformbutton:hover,
+    .edituserbutton:hover,
+    .deleteuserbutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles the user table. */
+    .userdatatable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        overflow: hidden;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        background: white;
+    }
+
+    /* This styles table titles. */
+    .userdatatable th {
         text-align: left;
         background: #f8fafc;
-        color: #334155;
-        border-bottom: 1px solid #e5e7eb;
-        padding: 12px 10px;
+        color: #475569;
+        border-bottom: 1px solid var(--borderlinecolor);
+        padding: 14px 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .user-table td {
+    /* This styles table cells. */
+    .userdatatable td {
         border-bottom: 1px solid #eef2f7;
-        padding: 12px 10px;
+        padding: 14px 12px;
         color: #334155;
         vertical-align: top;
     }
 
-    .badge {
+    /* This highlights a table row when the mouse is on it. */
+    .userdatatable tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* This styles usernames in the table. */
+    .userdatatable strong {
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+    }
+
+    /* This styles small user text. */
+    .userdatatable small {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* This styles status and role labels. */
+    .userstatusorrolelabel {
         display: inline-block;
         border-radius: 999px;
-        padding: 4px 9px;
+        padding: 5px 10px;
         font-size: 12px;
-        font-weight: bold;
-        background: #dcfce7;
+        font-weight: 900;
+        background: var(--softgreencolor);
         color: #166534;
+        margin: 2px;
     }
 
-    .badge-blue {
-        background: #dbeafe;
-        color: #1d4ed8;
+    /* This styles admin labels. */
+    .adminrolelabel {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
     }
 
-    .badge-red {
-        background: #fee2e2;
+    /* This styles inactive labels. */
+    .inactiveuserlabel {
+        background: var(--softredcolor);
         color: #991b1b;
     }
 
-    .action-row {
+    /* This puts action buttons next to each other. */
+    .tableactionbuttonrow {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
     }
 
-    .edit-btn {
-        border: none;
-        background: #dbeafe;
-        color: #1d4ed8;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .delete-btn {
-        border: none;
-        background: #fee2e2;
-        color: #991b1b;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .edit-form-row {
+    /* This hides edit forms first. */
+    .usereditformtablerow {
         display: none;
         background: #f8fafc;
     }
 
-    .edit-form-row.show {
+    /* This shows an edit form. */
+    .usereditformtablerow.show {
         display: table-row;
     }
 
-    .edit-box {
+    /* This styles the edit form box. */
+    .edituserformbox {
         padding: 20px;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        background: white;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
     }
 
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 16px;
     }
 
+    /* This hides an item. */
+    .hideitem {
+        display: none;
+    }
+
+    /* This changes the page on medium screens. */
     @media (max-width: 1100px) {
-        .stats-grid,
-        .filters,
-        .form-grid {
+        .usernumbercardgrid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .usersearchandfilterarea,
+        .forminputtwocolumngrid {
             grid-template-columns: 1fr;
         }
 
-        .title-row {
+        .useraccessbigtoptitlebox {
             flex-direction: column;
+            align-items: flex-start;
         }
 
-        .user-table {
+        .userdatatable {
             display: block;
             overflow-x: auto;
         }
     }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .useraccesswholepagearea {
+            padding: 0;
+        }
+
+        .useraccessbigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .useraccesspagetitle {
+            font-size: 29px;
+        }
+
+        .usernumbercardgrid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="access-wrap">
+<!-- This starts the user access page. -->
+<div class="useraccesswholepagearea">
 
-    <div class="title-row">
+    <!-- This shows the page title and add button. -->
+    <div class="useraccessbigtoptitlebox">
         <div>
-            <h1 class="page-title">User Access</h1>
-            <div class="page-subtitle">
+            <h1 class="useraccesspagetitle">User Access</h1>
+            <div class="useraccesstextundertitle">
                 Manage real login accounts, admin access and active status from the database.
             </div>
         </div>
 
-        <button class="top-button" onclick="toggleCreateForm()">+ Add User</button>
+        <!-- This button opens the add user form. -->
+        <button type="button" class="addusertopbutton" onclick="openorclosecreateuserbox()">+ Add User</button>
     </div>
 
+    <!-- This shows success or error messages. -->
     {% if messages %}
         {% for message in messages %}
             {% if message.tags == "error" %}
-                <div class="error-box">{{ message }}</div>
+                <div class="errormessagebox">{{ message }}</div>
             {% else %}
-                <div class="success-box">{{ message }}</div>
+                <div class="successmessagebox">{{ message }}</div>
             {% endif %}
         {% endfor %}
     {% endif %}
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Total Users</div>
-            <div class="stat-number">{{ total_users }}</div>
-            <div class="stat-source">Database</div>
+    <!-- This shows the number cards. -->
+    <div class="usernumbercardgrid">
+
+        <!-- This card shows total user count. -->
+        <div class="usernumbercard">
+            <div class="numbercardsmalltitle">Total Users</div>
+            <div class="numbercardbignumber">{{ total_users }}</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Admins</div>
-            <div class="stat-number">{{ total_admins }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows admin count. -->
+        <div class="usernumbercard">
+            <div class="numbercardsmalltitle">Admins</div>
+            <div class="numbercardbignumber">{{ total_admins }}</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Active</div>
-            <div class="stat-number">{{ total_active }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows active user count. -->
+        <div class="usernumbercard">
+            <div class="numbercardsmalltitle">Active</div>
+            <div class="numbercardbignumber">{{ total_active }}</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Inactive</div>
-            <div class="stat-number">{{ total_inactive }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows inactive user count. -->
+        <div class="usernumbercard">
+            <div class="numbercardsmalltitle">Inactive</div>
+            <div class="numbercardbignumber">{{ total_inactive }}</div>
         </div>
     </div>
 
-    <div class="panel">
+    <!-- This box adds a new user. -->
+    <div class="userwhitecontentbox createuserbox" id="createuserbox">
         <h2>Create User</h2>
 
-        <form method="post" class="create-form" id="createForm">
+        <!-- This form creates a new user. -->
+        <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="create_user">
 
-            <div class="form-grid">
-                <div class="form-group">
+            <div class="forminputtwocolumngrid">
+                <div class="forminputgroup">
                     <label>Username</label>
                     <input type="text" name="username" required>
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Full Name</label>
                     <input type="text" name="full_name">
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Email</label>
                     <input type="email" name="email">
                 </div>
 
-                <div class="form-group">
+                <div class="forminputgroup">
                     <label>Password</label>
                     <input type="text" name="password" required>
                 </div>
             </div>
 
-            <div class="check-row">
+            <div class="checkboxoptionrow">
+
+                <!-- This gives the user admin access. -->
                 <label>
                     <input type="checkbox" name="is_staff">
                     Admin Access
                 </label>
 
+                <!-- This makes the account active. -->
                 <label>
                     <input type="checkbox" name="is_active" checked>
                     Active Account
                 </label>
             </div>
 
-            <button type="submit" class="save-btn">Create User</button>
-            <button type="button" class="secondary-btn" onclick="toggleCreateForm()">Cancel</button>
+            <button type="submit" class="saveformbutton">Create User</button>
+            <button type="button" class="cancelformbutton" onclick="openorclosecreateuserbox()">Cancel</button>
         </form>
     </div>
 
-    <div class="panel">
+    <!-- This box manages users. -->
+    <div class="userwhitecontentbox">
         <h2>Manage Users</h2>
 
-        <form method="get" class="filters">
-            <input type="text" name="search" placeholder="Search username..." value="{{ search }}">
+        <!-- This area searches and filters users. -->
+        <div class="usersearchandfilterarea">
 
-            <select name="role" onchange="this.form.submit()">
+            <!-- This searches users by username, email or profile. -->
+            <input
+                type="text"
+                id="usersearchinput"
+                placeholder="Search username, email or profile..."
+                autocomplete="off"
+            >
+
+            <!-- This filters users by role. -->
+            <select id="rolefilterdropdown">
                 <option value="">All Roles</option>
-                <option value="admin" {% if selected_role == "admin" %}selected{% endif %}>Admins</option>
-                <option value="user" {% if selected_role == "user" %}selected{% endif %}>Users</option>
+                <option value="admin">Admins</option>
+                <option value="user">Users</option>
             </select>
 
-            <select name="status" onchange="this.form.submit()">
+            <!-- This filters users by status. -->
+            <select id="statusfilterdropdown">
                 <option value="">All Status</option>
-                <option value="active" {% if selected_status == "active" %}selected{% endif %}>Active</option>
-                <option value="inactive" {% if selected_status == "inactive" %}selected{% endif %}>Inactive</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
             </select>
-        </form>
+        </div>
 
-        <table class="user-table">
+        <!-- This table shows all users. -->
+        <table class="userdatatable">
             <thead>
                 <tr>
                     <th>User</th>
@@ -437,9 +652,14 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="usertablebody">
                 {% for user_obj in users %}
-                    <tr>
+                    <tr
+                        class="usertablerow"
+                        data-search="{{ user_obj.username|lower }} {{ user_obj.email|lower }} {{ user_obj.first_name|lower }} {% if user_obj.person %}{{ user_obj.person.name|lower }}{% endif %}"
+                        data-role="{% if user_obj.is_staff %}admin{% else %}user{% endif %}"
+                        data-status="{% if user_obj.is_active %}active{% else %}inactive{% endif %}"
+                    >
                         <td>
                             <strong>{{ user_obj.username }}</strong><br>
                             <small>{{ user_obj.first_name }}</small>
@@ -449,17 +669,17 @@
 
                         <td>
                             {% if user_obj.is_staff %}
-                                <span class="badge badge-blue">Admin</span>
+                                <span class="userstatusorrolelabel adminrolelabel">Admin</span>
                             {% else %}
-                                <span class="badge">User</span>
+                                <span class="userstatusorrolelabel">User</span>
                             {% endif %}
                         </td>
 
                         <td>
                             {% if user_obj.is_active %}
-                                <span class="badge">Active</span>
+                                <span class="userstatusorrolelabel">Active</span>
                             {% else %}
-                                <span class="badge badge-red">Inactive</span>
+                                <span class="userstatusorrolelabel inactiveuserlabel">Inactive</span>
                             {% endif %}
                         </td>
 
@@ -472,63 +692,70 @@
                         </td>
 
                         <td>
-                            <div class="action-row">
-                                <button type="button" class="edit-btn" onclick="toggleEditForm('{{ user_obj.id }}')">Edit</button>
+                            <div class="tableactionbuttonrow">
 
+                                <!-- This button opens the user edit form. -->
+                                <button type="button" class="edituserbutton" onclick="openorcloseusereditform('{{ user_obj.id }}')">Edit</button>
+
+                                <!-- This form deletes the user. -->
                                 <form method="post" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="delete_user">
                                     <input type="hidden" name="user_id" value="{{ user_obj.id }}">
-                                    <button type="submit" class="delete-btn">Delete</button>
+                                    <button type="submit" class="deleteuserbutton">Delete</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
 
-                    <tr class="edit-form-row" id="edit-row-{{ user_obj.id }}">
+                    <!-- This form updates the user. -->
+                    <tr class="usereditformtablerow" id="usereditformrow-{{ user_obj.id }}">
                         <td colspan="6">
-                            <div class="edit-box">
+                            <div class="edituserformbox">
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="action" value="update_user">
                                     <input type="hidden" name="user_id" value="{{ user_obj.id }}">
 
-                                    <div class="form-grid">
-                                        <div class="form-group">
+                                    <div class="forminputtwocolumngrid">
+                                        <div class="forminputgroup">
                                             <label>Username</label>
                                             <input type="text" name="username" value="{{ user_obj.username }}" required>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Full Name</label>
                                             <input type="text" name="full_name" value="{{ user_obj.first_name }}">
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>Email</label>
                                             <input type="email" name="email" value="{{ user_obj.email }}">
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="forminputgroup">
                                             <label>New Password</label>
                                             <input type="text" name="new_password" placeholder="Leave empty to keep current password">
                                         </div>
                                     </div>
 
-                                    <div class="check-row">
+                                    <div class="checkboxoptionrow">
+
+                                        <!-- This gives or removes admin access. -->
                                         <label>
                                             <input type="checkbox" name="is_staff" {% if user_obj.is_staff %}checked{% endif %}>
                                             Admin Access
                                         </label>
 
+                                        <!-- This makes the account active or inactive. -->
                                         <label>
                                             <input type="checkbox" name="is_active" {% if user_obj.is_active %}checked{% endif %}>
                                             Active Account
                                         </label>
                                     </div>
 
-                                    <button type="submit" class="save-btn">Save Access</button>
-                                    <button type="button" class="secondary-btn" onclick="toggleEditForm('{{ user_obj.id }}')">Cancel</button>
+                                    <button type="submit" class="saveformbutton">Save Access</button>
+                                    <button type="button" class="cancelformbutton" onclick="openorcloseusereditform('{{ user_obj.id }}')">Cancel</button>
                                 </form>
                             </div>
                         </td>
@@ -536,26 +763,118 @@
                 {% empty %}
                     <tr>
                         <td colspan="6">
-                            <div class="empty">No users found in the database.</div>
+
+                            <!-- This message appears when there are no users. -->
+                            <div class="emptymessagebox">No users found in the database.</div>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- This message appears when search finds nothing. -->
+        <div class="emptymessagebox hideitem" id="nousermatchsearchmessage">
+            No users match your search.
+        </div>
     </div>
 
 </div>
 
 <script>
-    function toggleCreateForm() {
-        const form = document.getElementById("createForm");
-        form.classList.toggle("show");
+    // This opens or closes the add user form.
+    function openorclosecreateuserbox() {
+        const createuserbox = document.getElementById("createuserbox");
+
+        if (createuserbox) {
+            createuserbox.classList.toggle("show");
+
+            if (createuserbox.classList.contains("show")) {
+                createuserbox.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        }
     }
 
-    function toggleEditForm(userId) {
-        const row = document.getElementById("edit-row-" + userId);
-        row.classList.toggle("show");
+    // This opens or closes the edit form for one user.
+    function openorcloseusereditform(userid) {
+        const usereditformrow = document.getElementById("usereditformrow-" + userid);
+
+        if (usereditformrow) {
+            usereditformrow.classList.toggle("show");
+        }
     }
+
+    // This finds the user search box.
+    const usersearchinput = document.getElementById("usersearchinput");
+
+    // This finds the role filter.
+    const rolefilterdropdown = document.getElementById("rolefilterdropdown");
+
+    // This finds the status filter.
+    const statusfilterdropdown = document.getElementById("statusfilterdropdown");
+
+    // This finds the no result message.
+    const nousermatchsearchmessage = document.getElementById("nousermatchsearchmessage");
+
+    // This searches and filters users.
+    function searchandfilterusers() {
+        const typedusersearchvalue = usersearchinput ? usersearchinput.value.toLowerCase().trim() : "";
+        const selectedrolevalue = rolefilterdropdown ? rolefilterdropdown.value : "";
+        const selectedstatusvalue = statusfilterdropdown ? statusfilterdropdown.value : "";
+
+        const allusertablerows = document.querySelectorAll(".usertablerow");
+        let visibleusercount = 0;
+
+        allusertablerows.forEach(function(usertablerow) {
+            const usersearchtext = usertablerow.dataset.search || "";
+            const userrolevalue = usertablerow.dataset.role || "";
+            const userstatusvalue = usertablerow.dataset.status || "";
+            const usereditrowunderit = usertablerow.nextElementSibling;
+
+            const matchestypedsearch = usersearchtext.includes(typedusersearchvalue);
+            const matchesrolefilter = selectedrolevalue === "" || userrolevalue === selectedrolevalue;
+            const matchesstatusfilter = selectedstatusvalue === "" || userstatusvalue === selectedstatusvalue;
+
+            if (matchestypedsearch && matchesrolefilter && matchesstatusfilter) {
+                usertablerow.classList.remove("hideitem");
+                visibleusercount++;
+            } else {
+                usertablerow.classList.add("hideitem");
+
+                if (usereditrowunderit && usereditrowunderit.classList.contains("usereditformtablerow")) {
+                    usereditrowunderit.classList.remove("show");
+                }
+            }
+        });
+
+        if (nousermatchsearchmessage) {
+            if (visibleusercount === 0 && allusertablerows.length > 0) {
+                nousermatchsearchmessage.classList.remove("hideitem");
+            } else {
+                nousermatchsearchmessage.classList.add("hideitem");
+            }
+        }
+    }
+
+    // This runs search when the user types.
+    if (usersearchinput) {
+        usersearchinput.addEventListener("input", searchandfilterusers);
+    }
+
+    // This runs filter when role changes.
+    if (rolefilterdropdown) {
+        rolefilterdropdown.addEventListener("change", searchandfilterusers);
+    }
+
+    // This runs filter when status changes.
+    if (statusfilterdropdown) {
+        statusfilterdropdown.addEventListener("change", searchandfilterusers);
+    }
+
+    // This runs the filter once when the page opens.
+    searchandfilterusers();
 </script>
 
 {% endblock %}

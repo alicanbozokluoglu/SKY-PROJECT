@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all search page content. */
+    .searchpagewholearea {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
+    .searchpagebigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This adds a circle decoration. */
+    .searchpagebigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the search page title. */
+    .searchpagetitle {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .searchpagetextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
+    /* This holds the search form. */
+    .searchformwhitebox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 18px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+    }
+
+    /* This puts the search input and button side by side. */
+    .searchinputandbuttonform {
+        display: grid;
+        grid-template-columns: 1fr 150px;
+        gap: 14px;
+    }
+
+    /* This styles the search input. */
+    .searchinputandbuttonform input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        padding: 0 14px;
+        font-size: 14px;
+        outline: none;
+        background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
+    }
+
+    /* This highlights the search input when clicked. */
+    .searchinputandbuttonform input:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This styles the search button. */
+    .searchinputandbuttonform button {
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
+        transition: 0.2s ease;
+    }
+
+    /* This moves the search button when the mouse is on it. */
+    .searchinputandbuttonform button:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles each result section. */
+    .searchresultsectionbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This moves result sections and cards when the mouse is on them. */
+    .searchresultsectionbox:hover,
+    .searchresultcard:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This puts result title and count side by side. */
+    .searchresultsectiontoparea {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* This styles result section titles. */
+    .searchresultsectiontoparea h2 {
+        margin: 0;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+    }
+
+    /* This styles the result count label. */
+    .resultcountpilllabel {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+        border-radius: 999px;
+        padding: 7px 11px;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    /* This puts result cards in a grid. */
+    .searchresultcardgrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    /* This styles one result card. */
+    .searchresultcard {
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        padding: 18px;
+        min-height: 190px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles result type labels. */
+    .resulttypepilllabel {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+        font-size: 12px;
+        font-weight: 900;
+        margin-bottom: 12px;
+    }
+
+    /* This styles department type labels. */
+    .departmenttypepilllabel {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    /* This styles person type labels. */
+    .persontypepilllabel {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    /* This holds the person photo. */
+    .personresultphotoarea {
+        margin-bottom: 14px;
+    }
+
+    /* This styles the person photo. */
+    .personresultphoto {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 10px 22px rgba(15,23,42,0.14);
+        background: white;
+    }
+
+    /* This styles result names. */
+    .searchresultnametext {
+        color: var(--maintextcolor);
+        font-size: 19px;
+        font-weight: 900;
+        margin-bottom: 9px;
+        letter-spacing: -0.03em;
+    }
+
+    /* This styles small result information. */
+    .searchresultsmallinfo {
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 16px;
+    }
+
+    /* This holds result action buttons. */
+    .searchresultbuttonarea {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* This styles result links. */
+    .searchresultopenlink {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        text-decoration: none;
+        border-radius: 13px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-weight: 900;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
+        transition: 0.2s ease;
+    }
+
+    /* This moves result links when the mouse is on them. */
+    .searchresultopenlink:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 18px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* This changes the page on medium screens. */
+    @media (max-width: 1000px) {
+        .searchresultcardgrid,
+        .searchinputandbuttonform {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .searchpagewholearea {
+            padding: 0;
+        }
+
+        .searchpagebigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .searchpagetitle {
+            font-size: 29px;
+        }
+
+        .searchresultsectiontoparea {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<!-- This starts the search page. -->
+<div class="searchpagewholearea">
+
+    <!-- This shows the search page title. -->
+    <div class="searchpagebigtoptitlebox">
+        <h1 class="searchpagetitle">Search</h1>
+        <div class="searchpagetextundertitle">
+            Search teams, departments and people from one place.
+            {% if query %}
+                Found {{ total_results }} result(s) for “{{ query }}”.
+            {% else %}
+                Type a name, team or department.
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- This form searches teams, departments and people. -->
+    <div class="searchformwhitebox">
+        <form class="searchinputandbuttonform" method="get" action="{% url 'global_search' %}">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search teams, departments or people..."
+                autocomplete="off"
+            >
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- This shows results only after the user searches. -->
+    {% if query %}
+
+        <!-- This shows team search results. -->
+        <div class="searchresultsectionbox">
+            <div class="searchresultsectiontoparea">
+                <h2>Teams</h2>
+                <div class="resultcountpilllabel">{{ teams.count }} results</div>
+            </div>
+
+            <div class="searchresultcardgrid">
+                {% for team in teams %}
+                    <div class="searchresultcard">
+                        <div class="resulttypepilllabel">Team</div>
+
+                        <div class="searchresultnametext">{{ team.name }}</div>
+
+                        <div class="searchresultsmallinfo">
+                            {% if team.department %}
+                                Department: {{ team.department.name }}<br>
+                            {% endif %}
+
+                            {% if team.team_leader %}
+                                Lead: {{ team.team_leader.name }}<br>
+                            {% else %}
+                                Lead: Not assigned<br>
+                            {% endif %}
+
+                            Members: {{ team.total_members }}<br>
+                            Repositories: {{ team.total_repositories }}<br>
+                            Status: {{ team.status }}
+                        </div>
+
+                        <div class="searchresultbuttonarea">
+
+                            <!-- This opens the selected team. -->
+                            <a href="{% url 'team_detail' team.id %}" class="searchresultopenlink">
+                                Open Team
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+
+                    <!-- This message appears when no teams are found. -->
+                    <div class="emptymessagebox">No teams found.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- This shows department search results. -->
+        <div class="searchresultsectionbox">
+            <div class="searchresultsectiontoparea">
+                <h2>Departments</h2>
+                <div class="resultcountpilllabel">{{ departments.count }} results</div>
+            </div>
+
+            <div class="searchresultcardgrid">
+                {% for department in departments %}
+                    <div class="searchresultcard">
+                        <div class="resulttypepilllabel departmenttypepilllabel">Department</div>
+
+                        <div class="searchresultnametext">{{ department.name }}</div>
+
+                        <div class="searchresultsmallinfo">
+                            Teams: {{ department.team_set.count }}<br>
+                            Open this department to see all teams inside it.
+                        </div>
+
+                        <div class="searchresultbuttonarea">
+
+                            <!-- This opens the selected department inside teams page. -->
+                            <a href="{% url 'teams' %}?department={{ department.id }}" class="searchresultopenlink">
+                                Open
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+
+                    <!-- This message appears when no departments are found. -->
+                    <div class="emptymessagebox">No departments found.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- This shows people search results. -->
+        <div class="searchresultsectionbox">
+            <div class="searchresultsectiontoparea">
+                <h2>People</h2>
+                <div class="resultcountpilllabel">{{ people.count }} results</div>
+            </div>
+
+            <div class="searchresultcardgrid">
+                {% for person in people %}
+                    <div class="searchresultcard">
+
+                        <!-- This shows the person's photo or avatar. -->
+                        <div class="personresultphotoarea">
+                            {% if person.photo %}
+                                <img class="personresultphoto" src="{{ person.photo.url }}" alt="{{ person.name }}">
+                            {% else %}
+                                <img class="personresultphoto" src="https://ui-avatars.com/api/?name={{ person.name|urlencode }}&background=2563eb&color=fff" alt="{{ person.name }}">
+                            {% endif %}
+                        </div>
+
+                        <div class="resulttypepilllabel persontypepilllabel">Person</div>
+
+                        <div class="searchresultnametext">{{ person.name }}</div>
+
+                        <div class="searchresultsmallinfo">
+                            {% if person.team %}
+                                Team: {{ person.team.name }}<br>
+                            {% endif %}
+
+                            {% if person.team and person.team.department %}
+                                Department: {{ person.team.department.name }}
+                            {% endif %}
+                        </div>
+
+                        <div class="searchresultbuttonarea">
+
+                            <!-- This opens the selected person's profile. -->
+                            <a href="{% url 'person_profile' person.id %}" class="searchresultopenlink">
+                                Open Profile
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+
+                    <!-- This message appears when no people are found. -->
+                    <div class="emptymessagebox">No people found.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% else %}
+
+        <!-- This message appears before the user searches. -->
+        <div class="searchresultsectionbox">
+            <div class="emptymessagebox">Start typing in the search bar to search teams, departments and people.</div>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

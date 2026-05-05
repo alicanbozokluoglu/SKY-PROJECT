@@ -3,129 +3,283 @@
 {% block content %}
 
 <style>
-    .new-message-wrap {
-        max-width: 920px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all new message page content. */
+    .newmessagewholepagearea {
+        max-width: 980px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .page-title {
-        font-size: 28px;
-        margin: 0 0 24px;
-        color: #1f2937;
+    /* This makes the big top title box. */
+    .newmessagebigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
     }
 
-    .form-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* This adds a circle decoration. */
+    .newmessagebigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .newmessagepagetitle {
+        position: relative;
+        z-index: 1;
+        font-size: 36px;
+        margin: 0;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .newmessagetextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 680px;
+    }
+
+    /* This styles the message form box. */
+    .newmessageformwhitebox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
         padding: 28px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .form-group {
+    /* This moves the form box when the mouse is on it. */
+    .newmessageformwhitebox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This adds space under each form part. */
+    .forminputgroup {
         margin-bottom: 18px;
     }
 
+    /* This styles form labels. */
     label {
         display: block;
-        font-weight: bold;
+        font-weight: 900;
         color: #334155;
         margin-bottom: 8px;
-        font-size: 14px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
+    /* This styles dropdowns, inputs and text boxes. */
     select,
     input,
     textarea {
         width: 100%;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         padding: 13px 14px;
-        font-size: 15px;
+        font-size: 14px;
         outline: none;
         font-family: Arial, sans-serif;
+        background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
     }
 
+    /* This sets dropdown and input height. */
+    select,
+    input {
+        height: 48px;
+    }
+
+    /* This highlights fields when clicked. */
     select:focus,
     input:focus,
     textarea:focus {
-        border-color: #2563eb;
+        border-color: var(--mainbluecolor);
         box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
     }
 
+    /* This styles the message text box. */
     textarea {
-        min-height: 160px;
+        min-height: 170px;
         resize: vertical;
+        line-height: 1.6;
     }
 
-    .button-row {
+    /* This puts cancel and send buttons on the right. */
+    .cancelandsendbuttonrow {
         display: flex;
         justify-content: flex-end;
         gap: 12px;
         margin-top: 22px;
+        flex-wrap: wrap;
     }
 
-    .cancel-btn {
+    /* This styles cancel and send buttons. */
+    .cancelmessagebutton,
+    .sendmessagebutton {
         padding: 12px 18px;
-        border: 1px solid #d0d5dd;
-        border-radius: 8px;
+        border-radius: 14px;
+        font-weight: 900;
+        transition: 0.2s ease;
+    }
+
+    /* This styles the cancel button. */
+    .cancelmessagebutton {
+        border: 1px solid var(--borderlinecolor);
         color: #334155;
         background: white;
         text-decoration: none;
-        font-weight: bold;
     }
 
-    .send-btn {
-        padding: 12px 20px;
+    /* This styles the send button. */
+    .sendmessagebutton {
         border: none;
-        border-radius: 8px;
-        background: #2563eb;
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
-        font-weight: bold;
         cursor: pointer;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
     }
 
-    .send-btn:hover {
-        background: #1d4ed8;
+    /* This moves buttons when the mouse is on them. */
+    .cancelmessagebutton:hover,
+    .sendmessagebutton:hover {
+        transform: translateY(-1px);
     }
 
-    .error-box {
-        background: #fee2e2;
+    /* This styles error messages. */
+    .errormessagebox {
+        background: var(--softredcolor);
         color: #991b1b;
         border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 12px 14px;
+        border-radius: 16px;
+        padding: 14px 16px;
         margin-bottom: 18px;
         font-size: 14px;
+        font-weight: 800;
     }
 
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .newmessagewholepagearea {
+            padding: 0;
+        }
+
+        .newmessagebigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .newmessagepagetitle {
+            font-size: 29px;
+        }
+
+        .newmessageformwhitebox {
+            padding: 22px;
+            border-radius: 22px;
+        }
+
+        .cancelandsendbuttonrow {
+            justify-content: stretch;
+        }
+
+        .cancelmessagebutton,
+        .sendmessagebutton {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
-<div class="new-message-wrap">
+<!-- This starts the new message page. -->
+<div class="newmessagewholepagearea">
 
-    <h1 class="page-title">New Message</h1>
+    <!-- This shows the page title. -->
+    <div class="newmessagebigtoptitlebox">
+        <h1 class="newmessagepagetitle">New Message</h1>
+        <div class="newmessagetextundertitle">
+            Send a direct message to a selected team from the company directory.
+        </div>
+    </div>
 
-    <div class="form-card">
+    <!-- This shows the message form box. -->
+    <div class="newmessageformwhitebox">
 
+        <!-- This shows error messages. -->
         {% if messages %}
             {% for message in messages %}
-                <div class="error-box">{{ message }}</div>
+                <div class="errormessagebox">{{ message }}</div>
             {% endfor %}
         {% endif %}
 
+        <!-- This shows the form only if teams exist. -->
         {% if teams %}
+
+            <!-- This form sends a new message. -->
             <form method="post">
                 {% csrf_token %}
 
-                <div class="form-group">
+                <!-- This chooses the team that will receive the message. -->
+                <div class="forminputgroup">
                     <label>Select Team</label>
 
                     <select name="team" required>
@@ -137,23 +291,32 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <!-- This gets the message subject. -->
+                <div class="forminputgroup">
                     <label>Subject</label>
                     <input type="text" name="subject" required>
                 </div>
 
-                <div class="form-group">
+                <!-- This gets the message text. -->
+                <div class="forminputgroup">
                     <label>Message</label>
                     <textarea name="body" required></textarea>
                 </div>
 
-                <div class="button-row">
-                    <a href="{% url 'messages' %}" class="cancel-btn">Cancel</a>
-                    <button type="submit" class="send-btn">Send Message</button>
+                <!-- This shows cancel and send buttons. -->
+                <div class="cancelandsendbuttonrow">
+
+                    <!-- This goes back to messages. -->
+                    <a href="{% url 'messages' %}" class="cancelmessagebutton">Cancel</a>
+
+                    <!-- This sends the message. -->
+                    <button type="submit" class="sendmessagebutton">Send Message</button>
                 </div>
             </form>
         {% else %}
-            <div class="empty">
+
+            <!-- This message appears when there are no teams. -->
+            <div class="emptymessagebox">
                 No teams exist in the database. Add teams before sending messages.
             </div>
         {% endif %}

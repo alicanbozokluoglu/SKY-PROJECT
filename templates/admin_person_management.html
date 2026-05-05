@@ -1,0 +1,716 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all page content. */
+    .personmanagementwholepagearea {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
+    .personmanagementbigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This adds a circle decoration. */
+    .personmanagementbigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
+    .personmanagementpagetitle {
+        position: relative;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+        z-index: 1;
+    }
+
+    /* This styles the small text under the title. */
+    .personmanagementtextundertitle {
+        position: relative;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 720px;
+        z-index: 1;
+    }
+
+    /* This styles success and error boxes. */
+    .successmessagebox,
+    .errormessagebox {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This shows a green success message. */
+    .successmessagebox {
+        background: var(--softgreencolor);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This shows a red error message. */
+    .errormessagebox {
+        background: var(--softredcolor);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This puts number cards in a grid. */
+    .personnumbercardgrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    /* This styles each number card. */
+    .personnumbercard {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This moves cards a little when the mouse is on them. */
+    .personnumbercard:hover,
+    .personwhitecontentbox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This styles the small title on number cards. */
+    .numbercardsmalltitle {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+    }
+
+    /* This styles the big number on number cards. */
+    .numbercardbignumber {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
+    }
+
+    /* This styles the main white box. */
+    .personwhitecontentbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This puts search and filters in one row. */
+    .personsearchandfilterarea {
+        display: grid;
+        grid-template-columns: 1fr 220px 220px;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    /* This styles inputs and dropdowns. */
+    input,
+    select {
+        width: 100%;
+        height: 46px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        padding: 0 14px;
+        font-size: 14px;
+        background: white;
+        color: var(--maintextcolor);
+        outline: none;
+        transition: 0.18s ease;
+    }
+
+    /* This highlights inputs and dropdowns when clicked. */
+    input:focus,
+    select:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This styles the people table. */
+    .persondatatable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        overflow: hidden;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        background: white;
+    }
+
+    /* This styles table titles. */
+    .persondatatable th {
+        text-align: left;
+        background: #f8fafc;
+        color: #475569;
+        border-bottom: 1px solid var(--borderlinecolor);
+        padding: 14px 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* This styles table cells. */
+    .persondatatable td {
+        border-bottom: 1px solid #eef2f7;
+        padding: 14px 12px;
+        color: #334155;
+        vertical-align: top;
+    }
+
+    /* This highlights a table row when the mouse is on it. */
+    .persondatatable tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* This styles person names. */
+    .personnametext {
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 5px;
+        letter-spacing: -0.02em;
+        font-size: 15px;
+    }
+
+    /* This styles small person text. */
+    .personsmalltext {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* This styles team and department labels. */
+    .teamordepartmentpilllabel {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 900;
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+        margin: 2px;
+    }
+
+    /* This styles empty labels. */
+    .emptyredpilllabel {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This puts team checkboxes in a grid. */
+    .teamcheckboxgrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-height: 240px;
+        overflow-y: auto;
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 16px;
+        margin-bottom: 12px;
+    }
+
+    /* This styles department titles inside the checkbox list. */
+    .departmenttitleinsidecheckboxlist {
+        grid-column: 1 / -1;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-top: 8px;
+        border-top: 1px solid var(--borderlinecolor);
+        padding-top: 10px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* This removes the top line from the first department title. */
+    .departmenttitleinsidecheckboxlist:first-child {
+        border-top: none;
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    /* This styles each team checkbox item. */
+    .teamcheckboxitem {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: white;
+        border: 1px solid #eef2f7;
+        border-radius: 14px;
+        padding: 10px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 800;
+        transition: 0.2s ease;
+    }
+
+    /* This highlights a team checkbox item when the mouse is on it. */
+    .teamcheckboxitem:hover {
+        border-color: #bfdbfe;
+        background: var(--softbluecolor);
+    }
+
+    /* This styles the checkbox itself. */
+    .teamcheckboxitem input {
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 4px;
+    }
+
+    /* This puts buttons next to each other. */
+    .saveandremovebuttonrow {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* This styles save and remove buttons. */
+    .saveselectedteamsbutton,
+    .removeallteamsbutton {
+        border: none;
+        border-radius: 13px;
+        padding: 10px 14px;
+        font-weight: 900;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    /* This styles the save button. */
+    .saveselectedteamsbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
+    }
+
+    /* This styles the remove button. */
+    .removeallteamsbutton {
+        background: var(--softredcolor);
+        color: #991b1b;
+    }
+
+    /* This moves buttons a little when the mouse is on them. */
+    .saveselectedteamsbutton:hover,
+    .removeallteamsbutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 18px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 16px;
+    }
+
+    /* This hides an item. */
+    .hideitem {
+        display: none;
+    }
+
+    /* This changes the page on medium screens. */
+    @media (max-width: 1100px) {
+        .personnumbercardgrid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .personsearchandfilterarea,
+        .teamcheckboxgrid {
+            grid-template-columns: 1fr;
+        }
+
+        .persondatatable {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .personmanagementwholepagearea {
+            padding: 0;
+        }
+
+        .personmanagementbigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .personmanagementpagetitle {
+            font-size: 29px;
+        }
+
+        .personnumbercardgrid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- This starts the person management page. -->
+<div class="personmanagementwholepagearea">
+
+    <!-- This shows the page title. -->
+    <div class="personmanagementbigtoptitlebox">
+        <h1 class="personmanagementpagetitle">Person Management</h1>
+        <div class="personmanagementtextundertitle">
+            Select exactly which teams each person belongs to. One person can be in one team or multiple teams.
+        </div>
+    </div>
+
+    <!-- This shows success or error messages. -->
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <div class="errormessagebox">{{ message }}</div>
+            {% else %}
+                <div class="successmessagebox">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <!-- This shows the number cards. -->
+    <div class="personnumbercardgrid">
+
+        <!-- This card shows people count. -->
+        <div class="personnumbercard">
+            <div class="numbercardsmalltitle">People</div>
+            <div class="numbercardbignumber">{{ total_people }}</div>
+        </div>
+
+        <!-- This card shows assigned people count. -->
+        <div class="personnumbercard">
+            <div class="numbercardsmalltitle">Assigned</div>
+            <div class="numbercardbignumber">{{ assigned_people }}</div>
+        </div>
+
+        <!-- This card shows unassigned people count. -->
+        <div class="personnumbercard">
+            <div class="numbercardsmalltitle">Unassigned</div>
+            <div class="numbercardbignumber">{{ unassigned_people }}</div>
+        </div>
+
+        <!-- This card shows team count. -->
+        <div class="personnumbercard">
+            <div class="numbercardsmalltitle">Teams</div>
+            <div class="numbercardbignumber">{{ total_teams }}</div>
+        </div>
+    </div>
+
+    <!-- This white box holds people tools. -->
+    <div class="personwhitecontentbox">
+
+        <!-- This area searches and filters people. -->
+        <div class="personsearchandfilterarea">
+
+            <!-- This searches people by name, email or role. -->
+            <input
+                type="text"
+                id="personsearchinput"
+                placeholder="Search person, email, role..."
+                autocomplete="off"
+            >
+
+            <!-- This filters people by department. -->
+            <select id="departmentfilterdropdown">
+                <option value="">All Departments</option>
+                {% for department in departments %}
+                    <option value="{{ department.id }}">{{ department.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- This filters people by team. -->
+            <select id="teamfilterdropdown">
+                <option value="">All Teams</option>
+                <option value="unassigned">No Team</option>
+                {% for team in teams %}
+                    <option value="{{ team.id }}">{{ team.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- This table shows all people. -->
+        {% if people %}
+            <table class="persondatatable">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Current Teams</th>
+                        <th>Departments</th>
+                        <th>Choose Teams</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for person in people %}
+                        <tr
+                            class="persontablerow"
+                            data-search="{{ person.name|lower }} {% if person.email %}{{ person.email|lower }}{% endif %} {% if person.role %}{{ person.role|lower }}{% endif %}"
+                            data-teams="{% for t in person.teams.all %}{{ t.id }} {% endfor %}{% if person.team %}{{ person.team.id }}{% endif %}"
+                            data-departments="{% for t in person.teams.all %}{% if t.department %}{{ t.department.id }} {% endif %}{% endfor %}{% if person.team and person.team.department %}{{ person.team.department.id }}{% endif %}"
+                            data-has-team="{% if person.teams.all or person.team %}yes{% else %}no{% endif %}"
+                        >
+                            <td>
+                                <div class="personnametext">{{ person.name }}</div>
+                                <div class="personsmalltext">
+                                    {% if person.role %}{{ person.role }}{% else %}No role{% endif %}
+                                    {% if person.email %} · {{ person.email }}{% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if person.teams.all %}
+                                    {% for t in person.teams.all %}
+                                        <span class="teamordepartmentpilllabel">{{ t.name }}</span>
+                                    {% endfor %}
+                                {% elif person.team %}
+                                    <span class="teamordepartmentpilllabel">{{ person.team.name }}</span>
+                                {% else %}
+                                    <span class="teamordepartmentpilllabel emptyredpilllabel">No Team</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if person.teams.all %}
+                                    {% for t in person.teams.all %}
+                                        {% if t.department %}
+                                            <span class="teamordepartmentpilllabel">{{ t.department.name }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% elif person.team and person.team.department %}
+                                    <span class="teamordepartmentpilllabel">{{ person.team.department.name }}</span>
+                                {% else %}
+                                    <span class="teamordepartmentpilllabel emptyredpilllabel">No Department</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <!-- This form saves selected teams for this person. -->
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="update_person_teams">
+                                    <input type="hidden" name="person_id" value="{{ person.id }}">
+
+                                    <!-- This lets the admin choose teams for this person. -->
+                                    <div class="teamcheckboxgrid">
+                                        {% for department in departments %}
+                                            <div class="departmenttitleinsidecheckboxlist">{{ department.name }}</div>
+
+                                            {% for team in teams %}
+                                                {% if team.department_id == department.id %}
+                                                    <label class="teamcheckboxitem">
+                                                        <input
+                                                            type="checkbox"
+                                                            name="team_ids"
+                                                            value="{{ team.id }}"
+                                                            {% if team in person.teams.all or person.team_id == team.id %}checked{% endif %}
+                                                        >
+                                                        {{ team.name }}
+                                                    </label>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+
+                                        <div class="departmenttitleinsidecheckboxlist">No Department</div>
+                                        {% for team in teams %}
+                                            {% if not team.department %}
+                                                <label class="teamcheckboxitem">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="team_ids"
+                                                        value="{{ team.id }}"
+                                                        {% if team in person.teams.all or person.team_id == team.id %}checked{% endif %}
+                                                    >
+                                                    {{ team.name }}
+                                                </label>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="saveandremovebuttonrow">
+
+                                        <!-- This button saves the selected teams. -->
+                                        <button type="submit" class="saveselectedteamsbutton">Save Selected Teams</button>
+
+                                        <!-- This button removes the person from all teams. -->
+                                        <button
+                                            type="submit"
+                                            class="removeallteamsbutton"
+                                            name="action"
+                                            value="remove_from_all_teams"
+                                            onclick="return confirm('Remove {{ person.name }} from all teams?');"
+                                        >
+                                            Remove All
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- This message appears when search finds nothing. -->
+            <div class="emptymessagebox hideitem" id="nopeoplematchsearchmessage">
+                No people match your search.
+            </div>
+        {% else %}
+
+            <!-- This message appears when there are no people. -->
+            <div class="emptymessagebox">No people found.</div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    // This finds the person search box.
+    const personsearchinput = document.getElementById("personsearchinput");
+
+    // This finds the department filter.
+    const departmentfilterdropdown = document.getElementById("departmentfilterdropdown");
+
+    // This finds the team filter.
+    const teamfilterdropdown = document.getElementById("teamfilterdropdown");
+
+    // This finds the no result message.
+    const nopeoplematchsearchmessage = document.getElementById("nopeoplematchsearchmessage");
+
+    // This searches and filters people.
+    function searchandfilterpeople() {
+        const typedpersonsearchvalue = personsearchinput ? personsearchinput.value.toLowerCase().trim() : "";
+        const selecteddepartmentid = departmentfilterdropdown ? departmentfilterdropdown.value : "";
+        const selectedteamid = teamfilterdropdown ? teamfilterdropdown.value : "";
+
+        const allpersontablerows = document.querySelectorAll(".persontablerow");
+        let visiblepeoplecount = 0;
+
+        allpersontablerows.forEach(function(persontablerow) {
+            const personsearchtext = persontablerow.dataset.search || "";
+            const personteamids = persontablerow.dataset.teams || "";
+            const persondepartmentids = persontablerow.dataset.departments || "";
+            const personhasteam = persontablerow.dataset.hasTeam || "no";
+
+            const matchestypedsearch = personsearchtext.includes(typedpersonsearchvalue);
+            const matchesdepartmentfilter = selecteddepartmentid === "" || persondepartmentids.split(" ").includes(selecteddepartmentid);
+
+            let matchesteamfilter = true;
+
+            if (selectedteamid === "unassigned") {
+                matchesteamfilter = personhasteam === "no";
+            } else if (selectedteamid !== "") {
+                matchesteamfilter = personteamids.split(" ").includes(selectedteamid);
+            }
+
+            if (matchestypedsearch && matchesdepartmentfilter && matchesteamfilter) {
+                persontablerow.classList.remove("hideitem");
+                visiblepeoplecount++;
+            } else {
+                persontablerow.classList.add("hideitem");
+            }
+        });
+
+        if (nopeoplematchsearchmessage) {
+            if (visiblepeoplecount === 0 && allpersontablerows.length > 0) {
+                nopeoplematchsearchmessage.classList.remove("hideitem");
+            } else {
+                nopeoplematchsearchmessage.classList.add("hideitem");
+            }
+        }
+    }
+
+    // This runs search when the user types.
+    if (personsearchinput) {
+        personsearchinput.addEventListener("input", searchandfilterpeople);
+    }
+
+    // This runs filter when department changes.
+    if (departmentfilterdropdown) {
+        departmentfilterdropdown.addEventListener("change", searchandfilterpeople);
+    }
+
+    // This runs filter when team changes.
+    if (teamfilterdropdown) {
+        teamfilterdropdown.addEventListener("change", searchandfilterpeople);
+    }
+
+    // This runs the filter once when the page opens.
+    searchandfilterpeople();
+</script>
+
+{% endblock %}

@@ -3,259 +3,505 @@
 {% block content %}
 
 <style>
-    .settings-wrap {
-        max-width: 1180px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all settings page content. */
+    .settingswholepagearea {
+        max-width: 1040px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .settings-title {
-        margin: 0 0 8px;
-        font-size: 30px;
-        color: #111827;
-    }
-
-    .settings-subtitle {
-        color: #667085;
+    /* This styles the big settings header. */
+    .settingsbigheaderbox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
         margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This adds a circle decoration to the header. */
+    .settingsbigheaderbox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the settings title. */
+    .settingspagetitle {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .settingspagetextundertitle {
+        position: relative;
+        z-index: 1;
+        color: rgba(255,255,255,0.86);
+        margin-top: 9px;
         font-size: 15px;
+        line-height: 1.65;
+        max-width: 680px;
     }
 
-    .settings-grid {
+    /* This styles success and error messages. */
+    .successmessagebox,
+    .errormessagebox {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This styles success messages. */
+    .successmessagebox {
+        background: var(--softgreencolor);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This styles error messages. */
+    .errormessagebox {
+        background: var(--softredcolor);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This makes the settings page two columns. */
+    .settingsmainlayoutgrid {
         display: grid;
-        grid-template-columns: 260px 1fr;
+        grid-template-columns: 250px 1fr;
         gap: 28px;
+        align-items: start;
     }
 
-    .settings-sidebar,
-    .settings-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    /* This styles the sidebar and main card. */
+    .settingstabsidebarbox,
+    .settingsmaincardbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        box-shadow: var(--smallboxshadow);
     }
 
-    .settings-sidebar {
+    /* This styles the left sidebar. */
+    .settingstabsidebarbox {
         padding: 18px;
         height: fit-content;
     }
 
-    .settings-tab {
-        padding: 13px 12px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        font-weight: bold;
-        color: #334155;
-        cursor: pointer;
-    }
-
-    .settings-tab.active,
-    .settings-tab:hover {
-        background: #eef6ff;
-        color: #0757b8;
-    }
-
-    .settings-card {
+    /* This styles the main settings card. */
+    .settingsmaincardbox {
         padding: 28px;
     }
 
-    .settings-section {
+    /* This styles one settings tab. */
+    .settingstabbutton {
+        padding: 13px 12px;
+        border-radius: 14px;
+        margin-bottom: 8px;
+        font-weight: 900;
+        color: #334155;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    /* This highlights the active tab or hovered tab. */
+    .settingstabbutton.active,
+    .settingstabbutton:hover {
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+    }
+
+    /* This hides settings sections by default. */
+    .settingscontentsection {
         display: none;
     }
 
-    .settings-section.active {
+    /* This shows the selected settings section. */
+    .settingscontentsection.active {
         display: block;
     }
 
-    .section-title {
+    /* This styles section titles. */
+    .sectiontitletext {
         margin: 0 0 20px;
-        font-size: 24px;
-        color: #111827;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
     }
 
-    .form-grid {
+    /* This styles the profile preview box. */
+    .profilepreviewbox {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        margin-bottom: 24px;
+        box-shadow: var(--smallboxshadow);
+    }
+
+    /* This styles the profile preview photo. */
+    .profilepreviewbox img {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        box-shadow: 0 8px 20px rgba(15,23,42,0.12);
+    }
+
+    /* This styles the profile preview name. */
+    .settingsprofilenametext {
+        font-size: 20px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 5px;
+        letter-spacing: -0.03em;
+    }
+
+    /* This styles profile preview details. */
+    .profilemetainfotext {
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    /* This puts form fields in two columns. */
+    .settingsformgrid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 18px;
     }
 
-    .form-group {
+    /* This adds space under each form field. */
+    .settingsformgroup {
         margin-bottom: 18px;
     }
 
-    label {
-        display: block;
-        font-weight: bold;
-        color: #334155;
-        font-size: 14px;
-        margin-bottom: 7px;
+    /* This makes a form field use full width. */
+    .settingsformgroup.full {
+        grid-column: 1 / -1;
     }
 
+    /* This styles form labels. */
+    label {
+        display: block;
+        font-weight: 900;
+        color: #334155;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* This styles inputs and selects. */
     input,
     select {
         width: 100%;
-        height: 46px;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
+        height: 48px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
         padding: 0 14px;
-        font-size: 15px;
+        font-size: 14px;
         outline: none;
         background: white;
+        color: var(--maintextcolor);
+        transition: 0.18s ease;
     }
 
+    /* This highlights inputs and selects when clicked. */
     input:focus,
     select:focus {
-        border-color: #2563eb;
+        border-color: var(--mainbluecolor);
         box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
     }
 
-    .profile-preview {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 18px;
-        background: #f8fafc;
-        border: 1px solid #eef2f7;
-        border-radius: 12px;
-        margin-bottom: 24px;
+    /* This styles file upload input. */
+    input[type="file"] {
+        height: auto;
+        padding: 12px 14px;
     }
 
-    .profile-preview img {
-        width: 72px;
-        height: 72px;
-        border-radius: 50%;
-        object-fit: cover;
+    /* This styles inputs that cannot be edited. */
+    .readonlyinputbox {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
     }
 
-    .profile-name {
-        font-size: 20px;
-        font-weight: bold;
-        color: #111827;
-        margin-bottom: 5px;
-    }
-
-    .profile-meta {
-        color: #667085;
-        font-size: 14px;
+    /* This styles small help text. */
+    .smallhinttext {
+        margin-top: 7px;
+        color: var(--mutedtextcolor);
+        font-size: 12px;
         line-height: 1.5;
     }
 
-    .toggle-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border: 1px solid #eef2f7;
-        border-radius: 10px;
-        padding: 16px;
-        margin-bottom: 14px;
-        background: #fbfcfe;
+    /* This puts background options side by side. */
+    .backgroundchoicegrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
     }
 
-    .toggle-title {
-        font-weight: bold;
-        color: #111827;
+    /* This styles one background option card. */
+    .backgroundchoicecard {
+        position: relative;
+        border: 2px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 14px;
+        cursor: pointer;
+        background: white;
+        transition: 0.2s ease;
+    }
+
+    /* This moves a background option when the mouse is on it. */
+    .backgroundchoicecard:hover {
+        border-color: #bfdbfe;
+        transform: translateY(-1px);
+    }
+
+    /* This hides the radio input. */
+    .backgroundchoicecard input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* This highlights the chosen background option. */
+    .backgroundchoicecard.active {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    /* This styles the background preview box. */
+    .backgroundpreviewbox {
+        height: 82px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        border: 1px solid var(--borderlinecolor);
+    }
+
+    /* This shows the standard background preview. */
+    .backgroundpreviewbox.default {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 38%),
+            linear-gradient(180deg, #f8fafc, #eef4fb);
+    }
+
+    /* This shows the black background preview. */
+    .backgroundpreviewbox.black {
+        background:
+            radial-gradient(circle at top right, rgba(37, 99, 235, 0.22), transparent 38%),
+            linear-gradient(180deg, #020617, #0f172a);
+    }
+
+    /* This styles background option title. */
+    .backgroundtitletext {
+        color: var(--maintextcolor);
+        font-weight: 900;
+        font-size: 14px;
         margin-bottom: 4px;
     }
 
-    .toggle-desc {
-        color: #667085;
-        font-size: 13px;
+    /* This styles background option description. */
+    .backgrounddescriptiontext {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        line-height: 1.45;
     }
 
-    .switch input {
-        width: 20px;
-        height: 20px;
-    }
-
-    .save-row {
+    /* This styles the save and cancel row. */
+    .savecancelbuttonrow {
         margin-top: 24px;
         display: flex;
         justify-content: flex-end;
         gap: 12px;
-        border-top: 1px solid #eef2f7;
+        border-top: 1px solid var(--borderlinecolor);
         padding-top: 22px;
+        flex-wrap: wrap;
     }
 
-    .save-btn {
-        background: #2563eb;
+    /* This styles save and cancel buttons. */
+    .savesettingsbutton,
+    .cancelsettingsbutton {
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-weight: 900;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    /* This styles the save button. */
+    .savesettingsbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
         border: none;
-        border-radius: 9px;
-        padding: 12px 20px;
-        font-weight: bold;
         cursor: pointer;
-        font-size: 15px;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
     }
 
-    .reset-btn {
+    /* This styles the cancel button. */
+    .cancelsettingsbutton {
         background: white;
         color: #334155;
-        border: 1px solid #d0d5dd;
-        border-radius: 9px;
-        padding: 12px 18px;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 15px;
+        border: 1px solid var(--borderlinecolor);
     }
 
-    .success-box {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
+    /* This moves save and cancel buttons when the mouse is on them. */
+    .savesettingsbutton:hover,
+    .cancelsettingsbutton:hover {
+        transform: translateY(-1px);
     }
 
+    /* This changes the layout on medium screens. */
     @media (max-width: 900px) {
-        .settings-grid,
-        .form-grid {
+        .settingsmainlayoutgrid,
+        .settingsformgrid,
+        .backgroundchoicegrid {
             grid-template-columns: 1fr;
+        }
+    }
+
+    /* This changes the layout on small screens. */
+    @media (max-width: 760px) {
+        .settingswholepagearea {
+            padding: 0;
+        }
+
+        .settingsbigheaderbox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .settingspagetitle {
+            font-size: 29px;
+        }
+
+        .settingsmaincardbox {
+            padding: 22px;
+        }
+
+        .profilepreviewbox {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .savecancelbuttonrow {
+            justify-content: stretch;
+        }
+
+        .savesettingsbutton,
+        .cancelsettingsbutton {
+            width: 100%;
+            text-align: center;
         }
     }
 </style>
 
-<div class="settings-wrap">
+<!-- This starts the settings page. -->
+<div class="settingswholepagearea">
 
-    <h1 class="settings-title">Settings</h1>
-    <div class="settings-subtitle">
-        Manage your profile, preferences and notifications. All settings are saved in the database.
+    <!-- This shows the settings page title. -->
+    <div class="settingsbigheaderbox">
+        <h1 class="settingspagetitle">Settings</h1>
+        <div class="settingspagetextundertitle">
+            Update your profile, security settings and personal preferences.
+        </div>
     </div>
 
+    <!-- This shows success or error messages. -->
     {% if messages %}
         {% for message in messages %}
-            <div class="success-box">{{ message }}</div>
+            {% if message.tags == "error" %}
+                <div class="errormessagebox">{{ message }}</div>
+            {% else %}
+                <div class="successmessagebox">{{ message }}</div>
+            {% endif %}
         {% endfor %}
     {% endif %}
 
+    <!-- This form saves profile, password and preference changes. -->
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <div class="settings-grid">
+        <!-- This holds the sidebar and settings card. -->
+        <div class="settingsmainlayoutgrid">
 
-            <aside class="settings-sidebar">
-                <div class="settings-tab active" data-tab="profile">👤 Profile</div>
-                <div class="settings-tab" data-tab="notifications">🔔 Notifications</div>
-                <div class="settings-tab" data-tab="preferences">⚙️ Preferences</div>
-                <div class="settings-tab" data-tab="privacy">🔐 Privacy</div>
+            <!-- This shows the settings tabs. -->
+            <aside class="settingstabsidebarbox">
+                <div class="settingstabbutton active" data-tab="profile">👤 Profile</div>
+                <div class="settingstabbutton" data-tab="security">🔐 Security</div>
+                <div class="settingstabbutton" data-tab="preferences">⚙️ Preferences</div>
             </aside>
 
-            <main class="settings-card">
+            <!-- This shows the main settings card. -->
+            <main class="settingsmaincardbox">
 
-                <section class="settings-section active" id="profile">
-                    <h2 class="section-title">Profile Settings</h2>
+                <!-- This shows profile settings. -->
+                <section class="settingscontentsection active" id="profile">
+                    <h2 class="sectiontitletext">Profile Settings</h2>
 
-                    <div class="profile-preview">
+                    <!-- This shows current profile preview. -->
+                    <div class="profilepreviewbox">
                         {% if person and person.photo %}
                             <img src="{{ person.photo.url }}" alt="{{ person.name }}">
                         {% elif person %}
-                            <img src="https://ui-avatars.com/api/?name={{ person.name|urlencode }}&background=0072ce&color=fff">
+                            <img src="https://ui-avatars.com/api/?name={{ person.name|urlencode }}&background=1E88E5&color=fff" alt="{{ person.name }}">
                         {% else %}
-                            <img src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=0072ce&color=fff">
+                            <img src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=1E88E5&color=fff" alt="{{ request.user.username }}">
                         {% endif %}
 
                         <div>
-                            <div class="profile-name">
+                            <div class="settingsprofilenametext">
                                 {% if person %}
                                     {{ person.name }}
                                 {% elif request.user.first_name %}
@@ -265,159 +511,182 @@
                                 {% endif %}
                             </div>
 
-                            <div class="profile-meta">
-                                {% if setting.job_title %}
+                            <div class="profilemetainfotext">
+                                {% if person and person.role %}
+                                    {{ person.role }}<br>
+                                {% elif setting.job_title %}
                                     {{ setting.job_title }}<br>
                                 {% endif %}
 
-                                {% if setting.department %}
-                                    {{ setting.department.name }}<br>
+                                {% if request.user.email %}
+                                    {{ request.user.email }}
+                                {% else %}
+                                    No email added
                                 {% endif %}
-
-                                {{ request.user.email }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-grid">
-                        <div class="form-group">
+                    <!-- This shows editable profile fields. -->
+                    <div class="settingsformgrid">
+                        <div class="settingsformgroup">
                             <label>Full Name</label>
-                            <input type="text" name="full_name" value="{% if person %}{{ person.name }}{% elif request.user.first_name %}{{ request.user.first_name }}{% else %}{{ request.user.username }}{% endif %}">
+                            <input
+                                type="text"
+                                class="readonlyinputbox"
+                                value="{% if person %}{{ person.name }}{% elif request.user.first_name %}{{ request.user.first_name }}{% else %}{{ request.user.username }}{% endif %}"
+                                readonly
+                            >
+                            <div class="smallhinttext">Full name cannot be changed here.</div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="settingsformgroup">
                             <label>Email</label>
-                            <input type="email" name="email" value="{{ request.user.email }}">
+                            <input
+                                type="email"
+                                name="email"
+                                value="{{ request.user.email }}"
+                                required
+                            >
                         </div>
 
-                        <div class="form-group">
+                        <div class="settingsformgroup">
                             <label>Job Title</label>
-                            <input type="text" name="job_title" value="{{ setting.job_title }}">
+                            <input
+                                type="text"
+                                name="job_title"
+                                value="{% if person and person.role %}{{ person.role }}{% else %}{{ setting.job_title }}{% endif %}"
+                                placeholder="Example: Backend Engineer"
+                            >
                         </div>
 
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="text" name="phone" value="{% if person %}{{ person.phone }}{% endif %}">
+                        <div class="settingsformgroup">
+                            <label>Phone Number</label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value="{% if person and person.phone %}{{ person.phone }}{% endif %}"
+                                placeholder="+447123456789"
+                                pattern="^\+44[0-9]{10}$"
+                                maxlength="13"
+                            >
+                            <div class="smallhinttext">Format: +44 followed by 10 digits. Example: +447123456789</div>
                         </div>
 
-                        <div class="form-group">
-                            <label>Department</label>
-                            <select name="department">
-                                <option value="">No department</option>
-
-                                {% for department in departments %}
-                                    <option value="{{ department.id }}" {% if setting.department and setting.department.id == department.id %}selected{% endif %}>
-                                        {{ department.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
+                        <div class="settingsformgroup full">
                             <label>Profile Photo</label>
                             <input type="file" name="photo" accept="image/*">
+                            <div class="smallhinttext">Upload a new photo only if you want to change it.</div>
                         </div>
                     </div>
                 </section>
 
-                <section class="settings-section" id="notifications">
-                    <h2 class="section-title">Notification Settings</h2>
+                <!-- This shows password settings. -->
+                <section class="settingscontentsection" id="security">
+                    <h2 class="sectiontitletext">Security</h2>
 
-                    <div class="toggle-row">
-                        <div>
-                            <div class="toggle-title">Email Notifications</div>
-                            <div class="toggle-desc">Receive important updates by email.</div>
+                    <div class="settingsformgrid">
+                        <div class="settingsformgroup full">
+                            <label>Old Password</label>
+                            <input
+                                type="password"
+                                name="old_password"
+                                placeholder="Enter current password"
+                            >
                         </div>
 
-                        <label class="switch">
-                            <input type="checkbox" name="email_notifications" {% if setting.email_notifications %}checked{% endif %}>
-                        </label>
+                        <div class="settingsformgroup">
+                            <label>New Password</label>
+                            <input
+                                type="password"
+                                name="new_password"
+                                placeholder="Enter new password"
+                            >
+                        </div>
+
+                        <div class="settingsformgroup">
+                            <label>Confirm New Password</label>
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                placeholder="Repeat new password"
+                            >
+                        </div>
                     </div>
 
-                    <div class="toggle-row">
-                        <div>
-                            <div class="toggle-title">Message Notifications</div>
-                            <div class="toggle-desc">Notify me when teams send or receive messages.</div>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" name="message_notifications" {% if setting.message_notifications %}checked{% endif %}>
-                        </label>
-                    </div>
-
-                    <div class="toggle-row">
-                        <div>
-                            <div class="toggle-title">Meeting Notifications</div>
-                            <div class="toggle-desc">Notify me about scheduled meetings and events.</div>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" name="meeting_notifications" {% if setting.meeting_notifications %}checked{% endif %}>
-                        </label>
+                    <div class="smallhinttext">
+                        Fill these fields only if you want to change your password.
                     </div>
                 </section>
 
-                <section class="settings-section" id="preferences">
-                    <h2 class="section-title">Preferences</h2>
+                <!-- This shows preference settings. -->
+                <section class="settingscontentsection" id="preferences">
+                    <h2 class="sectiontitletext">Preferences</h2>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Default View</label>
-                            <select name="default_view">
-                                <option value="dashboard" {% if setting.default_view == "dashboard" %}selected{% endif %}>Dashboard</option>
-                                <option value="teams" {% if setting.default_view == "teams" %}selected{% endif %}>Teams</option>
-                                <option value="messages" {% if setting.default_view == "messages" %}selected{% endif %}>Messages</option>
-                                <option value="schedule" {% if setting.default_view == "schedule" %}selected{% endif %}>Schedule</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Theme</label>
-                            <select name="theme">
-                                <option value="light" {% if setting.theme == "light" %}selected{% endif %}>Light</option>
-                                <option value="dark" {% if setting.theme == "dark" %}selected{% endif %}>Dark</option>
-                                <option value="system" {% if setting.theme == "system" %}selected{% endif %}>System</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
+                    <div class="settingsformgrid">
+                        <div class="settingsformgroup">
                             <label>Language</label>
                             <select name="language">
-                                <option value="English US" {% if setting.language == "English US" %}selected{% endif %}>English US</option>
-                                <option value="English UK" {% if setting.language == "English UK" %}selected{% endif %}>English UK</option>
-                                <option value="English" {% if setting.language == "English" %}selected{% endif %}>English</option>
+                                <option value="English UK" {% if setting.language == "English UK" or not setting.language %}selected{% endif %}>
+                                    English UK
+                                </option>
+                                <option value="English US" {% if setting.language == "English US" %}selected{% endif %}>
+                                    English US
+                                </option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label>Timezone</label>
-                            <select name="timezone">
-                                <option value="UTC" {% if setting.timezone == "UTC" %}selected{% endif %}>UTC</option>
-                                <option value="Europe/London" {% if setting.timezone == "Europe/London" %}selected{% endif %}>Europe/London</option>
-                                <option value="Europe/Istanbul" {% if setting.timezone == "Europe/Istanbul" %}selected{% endif %}>Europe/Istanbul</option>
-                                <option value="America/New_York" {% if setting.timezone == "America/New_York" %}selected{% endif %}>America/New York</option>
-                                <option value="America/Los_Angeles" {% if setting.timezone == "America/Los_Angeles" %}selected{% endif %}>America/Los Angeles</option>
+                        <div class="settingsformgroup">
+                            <label>Background Color</label>
+                            <select name="background" id="backgroundSelectDropdown">
+                                <option value="default" {% if setting.background == "default" or not setting.background %}selected{% endif %}>
+                                    Standard
+                                </option>
+                                <option value="black" {% if setting.background == "black" %}selected{% endif %}>
+                                    Black
+                                </option>
                             </select>
+                        </div>
+
+                        <div class="settingsformgroup full">
+                            <label>Background Preview</label>
+
+                            <!-- This shows clickable background options. -->
+                            <div class="backgroundchoicegrid">
+                                <label class="backgroundchoicecard {% if setting.background == 'default' or not setting.background %}active{% endif %}" data-background-option="default">
+                                    <input
+                                        type="radio"
+                                        name="background_radio"
+                                        value="default"
+                                        {% if setting.background == "default" or not setting.background %}checked{% endif %}
+                                    >
+
+                                    <div class="backgroundpreviewbox default"></div>
+                                    <div class="backgroundtitletext">Standard</div>
+                                    <div class="backgrounddescriptiontext">Default light Open Sky background.</div>
+                                </label>
+
+                                <label class="backgroundchoicecard {% if setting.background == 'black' %}active{% endif %}" data-background-option="black">
+                                    <input
+                                        type="radio"
+                                        name="background_radio"
+                                        value="black"
+                                        {% if setting.background == "black" %}checked{% endif %}
+                                    >
+
+                                    <div class="backgroundpreviewbox black"></div>
+                                    <div class="backgroundtitletext">Black</div>
+                                    <div class="backgrounddescriptiontext">Dark black background for this user.</div>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <section class="settings-section" id="privacy">
-                    <h2 class="section-title">Privacy</h2>
-
-                    <div class="form-group">
-                        <label>Profile Visibility</label>
-                        <select name="profile_visibility">
-                            <option value="public" {% if setting.profile_visibility == "public" %}selected{% endif %}>Public</option>
-                            <option value="team_only" {% if setting.profile_visibility == "team_only" %}selected{% endif %}>Team Only</option>
-                            <option value="private" {% if setting.profile_visibility == "private" %}selected{% endif %}>Private</option>
-                        </select>
-                    </div>
-                </section>
-
-                <div class="save-row">
-                    <a href="{% url 'settings' %}" class="reset-btn">Cancel</a>
-                    <button type="submit" class="save-btn">Save Settings</button>
+                <!-- This shows cancel and save buttons. -->
+                <div class="savecancelbuttonrow">
+                    <a href="{% url 'settings' %}" class="cancelsettingsbutton">Cancel</a>
+                    <button type="submit" class="savesettingsbutton">Save Settings</button>
                 </div>
 
             </main>
@@ -428,25 +697,80 @@
 </div>
 
 <script>
-    const tabs = document.querySelectorAll(".settings-tab");
-    const sections = document.querySelectorAll(".settings-section");
+    // This finds all settings tabs.
+    const settingsTabButtons = document.querySelectorAll(".settingstabbutton");
 
-    tabs.forEach(function(tab) {
+    // This finds all settings sections.
+    const settingsContentSections = document.querySelectorAll(".settingscontentsection");
+
+    // This changes the visible section when a tab is clicked.
+    settingsTabButtons.forEach(function(tab) {
         tab.addEventListener("click", function() {
             const target = tab.dataset.tab;
 
-            tabs.forEach(function(item) {
+            settingsTabButtons.forEach(function(item) {
                 item.classList.remove("active");
             });
 
-            sections.forEach(function(section) {
+            settingsContentSections.forEach(function(section) {
                 section.classList.remove("active");
             });
 
             tab.classList.add("active");
-            document.getElementById(target).classList.add("active");
+
+            const section = document.getElementById(target);
+            if (section) {
+                section.classList.add("active");
+            }
         });
     });
+
+    // This finds the background dropdown.
+    const backgroundSelectDropdown = document.getElementById("backgroundSelectDropdown");
+
+    // This finds the background option cards.
+    const backgroundChoiceCards = document.querySelectorAll(".backgroundchoicecard");
+
+    // This chooses the selected background option.
+    function setBackgroundChoice(value) {
+        if (backgroundSelectDropdown) {
+            backgroundSelectDropdown.value = value;
+        }
+
+        backgroundChoiceCards.forEach(function(option) {
+            const optionValue = option.dataset.backgroundOption;
+            const input = option.querySelector("input");
+
+            if (optionValue === value) {
+                option.classList.add("active");
+
+                if (input) {
+                    input.checked = true;
+                }
+            } else {
+                option.classList.remove("active");
+
+                if (input) {
+                    input.checked = false;
+                }
+            }
+        });
+    }
+
+    // This changes the background choice when an option card is clicked.
+    backgroundChoiceCards.forEach(function(option) {
+        option.addEventListener("click", function() {
+            const value = option.dataset.backgroundOption;
+            setBackgroundChoice(value);
+        });
+    });
+
+    // This changes the background choice when the dropdown changes.
+    if (backgroundSelectDropdown) {
+        backgroundSelectDropdown.addEventListener("change", function() {
+            setBackgroundChoice(backgroundSelectDropdown.value);
+        });
+    }
 </script>
 
 {% endblock %}

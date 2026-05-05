@@ -3,99 +3,214 @@
 {% block content %}
 
 <style>
-    .schedule-wrap {
-        max-width: 1260px;
-        margin: 0 auto;
+    /* This sets the page colors. */
+    :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --primary-soft: #eff6ff;
+        --green: #16a34a;
+        --green-soft: #dcfce7;
+        --red: #dc2626;
+        --red-soft: #fee2e2;
+        --gray-soft: #f1f5f9;
+        --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --radius: 22px;
     }
 
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+        color: var(--text);
+    }
+
+    /* This holds all schedule page content. */
+    .schedule-wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This makes the big top title box. */
     .schedule-title-row {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--shadow);
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 24px;
+        align-items: center;
+        gap: 24px;
     }
 
+    /* This adds a circle decoration. */
+    .schedule-title-row::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This styles the page title. */
     .schedule-title {
+        position: relative;
+        z-index: 1;
         margin: 0;
-        font-size: 30px;
-        color: #111827;
-    }
-
-    .schedule-subtitle {
-        color: #667085;
-        font-size: 15px;
-        margin-top: 6px;
-    }
-
-    .add-button {
-        background: #2563eb;
+        font-size: 36px;
         color: white;
-        border: none;
-        border-radius: 9px;
-        padding: 12px 18px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the small text under the title. */
+    .schedule-subtitle {
+        position: relative;
+        z-index: 1;
+        color: rgba(255,255,255,0.86);
         font-size: 15px;
-        font-weight: bold;
+        margin-top: 9px;
+        line-height: 1.65;
+    }
+
+    /* This styles the new event button. */
+    .add-button {
+        position: relative;
+        z-index: 1;
+        background: rgba(255,255,255,0.94);
+        color: #1d4ed8;
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 900;
         cursor: pointer;
+        white-space: nowrap;
+        box-shadow: 0 8px 22px rgba(15,23,42,0.14);
+        transition: 0.2s ease;
     }
 
+    /* This moves the new event button when the mouse is on it. */
     .add-button:hover {
-        background: #1d4ed8;
+        transform: translateY(-2px);
+        background: white;
     }
 
+    /* This styles success and error messages. */
+    .success-box,
+    .error-box {
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* This styles success messages. */
+    .success-box {
+        background: var(--green-soft);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* This styles error messages. */
+    .error-box {
+        background: var(--red-soft);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* This puts stat cards in three columns. */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
+        gap: 16px;
         margin-bottom: 28px;
     }
 
+    /* This styles one stat card. */
     .stat-card {
-        background: white;
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
-        padding: 22px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        transition: 0.2s ease;
     }
 
+    /* This moves cards when the mouse is on them. */
+    .stat-card:hover,
+    .panel:hover,
+    .event-card:hover,
+    .next-event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    /* This styles stat labels. */
     .stat-label {
-        color: #334e7d;
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .stat-number {
-        font-size: 32px;
-        font-weight: bold;
-        color: #000;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         margin-bottom: 10px;
     }
 
-    .stat-source {
-        color: green;
-        font-size: 13px;
+    /* This styles stat numbers. */
+    .stat-number {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
     }
 
+    /* This makes the main schedule layout. */
     .schedule-layout {
         display: grid;
-        grid-template-columns: 1.35fr 0.85fr;
+        grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.85fr);
         gap: 28px;
+        align-items: start;
     }
 
+    /* This styles white panels. */
     .panel {
-        background: white;
-        border: 1px solid #edf0f5;
-        border-radius: 12px;
-        padding: 26px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow-sm);
         margin-bottom: 28px;
+        transition: 0.2s ease;
     }
 
+    /* This styles panel titles. */
     .panel h2 {
         margin: 0 0 20px;
-        font-size: 24px;
-        color: #1f2937;
+        font-size: 22px;
+        color: var(--text);
+        font-weight: 900;
+        letter-spacing: -0.03em;
     }
 
+    /* This puts search and team filter side by side. */
     .filters {
         display: grid;
         grid-template-columns: 1fr 220px;
@@ -103,212 +218,253 @@
         margin-bottom: 22px;
     }
 
+    /* This styles inputs, selects, and textareas. */
     .filters input,
-    .filters select {
-        height: 46px;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
-        padding: 0 14px;
-        font-size: 15px;
+    .filters select,
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 14px;
         background: white;
+        color: var(--text);
         outline: none;
+        font-family: Arial, sans-serif;
+        transition: 0.18s ease;
     }
 
+    /* This sets input and select height. */
+    .filters input,
+    .filters select,
+    .form-group input,
+    .form-group select {
+        height: 46px;
+    }
+
+    /* This styles the notes textarea. */
+    .form-group textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    /* This highlights form fields when clicked. */
     .filters input:focus,
-    .filters select:focus {
-        border-color: #2563eb;
+    .filters select:focus,
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: var(--primary);
         box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
     }
 
+    /* This stacks event cards. */
     .event-list {
         display: flex;
         flex-direction: column;
         gap: 16px;
     }
 
+    /* This styles one event card. */
     .event-card {
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
         padding: 18px;
         display: grid;
         grid-template-columns: 78px 1fr auto;
         gap: 18px;
         align-items: center;
-        background: #fbfcfe;
+        background: white;
+        box-shadow: var(--shadow-sm);
+        transition: 0.2s ease;
     }
 
+    /* This styles the event date box. */
     .date-box {
         width: 70px;
         height: 70px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #3156c9, #20aee3);
+        border-radius: 18px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        font-weight: bold;
+        font-weight: 900;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
     }
 
+    /* This styles the event day number. */
     .date-day {
-        font-size: 26px;
+        font-size: 27px;
         line-height: 1;
+        letter-spacing: -0.04em;
     }
 
+    /* This styles the event month. */
     .date-month {
         font-size: 12px;
         margin-top: 5px;
         text-transform: uppercase;
+        letter-spacing: 0.08em;
     }
 
+    /* This styles event titles. */
     .event-title {
         font-size: 18px;
-        font-weight: bold;
-        color: #111827;
-        margin-bottom: 6px;
+        font-weight: 900;
+        color: var(--text);
+        margin-bottom: 7px;
+        letter-spacing: -0.03em;
     }
 
+    /* This styles event details. */
     .event-meta {
-        color: #667085;
+        color: var(--muted);
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 1.55;
     }
 
+    /* This styles the team label. */
     .event-team {
         display: inline-block;
-        background: #e0f2fe;
-        color: #0369a1;
+        background: var(--primary-soft);
+        color: var(--primary);
         border-radius: 999px;
         padding: 5px 10px;
         font-size: 12px;
-        font-weight: bold;
-        margin-top: 8px;
+        font-weight: 900;
+        margin-top: 9px;
     }
 
+    /* This styles the event time label. */
     .time-pill {
-        background: #eef2ff;
-        color: #3730a3;
+        background: var(--gray-soft);
+        color: #334155;
         border-radius: 999px;
         padding: 8px 12px;
         font-size: 13px;
-        font-weight: bold;
+        font-weight: 900;
         white-space: nowrap;
     }
 
+    /* This stacks create event form fields. */
     .form-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 14px;
     }
 
+    /* This styles form labels. */
     .form-group label {
         display: block;
-        font-weight: bold;
+        font-weight: 900;
         color: #334155;
-        font-size: 14px;
-        margin-bottom: 7px;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        width: 100%;
-        border: 1px solid #d9dee8;
-        border-radius: 8px;
-        padding: 12px 14px;
-        font-size: 15px;
-        font-family: Arial, sans-serif;
-        outline: none;
-    }
-
-    .form-group textarea {
-        min-height: 110px;
-        resize: vertical;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
-    }
-
+    /* This puts start and end time side by side. */
     .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
 
+    /* This styles the save event button. */
     .save-button {
         width: 100%;
-        background: #2563eb;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
         border: none;
-        border-radius: 9px;
+        border-radius: 14px;
         padding: 13px;
-        font-size: 15px;
-        font-weight: bold;
+        font-size: 14px;
+        font-weight: 900;
         cursor: pointer;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
+        transition: 0.2s ease;
     }
 
+    /* This moves the save button when the mouse is on it. */
     .save-button:hover {
-        background: #1d4ed8;
+        transform: translateY(-1px);
     }
 
-    .success-box {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
-    .error-box {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-bottom: 18px;
-        font-size: 14px;
-    }
-
+    /* This styles empty messages. */
     .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+        color: var(--muted);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
-    }
-
-    .next-event-card {
-        border-radius: 12px;
-        background: linear-gradient(135deg, #3156c9, #20aee3);
-        color: white;
-        padding: 22px;
-        margin-bottom: 22px;
-    }
-
-    .next-event-label {
         font-size: 14px;
-        opacity: 0.9;
+        font-weight: 700;
+    }
+
+    /* This styles the next event card. */
+    .next-event-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        padding: 24px;
+        margin-bottom: 22px;
+        box-shadow: var(--shadow);
+        transition: 0.2s ease;
+    }
+
+    /* This adds a circle decoration to the next event card. */
+    .next-event-card::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        right: -90px;
+        top: -90px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
+
+    /* This keeps next event text above the decoration. */
+    .next-event-label,
+    .next-event-title,
+    .next-event-meta {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* This styles the next event label. */
+    .next-event-label {
+        font-size: 13px;
+        opacity: 0.86;
         margin-bottom: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
     }
 
+    /* This styles the next event title. */
     .next-event-title {
-        font-size: 22px;
-        font-weight: bold;
-        margin-bottom: 8px;
+        font-size: 23px;
+        font-weight: 900;
+        margin-bottom: 9px;
+        letter-spacing: -0.04em;
     }
 
+    /* This styles next event details. */
     .next-event-meta {
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 1.6;
+        color: rgba(255,255,255,0.88);
     }
 
+    /* This changes the page on medium screens. */
     @media (max-width: 1000px) {
         .schedule-layout,
         .stats-grid,
@@ -319,6 +475,7 @@
 
         .schedule-title-row {
             flex-direction: column;
+            align-items: flex-start;
             gap: 14px;
         }
 
@@ -330,10 +487,28 @@
             width: fit-content;
         }
     }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .schedule-wrap {
+            padding: 0;
+        }
+
+        .schedule-title-row {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .schedule-title {
+            font-size: 29px;
+        }
+    }
 </style>
 
+<!-- This starts the schedule page. -->
 <div class="schedule-wrap">
 
+    <!-- This shows the page title and new event button. -->
     <div class="schedule-title-row">
         <div>
             <h1 class="schedule-title">Schedule</h1>
@@ -342,11 +517,13 @@
             </div>
         </div>
 
+        <!-- This scrolls to the create event form. -->
         <button class="add-button" onclick="document.getElementById('addEventPanel').scrollIntoView({behavior: 'smooth'})">
             + New Event
         </button>
     </div>
 
+    <!-- This shows success or error messages. -->
     {% if messages %}
         {% for message in messages %}
             {% if message.tags == "error" %}
@@ -357,44 +534,44 @@
         {% endfor %}
     {% endif %}
 
+    <!-- This shows schedule statistics. -->
     <div class="stats-grid">
-
         <div class="stat-card">
             <div class="stat-label">Total Events</div>
             <div class="stat-number">{{ total_events }}</div>
-            <div class="stat-source">Database</div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Teams With Events</div>
             <div class="stat-number">{{ total_teams_with_events }}</div>
-            <div class="stat-source">Database</div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Available Teams</div>
             <div class="stat-number">{{ teams.count }}</div>
-            <div class="stat-source">Database</div>
         </div>
-
     </div>
 
+    <!-- This holds schedule list and create event form. -->
     <div class="schedule-layout">
 
         <main>
-
+            <!-- This shows upcoming events. -->
             <div class="panel">
                 <h2>Upcoming Schedule</h2>
 
+                <!-- This filters schedule events. -->
                 <form method="get" class="filters">
                     <input
                         type="text"
                         name="search"
+                        id="scheduleSearch"
                         placeholder="Search schedule..."
                         value="{{ search }}"
+                        autocomplete="off"
                     >
 
-                    <select name="team" onchange="this.form.submit()">
+                    <select name="team" id="teamFilter">
                         <option value="">All Teams</option>
 
                         {% for team in teams %}
@@ -405,9 +582,15 @@
                     </select>
                 </form>
 
-                <div class="event-list">
+                <!-- This shows the event list. -->
+                <div class="event-list" id="eventList">
                     {% for event in events %}
-                        <div class="event-card">
+                        <!-- This shows one event. -->
+                        <div
+                            class="event-card"
+                            data-team="{% if event.team %}{{ event.team.id }}{% endif %}"
+                            data-search="{{ event.title|lower }} {{ event.date|date:'l, F d, Y'|lower }} {% if event.platform %}{{ event.platform|lower }}{% endif %} {% if event.notes %}{{ event.notes|lower }}{% endif %} {% if event.team %}{{ event.team.name|lower }}{% endif %}"
+                        >
                             <div class="date-box">
                                 <div class="date-day">{{ event.date|date:"d" }}</div>
                                 <div class="date-month">{{ event.date|date:"M" }}</div>
@@ -444,11 +627,10 @@
                     {% endfor %}
                 </div>
             </div>
-
         </main>
 
         <aside>
-
+            <!-- This shows the next event. -->
             {% if next_event %}
                 <div class="next-event-card">
                     <div class="next-event-label">Next Event</div>
@@ -469,17 +651,20 @@
                 </div>
             {% endif %}
 
+            <!-- This form creates a new event. -->
             <div class="panel" id="addEventPanel">
                 <h2>Create Event</h2>
 
                 <form method="post" class="form-grid">
                     {% csrf_token %}
 
+                    <!-- This gets the event title. -->
                     <div class="form-group">
                         <label>Event Title</label>
                         <input type="text" name="title" required>
                     </div>
 
+                    <!-- This selects the team. -->
                     <div class="form-group">
                         <label>Team</label>
                         <select name="team">
@@ -491,11 +676,13 @@
                         </select>
                     </div>
 
+                    <!-- This gets the event date. -->
                     <div class="form-group">
                         <label>Date</label>
                         <input type="date" name="date" required>
                     </div>
 
+                    <!-- This gets start and end time. -->
                     <div class="form-row">
                         <div class="form-group">
                             <label>Start Time</label>
@@ -508,24 +695,70 @@
                         </div>
                     </div>
 
+                    <!-- This gets the platform or location. -->
                     <div class="form-group">
                         <label>Platform / Location</label>
                         <input type="text" name="platform" placeholder="Google Meet, Teams, Office...">
                     </div>
 
+                    <!-- This gets optional notes. -->
                     <div class="form-group">
                         <label>Notes</label>
                         <textarea name="notes" placeholder="Optional notes..."></textarea>
                     </div>
 
+                    <!-- This saves the event. -->
                     <button type="submit" class="save-button">Save Event</button>
                 </form>
             </div>
-
         </aside>
 
     </div>
 
 </div>
+
+<script>
+    // This finds the schedule search input.
+    const scheduleSearch = document.getElementById("scheduleSearch");
+
+    // This finds the team filter dropdown.
+    const teamFilter = document.getElementById("teamFilter");
+
+    // This finds all event cards.
+    const eventCards = document.querySelectorAll(".event-card");
+
+    // This filters events by search text and selected team.
+    function filterScheduleEvents() {
+        const searchValue = scheduleSearch ? scheduleSearch.value.toLowerCase().trim() : "";
+        const selectedTeam = teamFilter ? teamFilter.value : "";
+
+        eventCards.forEach(function(card) {
+            const text = card.dataset.search || card.innerText.toLowerCase();
+            const cardTeam = card.dataset.team || "";
+
+            const matchesSearch = text.includes(searchValue);
+            const matchesTeam = selectedTeam === "" || cardTeam === selectedTeam;
+
+            if (matchesSearch && matchesTeam) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // This filters events when the user types.
+    if (scheduleSearch) {
+        scheduleSearch.addEventListener("input", filterScheduleEvents);
+    }
+
+    // This filters events when the user selects a team.
+    if (teamFilter) {
+        teamFilter.addEventListener("change", filterScheduleEvents);
+    }
+
+    // This runs the filter once when the page opens.
+    filterScheduleEvents();
+</script>
 
 {% endblock %}

@@ -3,311 +3,505 @@
 {% block content %}
 
 <style>
-    .dashboard-wrap {
-        max-width: 1260px;
-        margin: 0 auto;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
     }
 
-    .quick-grid {
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds all dashboard content. */
+    .dashboardwholepagearea {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    /* This puts the three quick cards in a row. */
+    .quickactioncardgrid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 28px;
-        margin: 0 0 28px;
+        gap: 22px;
+        margin-bottom: 28px;
     }
 
-    .quick-card {
-        min-height: 132px;
-        border-radius: 12px;
+    /* This styles each quick card. */
+    .quickactioncard {
+        position: relative;
+        overflow: hidden;
+        min-height: 148px;
+        border-radius: 28px;
         padding: 28px;
         color: white;
         text-decoration: none;
         display: flex;
         align-items: center;
-        gap: 24px;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+        gap: 22px;
+        box-shadow: var(--bigboxshadow);
+        transition: 0.2s ease;
     }
 
-    .quick-card:nth-child(1) {
-        background: linear-gradient(135deg, #3156c9, #20aee3);
-    }
-
-    .quick-card:nth-child(2) {
-        background: linear-gradient(135deg, #3e6cf0, #1d5db5);
-    }
-
-    .quick-card:nth-child(3) {
-        background: linear-gradient(135deg, #2550ad, #62c7eb);
-    }
-
-    .quick-icon {
-        font-size: 44px;
-        width: 52px;
-        text-align: center;
-    }
-
-    .quick-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 18px;
-    }
-
-    .quick-desc {
-        font-size: 18px;
-        line-height: 1.4;
-        opacity: 0.95;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 18px;
-        margin-bottom: 28px;
-    }
-
-    .stat-card {
-        background: white;
-        border: 1px solid #dce3ee;
-        border-radius: 12px;
-        padding: 22px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-    }
-
-    .stat-label {
-        color: #334e7d;
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .stat-number {
-        font-size: 32px;
-        font-weight: bold;
-        color: #000;
-        margin-bottom: 10px;
-    }
-
-    .stat-source {
-        color: green;
-        font-size: 13px;
-    }
-
-    .panel {
-        background: white;
-        border-radius: 12px;
-        padding: 28px;
-        margin-bottom: 28px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        border: 1px solid #edf0f5;
-    }
-
-    .panel h2 {
-        margin: 0 0 22px;
-        font-size: 24px;
-        color: #1f2937;
-    }
-
-    .team-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-    }
-
-    .team-card {
-        border: 1px solid #dce3ee;
-        border-radius: 10px;
-        padding: 20px;
-        min-height: 136px;
-        background: white;
-    }
-
-    .team-name {
-        font-size: 18px;
-        font-weight: bold;
-        color: #1f2937;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .team-manager {
-        color: #667085;
-        font-size: 15px;
-        margin-bottom: 18px;
-    }
-
-    .avatar-row {
-        display: flex;
-        align-items: center;
-    }
-
-    .avatar-row img,
-    .avatar-initial {
-        width: 34px;
-        height: 34px;
+    /* This adds a circle decoration to quick cards. */
+    .quickactioncard::after {
+        content: "";
+        position: absolute;
+        width: 210px;
+        height: 210px;
+        right: -78px;
+        top: -92px;
         border-radius: 50%;
-        border: 2px solid white;
-        margin-right: -8px;
-        background: #e5e7eb;
+        background: rgba(255,255,255,0.14);
     }
 
-    .avatar-initial {
+    /* This moves a quick card when the mouse is on it. */
+    .quickactioncard:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 22px 50px rgba(15,23,42,0.14);
+    }
+
+    /* This gives the first quick card its color. */
+    .quickactioncard:nth-child(1) {
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+    }
+
+    /* This gives the second quick card its color. */
+    .quickactioncard:nth-child(2) {
+        background: linear-gradient(135deg, #172554, #1d4ed8 58%, #38bdf8);
+    }
+
+    /* This gives the third quick card its color. */
+    .quickactioncard:nth-child(3) {
+        background: linear-gradient(135deg, #111827, #1e40af 58%, #60a5fa);
+    }
+
+    /* This styles the big icon on quick cards. */
+    .quickactioncardbigicon {
+        position: relative;
+        z-index: 1;
+        font-size: 40px;
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.22);
+        backdrop-filter: blur(10px);
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #0072ce;
-        color: white;
-        font-size: 11px;
-        font-weight: bold;
+        text-align: center;
+        color: #ffffff;
     }
 
-    .view-link {
-        display: inline-block;
-        margin-top: 16px;
-        color: #2563eb;
-        font-size: 14px;
-        text-decoration: none;
-        font-weight: bold;
+    /* This keeps quick card text above the decoration. */
+    .quickactioncard > div:last-child {
+        position: relative;
+        z-index: 1;
     }
 
-    .activity-list {
+    /* This styles quick card titles. */
+    .quickactioncardtitle {
+        font-size: 24px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        letter-spacing: -0.04em;
+        color: #ffffff;
+    }
+
+    /* This styles quick card descriptions. */
+    .quickactioncarddescription {
+        font-size: 15px;
+        line-height: 1.55;
+        opacity: 0.88;
+        color: #ffffff;
+    }
+
+    /* This puts number cards in a grid. */
+    .dashboardnumbercardgrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    /* This styles each number card. */
+    .dashboardnumbercard {
+        background: rgba(255,255,255,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This moves cards and rows a little when the mouse is on them. */
+    .dashboardnumbercard:hover,
+    .dashboardwhitecontentbox:hover,
+    .recentteamcard:hover,
+    .activityrowcard:hover,
+    .smallrightsidecard:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
+    }
+
+    /* This styles the small title on number cards. */
+    .numbercardsmalltitle {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+    }
+
+    /* This styles the big number on number cards. */
+    .numbercardbignumber {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        letter-spacing: -0.05em;
+        margin-bottom: 6px;
+    }
+
+    /* This styles the small note under numbers. */
+    .numbercardsmallnote {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    /* This makes the main dashboard two columns. */
+    .dashboardlowercontentgrid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.75fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    /* This styles white dashboard boxes. */
+    .dashboardwhitecontentbox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 24px;
+        margin-bottom: 28px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles the top part of a panel. */
+    .whiteboxtoparea {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    /* This styles panel titles. */
+    .dashboardwhitecontentbox h2 {
+        margin: 0;
+        font-size: 22px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+    }
+
+    /* This styles small panel text. */
+    .whiteboxsmallnote {
+        color: var(--mutedtextcolor);
+        font-size: 13px;
+        line-height: 1.5;
+        font-weight: 700;
+    }
+
+    /* This puts team cards in a grid. */
+    .recentteamcardgrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 18px;
     }
 
-    .activity-row {
+    /* This styles each team card. */
+    .recentteamcard {
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 20px;
+        padding: 20px;
+        min-height: 168px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles team names. */
+    .recentteamnametext {
+        font-size: 18px;
+        font-weight: 900;
+        color: var(--maintextcolor);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.03em;
+    }
+
+    /* This styles team manager and team info text. */
+    .recentteammanagertext,
+    .recentteamsmalltext {
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        line-height: 1.55;
+        margin-bottom: 12px;
+    }
+
+    /* This styles the department label on team cards. */
+    .teamdepartmentpilllabel {
+        display: inline-block;
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: 900;
+        margin-bottom: 8px;
+    }
+
+    /* This styles the view team link. */
+    .viewteamlink {
+        display: inline-block;
+        margin-top: 8px;
+        color: var(--mainbluecolor);
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 900;
+    }
+
+    /* This underlines the view team link when the mouse is on it. */
+    .viewteamlink:hover {
+        text-decoration: underline;
+    }
+
+    /* This stacks activity and small list rows. */
+    .activitycardlist,
+    .smallrightsidecardlist {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    /* This styles one activity row. */
+    .activityrowcard {
         display: grid;
         grid-template-columns: 52px 1fr;
         gap: 16px;
         align-items: flex-start;
-        padding: 12px 0;
+        padding: 15px;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        background: white;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .activity-icon {
+    /* This styles the activity icon. */
+    .activitytypeiconbox {
         width: 46px;
         height: 46px;
-        border-radius: 50%;
-        background: #dbeafe;
-        color: #2563eb;
+        border-radius: 16px;
+        background: var(--softbluecolor);
+        color: var(--mainbluecolor);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
-        font-weight: bold;
+        font-size: 22px;
+        font-weight: 900;
     }
 
-    .activity-title {
-        font-size: 17px;
-        color: #1f2937;
-        font-weight: bold;
-        margin-bottom: 5px;
+    /* This styles activity and small list titles. */
+    .activitytitletext,
+    .smallrightsidecardtitle {
+        font-size: 16px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
     }
 
-    .activity-desc {
-        color: #667085;
+    /* This styles activity and small list text. */
+    .activitydescriptiontext,
+    .activitytimetext,
+    .smallrightsidecardtext {
+        color: var(--mutedtextcolor);
         font-size: 14px;
-        line-height: 1.4;
+        line-height: 1.5;
     }
 
-    .activity-time {
-        color: #667085;
-        font-size: 14px;
-        margin-top: 5px;
+    /* This styles activity time. */
+    .activitytimetext {
+        margin-top: 6px;
+        font-size: 13px;
     }
 
-    .empty {
-        color: #667085;
-        border: 1px dashed #d0d5dd;
+    /* This styles small rows in the right side. */
+    .smallrightsidecard {
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 15px;
+        background: white;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
+
+    /* This styles empty messages. */
+    .emptymessagebox {
+        color: var(--mutedtextcolor);
+        border: 1px dashed #cbd5e1;
         background: #f8fafc;
-        border-radius: 10px;
+        border-radius: 16px;
         padding: 18px;
-        font-size: 15px;
+        font-size: 14px;
+        font-weight: 700;
     }
 
+    /* This changes the page on medium screens. */
     @media (max-width: 1100px) {
-        .stats-grid,
-        .quick-grid,
-        .team-grid {
+        .quickactioncardgrid,
+        .dashboardnumbercardgrid,
+        .recentteamcardgrid,
+        .dashboardlowercontentgrid {
             grid-template-columns: 1fr;
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .dashboardwholepagearea {
+            padding: 0;
+        }
+
+        .quickactioncard {
+            border-radius: 22px;
+            padding: 24px;
+            align-items: flex-start;
+        }
+
+        .whiteboxtoparea {
+            flex-direction: column;
+            align-items: flex-start;
         }
     }
 </style>
 
-<div class="dashboard-wrap">
+<!-- This starts the dashboard page. -->
+<div class="dashboardwholepagearea">
 
-    <div class="quick-grid">
+    <!-- This shows the three quick action cards. -->
+    <div class="quickactioncardgrid">
 
-        <a href="{% url 'teams' %}" class="quick-card">
-            <div class="quick-icon">⌕</div>
+        <!-- This card opens the teams page. -->
+        <a href="{% url 'teams' %}" class="quickactioncard">
+            <div class="quickactioncardbigicon">⌕</div>
             <div>
-                <div class="quick-title">Find a Team</div>
-                <div class="quick-desc">Search and filter through all the teams</div>
+                <div class="quickactioncardtitle">Find a Team</div>
+                <div class="quickactioncarddescription">Search and filter through all the teams</div>
             </div>
         </a>
 
-        <a href="{% url 'organisation_map' %}" class="quick-card">
-            <div class="quick-icon">⛓</div>
+        <!-- This card opens the organisation map. -->
+        <a href="{% url 'organisation_map' %}" class="quickactioncard">
+            <div class="quickactioncardbigicon">⛓</div>
             <div>
-                <div class="quick-title">View Map</div>
-                <div class="quick-desc">Explore hierarchies and dependencies</div>
+                <div class="quickactioncardtitle">View Map</div>
+                <div class="quickactioncarddescription">Explore hierarchies and dependencies</div>
             </div>
         </a>
 
-        <a href="{% url 'messages' %}" class="quick-card">
-            <div class="quick-icon">☁</div>
+        <!-- This card opens the messages page. -->
+        <a href="{% url 'messages' %}" class="quickactioncard">
+            <div class="quickactioncardbigicon">☁</div>
             <div>
-                <div class="quick-title">Contact Teams</div>
-                <div class="quick-desc">Quick access to team communication</div>
+                <div class="quickactioncardtitle">Contact Teams</div>
+                <div class="quickactioncarddescription">Quick access to team communication</div>
             </div>
         </a>
 
     </div>
 
-    <div class="stats-grid">
+    <!-- This shows personal number cards. -->
+    <div class="dashboardnumbercardgrid">
 
-        <div class="stat-card">
-            <div class="stat-label">Total Teams</div>
-            <div class="stat-number">{{ total_teams }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows how many teams you belong to. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">My Teams</div>
+            <div class="numbercardbignumber">{{ total_user_teams }}</div>
+            <div class="numbercardsmallnote">Teams you belong to</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Departments</div>
-            <div class="stat-number">{{ total_departments }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows how many messages you sent. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">My Messages</div>
+            <div class="numbercardbignumber">{{ total_user_messages }}</div>
+            <div class="numbercardsmallnote">Messages you sent</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Members</div>
-            <div class="stat-number">{{ total_members }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows how many meetings you created. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">My Meetings</div>
+            <div class="numbercardbignumber">{{ total_user_meetings }}</div>
+            <div class="numbercardsmallnote">Events created by you</div>
         </div>
 
-        <div class="stat-card">
-            <div class="stat-label">Messages</div>
-            <div class="stat-number">{{ total_messages }}</div>
-            <div class="stat-source">Database</div>
+        <!-- This card shows how many actions you made. -->
+        <div class="dashboardnumbercard">
+            <div class="numbercardsmalltitle">My Actions</div>
+            <div class="numbercardbignumber">{{ total_user_actions }}</div>
+            <div class="numbercardsmallnote">Tracked personal activity</div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-label">Meetings</div>
-            <div class="stat-number">{{ total_meetings }}</div>
-            <div class="stat-source">Database</div>
-        </div>
-
     </div>
 
-    <div class="panel">
-        <h2>Recently Added Teams</h2>
+    <!-- This shows recently visited teams. -->
+    <div class="dashboardwhitecontentbox">
+        <div class="whiteboxtoparea">
+            <div>
+                <h2>Recently Visited Teams</h2>
+                <div class="whiteboxsmallnote">Only teams you opened recently are shown here.</div>
+            </div>
+        </div>
 
-        <div class="team-grid">
-            {% for team in teams|slice:":3" %}
-                <div class="team-card">
-                    <div class="team-name">
-                        👥 {{ team.name }}
-                    </div>
+        <!-- This lists recently visited teams. -->
+        <div class="recentteamcardgrid">
+            {% for team in teams %}
+                <div class="recentteamcard">
+                    <div class="recentteamnametext">👥 {{ team.name }}</div>
 
-                    <div class="team-manager">
+                    {% if team.department %}
+                        <div class="teamdepartmentpilllabel">{{ team.department.name }}</div>
+                    {% endif %}
+
+                    <div class="recentteammanagertext">
                         Manager:
                         {% if team.team_leader %}
                             {{ team.team_leader.name }}
@@ -316,66 +510,122 @@
                         {% endif %}
                     </div>
 
-                    <div class="avatar-row">
+                    {% if team.last_visited_at %}
+                        <div class="recentteamsmalltext">Last visited: {{ team.last_visited_at|date:"M d, Y H:i" }}</div>
+                    {% else %}
+                        <div class="recentteamsmalltext">One of your assigned teams.</div>
+                    {% endif %}
 
-                        {% if team.team_leader %}
-                            {% if team.team_leader.photo %}
-                                <img src="{{ team.team_leader.photo.url }}" alt="{{ team.team_leader.name }}">
-                            {% else %}
-                                <img src="https://ui-avatars.com/api/?name={{ team.team_leader.name|urlencode }}&background=0072ce&color=fff">
-                            {% endif %}
-                        {% endif %}
-
-                        {% for member in team.members.all|slice:":3" %}
-                            {% if member.photo %}
-                                <img src="{{ member.photo.url }}" alt="{{ member.name }}">
-                            {% else %}
-                                <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&background=random&color=fff">
-                            {% endif %}
-                        {% empty %}
-                            {% if not team.team_leader %}
-                                <div class="avatar-initial">N/A</div>
-                            {% endif %}
-                        {% endfor %}
-
-                    </div>
-
-                    <a href="{% url 'team_detail' team.id %}" class="view-link">View Team</a>
+                    <a href="{% url 'team_detail' team.id %}" class="viewteamlink">View Team</a>
                 </div>
             {% empty %}
-                <div class="empty">No teams found in the database.</div>
+                <div class="emptymessagebox">You have not visited a team yet.</div>
             {% endfor %}
         </div>
     </div>
 
-    <div class="panel">
-        <h2>Recent Activities</h2>
+    <!-- This starts the lower dashboard layout. -->
+    <div class="dashboardlowercontentgrid">
 
-        <div class="activity-list">
-            {% for activity in activities %}
-                <div class="activity-row">
-                    <div class="activity-icon">+</div>
+        <!-- This shows the left side content. -->
+        <main>
 
+            <!-- This shows your recent activity. -->
+            <div class="dashboardwhitecontentbox">
+                <div class="whiteboxtoparea">
                     <div>
-                        <div class="activity-title">{{ activity.title }}</div>
-
-                        {% if activity.description %}
-                            <div class="activity-desc">{{ activity.description }}</div>
-                        {% endif %}
-
-                        <div class="activity-time">
-                            {{ activity.created_at }}
-
-                            {% if activity.related_team %}
-                                · {{ activity.related_team.name }}
-                            {% endif %}
-                        </div>
+                        <h2>My Recent Activity</h2>
+                        <div class="whiteboxsmallnote">This list is personal to you. Admin and other user actions are not shown.</div>
                     </div>
                 </div>
-            {% empty %}
-                <div class="empty">No activities found in the database.</div>
-            {% endfor %}
-        </div>
+
+                <!-- This lists your recent actions. -->
+                <div class="activitycardlist">
+                    {% for activity in personal_activities %}
+                        <div class="activityrowcard">
+
+                            <!-- This shows an icon based on activity type. -->
+                            <div class="activitytypeiconbox">
+                                {% if activity.action_type == "team_visit" %}
+                                    👁
+                                {% elif activity.action_type == "message_sent" %}
+                                    ✉
+                                {% elif activity.action_type == "message_reply" %}
+                                    ↩
+                                {% elif activity.action_type == "schedule_created" %}
+                                    ☑
+                                {% elif activity.action_type == "settings_updated" %}
+                                    ⚙
+                                {% else %}
+                                    +
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <div class="activitytitletext">{{ activity.title }}</div>
+
+                                {% if activity.description %}
+                                    <div class="activitydescriptiontext">{{ activity.description }}</div>
+                                {% endif %}
+
+                                {% if activity.related_team %}
+                                    <div class="activitydescriptiontext">Team: {{ activity.related_team.name }}</div>
+                                {% endif %}
+
+                                <div class="activitytimetext">{{ activity.created_at|date:"M d, Y H:i" }}</div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="emptymessagebox">Your personal activity will appear here after you visit teams, send messages or create meetings.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+
+        <!-- This shows the right side content. -->
+        <aside>
+
+            <!-- This shows your upcoming events. -->
+            <div class="dashboardwhitecontentbox">
+                <h2>My Upcoming Events</h2>
+
+                <!-- This lists your upcoming events. -->
+                <div class="smallrightsidecardlist">
+                    {% for event in upcoming_events %}
+                        <div class="smallrightsidecard">
+                            <div class="smallrightsidecardtitle">{{ event.title }}</div>
+                            <div class="smallrightsidecardtext">
+                                {{ event.date|date:"M d, Y" }} · {{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}
+                                {% if event.team %}<br>{{ event.team.name }}{% endif %}
+                                {% if event.platform %}<br>{{ event.platform }}{% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="emptymessagebox">You have not created any upcoming events yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- This shows your sent messages. -->
+            <div class="dashboardwhitecontentbox">
+                <h2>My Sent Messages</h2>
+
+                <!-- This lists your sent messages. -->
+                <div class="smallrightsidecardlist">
+                    {% for message in sent_messages %}
+                        <div class="smallrightsidecard">
+                            <div class="smallrightsidecardtitle">{{ message.subject }}</div>
+                            <div class="smallrightsidecardtext">
+                                To {{ message.receiver.name }}<br>
+                                {{ message.created_at|date:"M d, Y H:i" }}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="emptymessagebox">You have not sent any messages yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
     </div>
 
 </div>

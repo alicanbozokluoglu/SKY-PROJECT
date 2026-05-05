@@ -3,126 +3,220 @@
 {% block content %}
 
 <style>
-    .detail-wrap {
-        max-width: 900px;
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
+
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
+
+    /* This holds the message detail page. */
+    .messagedetailwholepagearea {
+        max-width: 960px;
         margin: 0 auto;
+        padding: 12px;
     }
 
-    .detail-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* This styles the message detail box. */
+    .messagedetailwhitebox {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
         padding: 28px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
     }
 
-    .subject {
-        font-size: 28px;
-        margin: 0 0 18px;
-        color: #1f2937;
+    /* This moves the message box when the mouse is on it. */
+    .messagedetailwhitebox:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--bigboxshadow);
     }
 
-    .meta-grid {
+    /* This styles the message subject. */
+    .messagesubjecttitle {
+        font-size: 32px;
+        margin: 0 0 20px;
+        color: var(--maintextcolor);
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 1.2;
+    }
+
+    /* This puts message information in a grid. */
+    .messageinfoboxgrid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
         margin-bottom: 24px;
         padding-bottom: 22px;
-        border-bottom: 1px solid #eef2f7;
+        border-bottom: 1px solid var(--borderlinecolor);
     }
 
-    .meta-box {
-        background: #f8fafc;
-        border: 1px solid #eef2f7;
-        border-radius: 10px;
-        padding: 14px;
+    /* This styles one message information box. */
+    .messageinfobox {
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: var(--smallboxshadow);
     }
 
-    .meta-label {
-        color: #667085;
-        font-size: 13px;
-        margin-bottom: 5px;
+    /* This styles small labels like From and Date. */
+    .messageinfolabel {
+        color: var(--mutedtextcolor);
+        font-size: 12px;
+        margin-bottom: 6px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .meta-value {
-        color: #111827;
-        font-weight: bold;
+    /* This styles the value under each label. */
+    .messageinfovalue {
+        color: var(--maintextcolor);
+        font-weight: 900;
         font-size: 15px;
+        letter-spacing: -0.02em;
     }
 
-    .body {
+    /* This styles the message text. */
+    .messagebodytext {
         color: #334155;
         font-size: 16px;
-        line-height: 1.7;
+        line-height: 1.75;
         white-space: pre-line;
         margin-bottom: 28px;
+        background: white;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 18px;
+        padding: 20px;
     }
 
-    .button-row {
+    /* This puts buttons next to each other. */
+    .replyandbackbuttonrow {
         display: flex;
         gap: 12px;
+        flex-wrap: wrap;
     }
 
-    .primary-btn {
-        background: #2563eb;
-        color: white;
+    /* This styles both buttons. */
+    .replymessagebutton,
+    .backtomessagesbutton {
         padding: 12px 18px;
-        border-radius: 8px;
+        border-radius: 14px;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 900;
+        transition: 0.2s ease;
     }
 
-    .secondary-btn {
+    /* This styles the reply button. */
+    .replymessagebutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.24);
+    }
+
+    /* This styles the back button. */
+    .backtomessagesbutton {
         background: white;
         color: #334155;
-        border: 1px solid #d0d5dd;
-        padding: 12px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
+        border: 1px solid var(--borderlinecolor);
+    }
+
+    /* This moves buttons when the mouse is on them. */
+    .replymessagebutton:hover,
+    .backtomessagesbutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .messagedetailwholepagearea {
+            padding: 0;
+        }
+
+        .messagedetailwhitebox {
+            padding: 22px;
+            border-radius: 22px;
+        }
+
+        .messagesubjecttitle {
+            font-size: 27px;
+        }
+
+        .messageinfoboxgrid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
-<div class="detail-wrap">
+<!-- This starts the message detail page. -->
+<div class="messagedetailwholepagearea">
 
-    <div class="detail-card">
-        <h1 class="subject">{{ message.subject }}</h1>
+    <!-- This shows the selected message. -->
+    <div class="messagedetailwhitebox">
 
-        <div class="meta-grid">
-            <div class="meta-box">
-                <div class="meta-label">From</div>
-                <div class="meta-value">{{ message.sender.name }}</div>
+        <!-- This shows the message subject. -->
+        <h1 class="messagesubjecttitle">{{ message.subject }}</h1>
+
+        <!-- This shows who sent the message, who received it and the date. -->
+        <div class="messageinfoboxgrid">
+
+            <!-- This shows the sender. -->
+            <div class="messageinfobox">
+                <div class="messageinfolabel">From</div>
+                <div class="messageinfovalue">{{ message.sender.name }}</div>
             </div>
 
-            <div class="meta-box">
-                <div class="meta-label">To Team</div>
-                <div class="meta-value">{{ message.receiver.name }}</div>
+            <!-- This shows the receiver team. -->
+            <div class="messageinfobox">
+                <div class="messageinfolabel">To Team</div>
+                <div class="messageinfovalue">{{ message.receiver.name }}</div>
             </div>
 
-            <div class="meta-box">
-                <div class="meta-label">Date</div>
-                <div class="meta-value">{{ message.created_at|date:"M d, Y H:i" }}</div>
-            </div>
-
-            <div class="meta-box">
-                <div class="meta-label">Status</div>
-                <div class="meta-value">
-                    {% if message.is_read %}
-                        Read
-                    {% else %}
-                        Unread
-                    {% endif %}
-                </div>
+            <!-- This shows the message date. -->
+            <div class="messageinfobox">
+                <div class="messageinfolabel">Date</div>
+                <div class="messageinfovalue">{{ message.created_at|date:"M d, Y H:i" }}</div>
             </div>
         </div>
 
-        <div class="body">
+        <!-- This shows the message body. -->
+        <div class="messagebodytext">
             {{ message.body }}
         </div>
 
-        <div class="button-row">
-            <a href="{% url 'reply_message' message.id %}" class="primary-btn">Reply</a>
-            <a href="{% url 'messages' %}" class="secondary-btn">Back</a>
+        <!-- This shows reply and back buttons. -->
+        <div class="replyandbackbuttonrow">
+
+            <!-- This opens the reply page. -->
+            <a href="{% url 'reply_message' message.id %}" class="replymessagebutton">Reply</a>
+
+            <!-- This goes back to the messages page. -->
+            <a href="{% url 'messages' %}" class="backtomessagesbutton">Back</a>
         </div>
     </div>
 

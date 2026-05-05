@@ -1,102 +1,510 @@
 {% extends "base.html" %}
-<!-- this page uses "base.html", so it automatically includes the sidebar, header, and footer -->
 
 {% block content %}
-<!-- everything inside this block will appear in the main content area of the page -->
 
+<style>
+    /* This sets the page colors. */
+    :root {
+        --pagebackgroundcolor: #f4f7fb;
+        --whitecardcolor: #ffffff;
+        --maintextcolor: #0f172a;
+        --mutedtextcolor: #64748b;
+        --borderlinecolor: #e2e8f0;
+        --mainbluecolor: #2563eb;
+        --darkbluecolor: #1e40af;
+        --softbluecolor: #eff6ff;
+        --greencolor: #16a34a;
+        --softgreencolor: #dcfce7;
+        --redcolor: #dc2626;
+        --softredcolor: #fee2e2;
+        --softgraycolor: #f1f5f9;
+        --bigboxshadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        --smallboxshadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        --boxroundcorner: 22px;
+    }
 
-<h2>🏢 Departments</h2>
-<!-- this is the title of the page showing all departments -->
+    /* This sets the page background. */
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+            linear-gradient(180deg, #f8fafc 0%, var(--pagebackgroundcolor) 100%);
+        color: var(--maintextcolor);
+    }
 
+    /* This holds all department page content. */
+    .departmentdirectorywholepagearea {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 12px;
+    }
 
-<!-- this section creates a top control bar where the user can see the page title 
-and simple filter and sort options -->
-<div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+    /* This makes the big top title box. */
+    .departmentdirectorybigtoptitlebox {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 26px;
+        box-shadow: var(--bigboxshadow);
+    }
 
-    <!-- this shows a label for the section -->
-    <div>
-        <strong>Department List</strong>
-    </div>
+    /* This adds a circle decoration. */
+    .departmentdirectorybigtoptitlebox::after {
+        content: "";
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        right: -120px;
+        top: -130px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.13);
+    }
 
-    <!-- these are visual icons for filtering and sorting (they do not have functionality yet) -->
-    <div>
-        🔍 Filter &nbsp;&nbsp; 🔃 Sort
-    </div>
+    /* This styles the page title. */
+    .departmentdirectorypagetitle {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 36px;
+        color: white;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+    }
 
-</div>
+    /* This styles the small text under the title. */
+    .departmentdirectorytextundertitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 9px;
+        color: rgba(255,255,255,0.86);
+        font-size: 15px;
+        line-height: 1.65;
+        max-width: 680px;
+    }
 
+    /* This holds the search and sort boxes. */
+    .departmentsearchandsortarea {
+        display: grid;
+        grid-template-columns: 1fr 220px;
+        gap: 14px;
+        margin-bottom: 28px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 18px;
+        box-shadow: var(--smallboxshadow);
+    }
 
-<!-- this section creates a grid layout to display departments in two columns -->
-<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+    /* This styles search and sort inputs. */
+    .departmentsearchandsortarea input,
+    .departmentsearchandsortarea select {
+        height: 48px;
+        border: 1px solid #dbe3ef;
+        border-radius: 14px;
+        background: white;
+        color: var(--maintextcolor);
+        padding: 0 14px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.18s ease;
+    }
 
+    /* This highlights search and sort inputs when clicked. */
+    .departmentsearchandsortarea input:focus,
+    .departmentsearchandsortarea select:focus {
+        border-color: var(--mainbluecolor);
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
 
-    <!-- this loop goes through each department sent from "views.py" -->
-    {% for dept in departments %}
+    /* This puts department cards in a grid. */
+    .departmentcardgrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
 
-    <!-- for each department, it creates a box -->
-    <div style="border:1px solid #ccc; padding:15px;">
+    /* This styles each department card. */
+    .departmentcard {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: var(--boxroundcorner);
+        padding: 22px;
+        min-height: 248px;
+        box-shadow: var(--smallboxshadow);
+        transition: 0.2s ease;
+    }
 
+    /* This moves a department card when the mouse is on it. */
+    .departmentcard:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--bigboxshadow);
+    }
 
-        <!-- this shows an icon for the department -->
-        <div style="font-size:30px; margin-bottom:8px; color:purple;">
-            🏢
+    /* This puts department name and status side by side. */
+    .departmentcardtoparea {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    /* This styles department names. */
+    .departmentnametext {
+        margin: 0;
+        color: var(--maintextcolor);
+        font-size: 23px;
+        font-weight: 900;
+        line-height: 1.2;
+        letter-spacing: -0.04em;
+    }
+
+    /* This styles the active label. */
+    .activestatuspilllabel {
+        background: var(--softgreencolor);
+        color: #15803d;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    /* This styles the department lead text. */
+    .departmentleadtext {
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        line-height: 1.55;
+        margin-bottom: 18px;
+    }
+
+    /* This holds department numbers. */
+    .departmentnumberinfoarea {
+        color: #334155;
+        font-size: 14px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* This styles department number labels. */
+    .departmentnumberinfoarea span {
+        background: #f8fafc;
+        border: 1px solid var(--borderlinecolor);
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-weight: 800;
+    }
+
+    /* This holds team letter circles. */
+    .teamlettercirclearea {
+        display: flex;
+        align-items: center;
+        min-height: 42px;
+        margin-bottom: 28px;
+        padding-left: 2px;
+    }
+
+    /* This styles one team letter circle. */
+    .teamlettercircle {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 900;
+        border: 2px solid white;
+        margin-right: -8px;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
+    }
+
+    /* This styles the more teams circle. */
+    .moreteamlettercircle {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid var(--borderlinecolor);
+        margin-left: 4px;
+        margin-right: 0;
+    }
+
+    /* This holds contact and details buttons. */
+    .departmentcardbuttonarea {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* This styles the contact link. */
+    .contactdepartmentlink {
+        color: var(--mainbluecolor);
+        text-decoration: none;
+        font-weight: 900;
+        font-size: 14px;
+    }
+
+    /* This underlines the contact link when the mouse is on it. */
+    .contactdepartmentlink:hover {
+        text-decoration: underline;
+    }
+
+    /* This styles the details button. */
+    .departmentdetailsbutton {
+        background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
+        color: white;
+        text-decoration: none;
+        border-radius: 13px;
+        padding: 10px 15px;
+        font-weight: 900;
+        font-size: 14px;
+        box-shadow: 0 10px 22px rgba(37,99,235,0.22);
+        transition: 0.2s ease;
+    }
+
+    /* This moves the details button when the mouse is on it. */
+    .departmentdetailsbutton:hover {
+        transform: translateY(-1px);
+    }
+
+    /* This styles empty messages. */
+    .emptymessagebox {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 18px;
+        color: var(--mutedtextcolor);
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 16px;
+    }
+
+    /* This hides an item. */
+    .hideitem {
+        display: none;
+    }
+
+    /* This changes the page on medium screens. */
+    @media (max-width: 1200px) {
+        .departmentcardgrid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* This changes the page on small screens. */
+    @media (max-width: 760px) {
+        .departmentdirectorywholepagearea {
+            padding: 0;
+        }
+
+        .departmentdirectorybigtoptitlebox {
+            padding: 26px;
+            border-radius: 22px;
+        }
+
+        .departmentdirectorypagetitle {
+            font-size: 29px;
+        }
+
+        .departmentsearchandsortarea,
+        .departmentcardgrid {
+            grid-template-columns: 1fr;
+        }
+
+        .departmentcardbuttonarea {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- This starts the department directory page. -->
+<div class="departmentdirectorywholepagearea">
+
+    <!-- This shows the page title. -->
+    <div class="departmentdirectorybigtoptitlebox">
+        <h1 class="departmentdirectorypagetitle">Department Directory</h1>
+        <div class="departmentdirectorytextundertitle">
+            Search, sort and explore company departments with their teams and structure.
         </div>
+    </div>
 
+    <!-- This searches and sorts departments. -->
+    <div class="departmentsearchandsortarea">
+        <input
+            type="text"
+            id="departmentsearchinput"
+            placeholder="Search departments..."
+            autocomplete="off"
+        >
 
-        <!-- this shows the department name -->
-        <h3>{{ dept.name }}</h3>
+        <select id="departmentsortdropdown">
+            <option value="name">Sort by Name</option>
+            <option value="teams">Sort by Teams</option>
+        </select>
+    </div>
 
+    <!-- This shows all departments. -->
+    {% if departments %}
+        <div class="departmentcardgrid" id="departmentcardgrid">
 
-        <!-- this section shows the team leader of the first team in this department -->
-        <!-- if no team exists, it shows "Not assigned" -->
-        <p>
-            👤 <strong>
-                {% if dept.team_set.first %}
-                    {{ dept.team_set.first.team_leader.name }}
-                {% else %}
-                    Not assigned
-                {% endif %}
-            </strong>
-        </p>
+            {% for department in departments %}
+                <div
+                    class="departmentcard"
+                    data-name="{{ department.name|lower }}"
+                    data-teams="{{ department.team_set.count }}"
+                    data-search="{{ department.name|lower }} {% for team in department.team_set.all %}{{ team.name|lower }} {% endfor %}"
+                >
+                    <div class="departmentcardtoparea">
+                        <h2 class="departmentnametext">{{ department.name }}</h2>
+                        <span class="activestatuspilllabel">Active</span>
+                    </div>
 
+                    <!-- This shows the department lead. -->
+                    <div class="departmentleadtext">
+                        {% if department.department_head %}
+                            {{ department.department_head.name }}
+                        {% else %}
+                            Department Lead
+                        {% endif %}
+                    </div>
 
-        <!-- this shows how many teams belong to this department -->
-        <p style="color:#777;">
-            👥 Teams · {{ dept.team_set.count }}
-        </p>
+                    <!-- This shows department stats. -->
+                    <div class="departmentnumberinfoarea">
+                        <span>{{ department.team_set.count }} Teams</span>
+                        <span>
+                            {% with total_members=0 %}
+                                Members
+                            {% endwith %}
+                        </span>
+                    </div>
 
+                    <!-- This shows first letters of teams. -->
+                    <div class="teamlettercirclearea">
+                        {% for team in department.team_set.all|slice:":5" %}
+                            <div class="teamlettercircle" title="{{ team.name }}">
+                                {{ team.name|slice:":1"|upper }}
+                            </div>
+                        {% empty %}
+                            <div class="teamlettercircle">--</div>
+                        {% endfor %}
 
-        <!-- this section lists all teams inside the department -->
-        <p><strong>Teams:</strong></p>
+                        {% if department.team_set.count > 5 %}
+                            <div class="teamlettercircle moreteamlettercircle">
+                                +{{ department.team_set.count|add:"-5" }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-        <ul style="padding-left:18px;">
-            {% for team in dept.team_set.all %}
-                <li>{{ team.name }}</li>
-            {% empty %}
-                <li>No teams</li>
+                    <!-- This shows contact and details links. -->
+                    <div class="departmentcardbuttonarea">
+                        <a class="contactdepartmentlink" href="{% url 'messages' %}">Contact</a>
+
+                        <a class="departmentdetailsbutton" href="{% url 'teams' %}?department={{ department.id }}">
+                            Details
+                        </a>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
 
-
-        <!-- this button takes the user to the teams page -->
-        <div style="margin-top:10px;">
-            <a href="{% url 'teams' %}">
-                <button style="background:#0072ce; color:white; border:none; padding:6px 10px;">
-                    👁 View Teams
-                </button>
-            </a>
         </div>
 
-    </div>
+        <!-- This message appears when search finds nothing. -->
+        <div class="emptymessagebox hideitem" id="nodepartmentresultsmessage">
+            No departments found.
+        </div>
+    {% else %}
 
-    {% endfor %}
+        <!-- This message appears when there are no departments. -->
+        <div class="emptymessagebox">No departments found.</div>
+    {% endif %}
 
 </div>
 
+<script>
+    // This finds the department search box.
+    const departmentsearchinput = document.getElementById("departmentsearchinput");
+
+    // This finds the sort dropdown.
+    const departmentsortdropdown = document.getElementById("departmentsortdropdown");
+
+    // This finds the department card area.
+    const departmentcardgrid = document.getElementById("departmentcardgrid");
+
+    // This finds the no result message.
+    const nodepartmentresultsmessage = document.getElementById("nodepartmentresultsmessage");
+
+    // This searches departments.
+    function searchdepartments() {
+        if (!departmentcardgrid) return;
+
+        const typedsearchvalue = departmentsearchinput ? departmentsearchinput.value.toLowerCase().trim() : "";
+        const alldepartmentcards = departmentcardgrid.querySelectorAll(".departmentcard");
+        let visibledepartmentcount = 0;
+
+        alldepartmentcards.forEach(function(departmentcard) {
+            const departmentsearchtext = departmentcard.dataset.search || "";
+            const departmentisvisible = departmentsearchtext.includes(typedsearchvalue);
+
+            departmentcard.classList.toggle("hideitem", !departmentisvisible);
+
+            if (departmentisvisible) {
+                visibledepartmentcount++;
+            }
+        });
+
+        if (nodepartmentresultsmessage) {
+            nodepartmentresultsmessage.classList.toggle("hideitem", visibledepartmentcount > 0);
+        }
+    }
+
+    // This sorts departments by name or team count.
+    function sortdepartments() {
+        if (!departmentcardgrid || !departmentsortdropdown) return;
+
+        const alldepartmentcards = Array.from(departmentcardgrid.querySelectorAll(".departmentcard"));
+        const selectedsorttype = departmentsortdropdown.value;
+
+        alldepartmentcards.sort(function(firstdepartmentcard, seconddepartmentcard) {
+            if (selectedsorttype === "teams") {
+                return Number(seconddepartmentcard.dataset.teams) - Number(firstdepartmentcard.dataset.teams);
+            }
+
+            return firstdepartmentcard.dataset.name.localeCompare(seconddepartmentcard.dataset.name);
+        });
+
+        alldepartmentcards.forEach(function(departmentcard) {
+            departmentcardgrid.appendChild(departmentcard);
+        });
+    }
+
+    // This runs search when the user types.
+    if (departmentsearchinput) {
+        departmentsearchinput.addEventListener("input", searchdepartments);
+    }
+
+    // This sorts and searches when sort option changes.
+    if (departmentsortdropdown) {
+        departmentsortdropdown.addEventListener("change", function() {
+            sortdepartments();
+            searchdepartments();
+        });
+    }
+
+    // This sorts departments when the page opens.
+    sortdepartments();
+
+    // This searches departments when the page opens.
+    searchdepartments();
+</script>
 
 {% endblock %}
-<!-- this ends the content section -->
-
-<!--This page shows all departments.
-Each department is displayed in a box with its name, leader, and teams.
-We use a loop to display all departments from the database.--->

@@ -106,8 +106,8 @@
         text-shadow: 0 1px 2px rgba(0,0,0,0.35);
     }
 
-    /* This styles the edit profile button. */
-    .editprofilebutton {
+    /* This styles the view team button. */
+    .viewteambutton {
         position: relative;
         z-index: 1;
         background: rgba(255,255,255,0.94);
@@ -121,8 +121,8 @@
         transition: 0.2s ease;
     }
 
-    /* This moves the edit profile button when the mouse is on it. */
-    .editprofilebutton:hover {
+    /* This moves the view team button when the mouse is on it. */
+    .viewteambutton:hover {
         transform: translateY(-2px);
         background: white;
     }
@@ -245,7 +245,7 @@
         letter-spacing: -0.02em;
     }
 
-    /* This styles the team card. */
+    /* This styles the team overview card. */
     .teamoverviewcardbox {
         background: linear-gradient(180deg, #ffffff, #f8fafc);
         border: 1px solid var(--borderlinecolor);
@@ -272,8 +272,8 @@
         margin-bottom: 16px;
     }
 
-    /* This styles the view team link. */
-    .viewteamlinkbutton {
+    /* This styles links that open teams. */
+    .openteamlinkbutton {
         display: inline-block;
         background: linear-gradient(135deg, var(--mainbluecolor), var(--darkbluecolor));
         color: white;
@@ -286,8 +286,8 @@
         transition: 0.2s ease;
     }
 
-    /* This moves the view team link when the mouse is on it. */
-    .viewteamlinkbutton:hover {
+    /* This moves team links when the mouse is on them. */
+    .openteamlinkbutton:hover {
         transform: translateY(-1px);
     }
 
@@ -371,7 +371,7 @@
             margin: 0 auto;
         }
 
-        .editprofilebutton {
+        .viewteambutton {
             display: inline-block;
         }
     }
@@ -406,7 +406,7 @@
             {% elif person %}
                 <img class="profileuserphoto" src="https://ui-avatars.com/api/?name={{ person.name|urlencode }}&background=0072ce&color=fff" alt="{{ person.name }}">
             {% else %}
-                <img class="profileuserphoto" src="https://ui-avatars.com/api/?name={{ request.user.username|urlencode }}&background=0072ce&color=fff" alt="{{ request.user.username }}">
+                <img class="profileuserphoto" src="https://ui-avatars.com/api/?name={{ username|urlencode }}&background=0072ce&color=fff" alt="{{ username }}">
             {% endif %}
         </div>
 
@@ -415,10 +415,8 @@
             <div class="profilemainnametext">
                 {% if person %}
                     {{ person.name }}
-                {% elif request.user.first_name %}
-                    {{ request.user.first_name }}
                 {% else %}
-                    {{ request.user.username }}
+                    {{ username }}
                 {% endif %}
             </div>
 
@@ -433,9 +431,13 @@
             </div>
         </div>
 
-        <!-- This opens the settings page to edit the profile. -->
+        <!-- This opens the user's team or the teams page. -->
         <div>
-            <a href="{% url 'settings' %}" class="editprofilebutton">Edit Profile</a>
+            {% if user_team %}
+                <a href="{% url 'team_detail' user_team.id %}" class="viewteambutton">View Team</a>
+            {% else %}
+                <a href="{% url 'teams' %}" class="viewteambutton">View Teams</a>
+            {% endif %}
         </div>
 
     </div>
@@ -447,7 +449,7 @@
         <div class="profilewhitepanelbox contactinformationpanelbox">
             <div class="paneltitlearea">
                 <h2>Contact Information</h2>
-                <div class="paneltextundertitle">Your primary company contact details.</div>
+                <div class="paneltextundertitle">Primary company contact details.</div>
             </div>
 
             <div class="contactinfogrid">
@@ -455,7 +457,6 @@
                 <!-- This shows the email address. -->
                 <div class="contactinfobox">
                     <div class="contacticonbox">📧</div>
-
                     <div>
                         <div class="contactlabeltext">Email Address</div>
                         <div class="contactvaluetext">
@@ -470,8 +471,7 @@
 
                 <!-- This shows the phone number. -->
                 <div class="contactinfobox">
-                    <div class="contacticonbox">📞</div>
-
+                    <div class="contacticonbox">📱</div>
                     <div>
                         <div class="contactlabeltext">Phone Number</div>
                         <div class="contactvaluetext">
@@ -479,6 +479,36 @@
                                 {{ person.phone }}
                             {% else %}
                                 Not added
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- This shows the primary team. -->
+                <div class="contactinfobox">
+                    <div class="contacticonbox">👥</div>
+                    <div>
+                        <div class="contactlabeltext">Primary Team</div>
+                        <div class="contactvaluetext">
+                            {% if user_team %}
+                                {{ user_team.name }}
+                            {% else %}
+                                Not assigned
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- This shows the department. -->
+                <div class="contactinfobox">
+                    <div class="contacticonbox">🏢</div>
+                    <div>
+                        <div class="contactlabeltext">Department</div>
+                        <div class="contactvaluetext">
+                            {% if user_department %}
+                                {{ user_department.name }}
+                            {% else %}
+                                Not assigned
                             {% endif %}
                         </div>
                     </div>
@@ -492,11 +522,11 @@
             <!-- This shows the left column. -->
             <div>
 
-                <!-- This shows the user's team. -->
+                <!-- This shows the primary team overview. -->
                 <div class="profilewhitepanelbox">
                     <div class="paneltitlearea">
-                        <h2>My Team</h2>
-                        <div class="paneltextundertitle">Team ownership and collaboration overview.</div>
+                        <h2>Team Overview</h2>
+                        <div class="paneltextundertitle">Primary team and related team assignments.</div>
                     </div>
 
                     {% if user_team %}
@@ -504,39 +534,89 @@
                             <div class="teamnametext">{{ user_team.name }}</div>
 
                             <div class="teammetainfotext">
-                                {% if user_team.department %}
-                                    Department: {{ user_team.department.name }}<br>
+                                {% if user_department %}
+                                    Department: {{ user_department.name }}<br>
                                 {% endif %}
 
                                 {% if user_team.team_leader %}
                                     Team Lead: {{ user_team.team_leader.name }}<br>
+                                {% else %}
+                                    Team Lead: Not assigned<br>
                                 {% endif %}
 
                                 Members: {{ user_team.total_members }}<br>
-                                Repositories: {{ user_team.total_repositories }}
+                                Repositories: {{ user_team.total_repositories }}<br>
+                                Dependencies: {{ user_team.total_dependencies }}
                             </div>
 
-                            <!-- This opens the team page. -->
-                            <a href="{% url 'team_detail' user_team.id %}" class="viewteamlinkbutton">View Team</a>
+                            <a href="{% url 'team_detail' user_team.id %}" class="openteamlinkbutton">Open Team</a>
                         </div>
                     {% else %}
-                        <div class="emptymessagebox">This user is not assigned to a team.</div>
+                        <div class="emptymessagebox">No primary team assigned.</div>
                     {% endif %}
                 </div>
+
+                <!-- This shows related teams. -->
+                <div class="profilewhitepanelbox">
+                    <div class="paneltitlearea">
+                        <h2>Related Teams</h2>
+                        <div class="paneltextundertitle">Teams this person belongs to or leads.</div>
+                    </div>
+
+                    <div class="activityrowlist">
+                        {% for team in related_teams %}
+                            <div class="activityrowbox">
+                                <div class="activitytitletext">{{ team.name }}</div>
+                                <div class="activitymetatext">
+                                    {% if team.department %}
+                                        Department: {{ team.department.name }}<br>
+                                    {% endif %}
+                                    Members: {{ team.total_members }} · Repositories: {{ team.total_repositories }}
+                                </div>
+                                <br>
+                                <a href="{% url 'team_detail' team.id %}" class="openteamlinkbutton">Open Team</a>
+                            </div>
+                        {% empty %}
+                            <div class="emptymessagebox">No related teams found.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- This shows recent messages sent by the user. -->
+                <div class="profilewhitepanelbox">
+                    <div class="paneltitlearea">
+                        <h2>Recent Messages</h2>
+                        <div class="paneltextundertitle">Latest messages sent by this person.</div>
+                    </div>
+
+                    <div class="activityrowlist">
+                        {% for message in user_messages_sent %}
+                            <div class="activityrowbox">
+                                <div class="activitytitletext">{{ message.subject }}</div>
+                                <div class="activitymetatext">
+                                    To {{ message.receiver.name }} · {{ message.created_at|date:"M d, Y H:i" }}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="emptymessagebox">No recent messages found.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
             </div>
 
             <!-- This shows the right column. -->
             <div>
 
-                <!-- This shows team members. -->
+                <!-- This shows primary team members. -->
                 <div class="profilewhitepanelbox">
                     <div class="paneltitlearea">
                         <h2>Team Members</h2>
-                        <div class="paneltextundertitle">People in your current team.</div>
+                        <div class="paneltextundertitle">People in the primary team.</div>
                     </div>
 
                     <div class="teammemberrowlist">
-                        {% for member in team_members|slice:":6" %}
+                        {% for member in team_members %}
                             <div class="teammemberrowbox">
                                 {% if member.photo %}
                                     <img src="{{ member.photo.url }}" alt="{{ member.name }}">
@@ -550,7 +630,7 @@
                                         {% if member.role %}
                                             {{ member.role }}
                                         {% else %}
-                                            Team Member
+                                            Employee
                                         {% endif %}
                                     </div>
                                 </div>
@@ -561,11 +641,11 @@
                     </div>
                 </div>
 
-                <!-- This shows upcoming team events. -->
+                <!-- This shows upcoming related schedule events. -->
                 <div class="profilewhitepanelbox">
                     <div class="paneltitlearea">
-                        <h2>Upcoming Events</h2>
-                        <div class="paneltextundertitle">Meetings connected to your team.</div>
+                        <h2>Schedule</h2>
+                        <div class="paneltextundertitle">Upcoming related team events.</div>
                     </div>
 
                     <div class="activityrowlist">
@@ -573,18 +653,19 @@
                             <div class="activityrowbox">
                                 <div class="activitytitletext">{{ event.title }}</div>
                                 <div class="activitymetatext">
-                                    {{ event.date|date:"M d, Y" }} · {{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}
-
-                                    {% if event.platform %}
-                                        <br>{{ event.platform }}
-                                    {% endif %}
+                                    {{ event.date|date:"M d, Y" }}
+                                    {% if event.start_time %} · {{ event.start_time|time:"H:i" }}{% endif %}
+                                    {% if event.end_time %} - {{ event.end_time|time:"H:i" }}{% endif %}
+                                    {% if event.team %}<br>{{ event.team.name }}{% endif %}
+                                    {% if event.platform %}<br>{{ event.platform }}{% endif %}
                                 </div>
                             </div>
                         {% empty %}
-                            <div class="emptymessagebox">No upcoming team events found.</div>
+                            <div class="emptymessagebox">No related schedule events found.</div>
                         {% endfor %}
                     </div>
                 </div>
+
             </div>
 
         </div>
